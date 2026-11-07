@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz — Test Studio Pro</title>
-<!-- Подключаем красивые шрифты Manrope и JetBrains Mono -->
+<!-- Шрифты Manrope и JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -417,7 +417,7 @@ h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:upperca
       <span>QUIZ / TEST STUDIO PRO</span>
     </div>
     <div class="header-actions">
-      <div class="header-meta" id="headerMeta">v3.3</div>
+      <div class="header-meta" id="headerMeta">v3.4</div>
       <button class="icon-btn" title="Настройки" data-act="settings" onclick="openSettings()" id="settingsBtn"></button>
     </div>
   </header>
@@ -626,7 +626,7 @@ h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:upperca
         </select>
       </div>
     </div>
-    <div class="ai-note">⚡ POLLINATIONS AI — БЕСПЛАТНО. ОЖИДАНИЕ: 10–40 СЕКУНД.</div>
+    <div class="ai-note">⚡ AI-ГЕНЕРАЦИЯ. ВЫБЕРИТЕ ПРОВАЙДЕРА В НАСТРОЙКАХ. ОЖИДАНИЕ: 10–40 СЕКУНД.</div>
     <div id="aiSkeleton" class="skeleton hidden">
       <div class="skeleton-bar"></div><div class="skeleton-bar"></div><div class="skeleton-bar"></div>
     </div>
@@ -642,7 +642,7 @@ h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:upperca
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
-    <p class="modal-sub">Внешний вид и AI-прокси.</p>
+    <p class="modal-sub">Внешний вид и AI-провайдер.</p>
     <div class="set-group">
       <h3>Тема</h3>
       <div class="set-row" id="setTheme">
@@ -666,9 +666,20 @@ h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:upperca
       </div>
     </div>
     <div class="set-group">
-      <h3>AI Прокси (опционально)</h3>
+      <h3>AI Провайдер</h3>
+      <div class="set-row" id="setAiProvider">
+        <button class="set-btn" data-v="pollinations">Pollinations</button>
+        <button class="set-btn" data-v="ovhcloud">OVHcloud</button>
+        <button class="set-btn" data-v="hackclub">Hack Club</button>
+      </div>
+      <p style="font-size:12px;color:var(--gray-500);margin-top:8px;line-height:1.5;">
+        Все провайдеры бесплатны и не требуют ключа. У каждого могут быть ограничения по частоте запросов.
+      </p>
+    </div>
+    <div class="set-group">
+      <h3>Свой AI Прокси (опционально)</h3>
       <p style="font-size:13px;color:var(--gray-500);margin-bottom:10px;line-height:1.5;">
-        Если указан — используется вместо прямого Pollinations.
+        Если указан — используется вместо выбранного провайдера.
       </p>
       <input type="url" id="setProxy" placeholder="https://your-worker.workers.dev/chat" style="width:100%;padding:10px 14px;border:var(--line-thin);background:var(--white);color:var(--black);font-family:var(--sans);font-size:14px;margin-bottom:8px;border-radius:var(--r-sm);">
       <button class="btn-ghost btn-small" onclick="saveProxy()">СОХРАНИТЬ URL</button>
@@ -683,17 +694,14 @@ h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:upperca
 
 <script>
 /* ==========================================================
-   SVG ИКОНКИ (включая кастомные из картинок)
+   SVG ИКОНКИ
    ========================================================== */
 const ICONS = {
-  // Кастомные иконки по запросу
   createBox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4" ry="4"/><path d="M12 8v8M8 12h8"/></svg>',
   aiSparkle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-2.5 4-6 8-9 9.5 3 1.5 6.5 5.5 9 9.5 2.5-4 6-8 9-9.5-3-1.5-6.5-5.5-9-9.5z"/><path d="M19 4v4m-2-2h4"/><path d="M19 16v4m-2-2h4"/></svg>',
   csvDoc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><text x="6" y="17" font-size="8" font-weight="900" font-family="monospace" fill="currentColor" stroke="none">CSV</text></svg>',
   importArrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path d="m16 10-4 4-4-4"/><path d="M12 4v10"/></svg>',
   exportArrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path d="m16 8-4-4-4 4"/><path d="M12 4v10"/></svg>',
-  
-  // Стандартные
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
   copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
@@ -717,24 +725,15 @@ const ICONS = {
 };
 function ic(name){ return ICONS[name] || ''; }
 
-/* Инициализация статических иконок */
 function initStaticIcons(){
   $("settingsBtn").innerHTML = ic('settings');
-  
-  // Кнопки создания с кастомными иконками
   $("btnNew").innerHTML = ic('createBox') + ' Создать';
   $("btnAiNew").innerHTML = ic('aiSparkle') + ' AI';
-  
-  // Импорт/Экспорт/CSV
   $("btnImport").innerHTML = ic('importArrow') + ' ИМП';
   $("btnCsv").innerHTML = ic('csvDoc') + ' CSV';
   $("btnExport").innerHTML = ic('exportArrow') + ' ЭКСП';
-  
-  // Welcome экран
   $("welcomeCreate").innerHTML = ic('createBox') + ' Новый тест';
   $("welcomeAi").innerHTML = ic('aiSparkle') + ' AI Создать';
-  
-  // Остальные
   $("startBackBtn").innerHTML = ic('arrowLeft');
   $("editorBackBtn").innerHTML = ic('arrowLeft');
   $("btnAiQ").innerHTML = ic('aiSparkle') + ' AI ВОПРОСЫ';
@@ -749,8 +748,6 @@ function initStaticIcons(){
   $("btnPdfRes").innerHTML = ic('print') + ' PDF';
   $("btnAiAnalyze").innerHTML = ic('aiSparkle') + ' AI АНАЛИЗ';
   $("btnRestart").innerHTML = ic('refresh') + ' ЕЩЁ РАЗ';
-  
-  // Search icon
   const sw = $("searchWrap");
   const iconEl = document.createElement('span');
   iconEl.innerHTML = ic('search');
@@ -767,6 +764,7 @@ const SETTINGS_KEY = "quiz_settings_v3";
 const DRAFT_KEY = "quiz_editor_draft_v3";
 const ATTEMPTS_KEY = "quiz_attempts_v3";
 const PROXY_KEY = "quiz_proxy_url";
+const AI_PROVIDER_KEY = "quiz_ai_provider";
 
 const $ = id => document.getElementById(id);
 const deepCopy = x => JSON.parse(JSON.stringify(x));
@@ -803,12 +801,13 @@ function renderMath(el){
   }); } catch(e){}
 }
 
-let settings = { theme:"light", fontSize:"normal", density:"normal" };
+let settings = { theme:"light", fontSize:"normal", density:"normal", aiProvider:"pollinations" };
 let proxyUrl = "";
 
 function loadSettings(){
   try { const raw=localStorage.getItem(SETTINGS_KEY); if(raw) settings={...settings,...JSON.parse(raw)}; } catch(e){}
   try { proxyUrl = localStorage.getItem(PROXY_KEY) || ""; } catch(e){}
+  try { const p = localStorage.getItem(AI_PROVIDER_KEY); if(p) settings.aiProvider = p; } catch(e){}
   applySettings();
 }
 function saveSettings(){
@@ -836,10 +835,18 @@ function renderSettingsButtons(){
   document.querySelectorAll("#setTheme .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.theme));
   document.querySelectorAll("#setFont .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.fontSize));
   document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.density));
+  document.querySelectorAll("#setAiProvider .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.aiProvider));
 }
 document.querySelectorAll("#setTheme .set-btn").forEach(b=>b.onclick=()=>{settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll("#setFont .set-btn").forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.onclick=()=>{settings.density=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll("#setAiProvider .set-btn").forEach(b=>b.onclick=()=>{
+  settings.aiProvider = b.dataset.v;
+  try { localStorage.setItem(AI_PROVIDER_KEY, settings.aiProvider); } catch(e){}
+  saveSettings();
+  renderSettingsButtons();
+  showToast("AI: " + (b.textContent));
+});
 
 /* ==========================================================
    МОДЕЛЬ ВОПРОСА
@@ -955,7 +962,7 @@ function show(id){
   if (main) main.scrollTop = 0;
   const names={welcomeScreen:"WELCOME",startScreen:"START",editorScreen:"EDIT",
     quizScreen:"IN PROGRESS",resultScreen:"RESULT"};
-  $("headerMeta").textContent = "v3.3 · " + (names[id]||"");
+  $("headerMeta").textContent = "v3.4 · " + (names[id]||"");
 }
 
 /* ==========================================================
@@ -1921,36 +1928,54 @@ function importCsv(event){
 }
 
 /* ==========================================================
-   AI
+   AI (с выбором провайдера)
    ========================================================== */
 async function callAI(messages){
-  const useProxy = proxyUrl && proxyUrl.trim();
-  const url = useProxy ? proxyUrl : "https://text.pollinations.ai/openai";
+  const provider = settings.aiProvider || "pollinations";
+  let url, headers = { "Content-Type": "application/json" };
+  let body = JSON.stringify({ model: "openai", messages, temperature: 0.8, max_tokens: 4096 });
+
+  if (proxyUrl && proxyUrl.trim()){
+    url = proxyUrl.trim();
+  } else {
+    switch (provider){
+      case "ovhcloud":
+        url = "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions";
+        body = JSON.stringify({ model: "mistral-small-latest", messages, temperature: 0.8, max_tokens: 4096 });
+        break;
+      case "hackclub":
+        url = "https://ai.hackclub.com/proxy/v1/chat/completions";
+        body = JSON.stringify({ model: "deepseek-chat", messages, temperature: 0.8, max_tokens: 4096 });
+        break;
+      case "pollinations":
+      default:
+        url = "https://text.pollinations.ai/openai";
+        break;
+    }
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 90000);
   try {
-    const res = await fetch(url, {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"openai",messages,temperature:0.8,max_tokens:4096}),
-      signal:controller.signal
-    });
+    const res = await fetch(url, { method:"POST", headers, body, signal:controller.signal });
     clearTimeout(timeoutId);
     if (!res.ok){
-      let body="";try{body=await res.text();}catch(e){}
-      if (res.status===429) throw new Error("Слишком много запросов. Подождите 15–30 секунд.");
-      if (res.status>=500) throw new Error("Сервер AI недоступен. Попробуйте позже.");
-      throw new Error(`Ошибка API ${res.status}: ${body.slice(0,200)}`);
+      let text="";try{text=await res.text();}catch(e){}
+      if (res.status===429) throw new Error("Слишком много запросов. Подождите 15–30 секунд или смените провайдера в настройках.");
+      if (res.status>=500) throw new Error("Сервер AI недоступен. Попробуйте другого провайдера.");
+      throw new Error(`Ошибка API ${res.status}: ${text.slice(0,200)}`);
     }
     const data=await res.json();
     if (!data.choices||!data.choices[0]||!data.choices[0].message) throw new Error("Неожиданный ответ");
     return data.choices[0].message.content;
   } catch(err){
     clearTimeout(timeoutId);
-    if (err.name==="AbortError") throw new Error("Превышено время (90 сек).");
-    if (err.message&&err.message.includes("fetch")) throw new Error("Сеть/прокси недоступен.");
+    if (err.name==="AbortError") throw new Error("Превышено время (90 сек). Попробуйте другого провайдера.");
+    if (err.message&&err.message.includes("fetch")) throw new Error("Сеть/прокси недоступен. Проверьте соединение или смените провайдера.");
     throw err;
   }
 }
+
 function parseJsonLoose(text){
   if (!text) throw new Error("пустой ответ");
   try {return JSON.parse(text);}catch(e){}
@@ -2003,7 +2028,7 @@ async function generateWithAi(){
 Правила: ровно ${count} вопросов, 4 варианта, correct=0..3, правильный не всегда первый. На русском.`;
   const btn=$("aiGenBtn");
   btn.disabled=true;btn.textContent="⏳ ГЕНЕРИРУЮ...";
-  setStatus("Запрос к AI. 10–40 секунд…","info");
+  setStatus(`Запрос к ${settings.aiProvider}. 10–40 секунд…`,"info");
   $("aiSkeleton").classList.remove("hidden");
   try {
     const content=await callAI([{role:"system",content:sys},{role:"user",content:user}]);
