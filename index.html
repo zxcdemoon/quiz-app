@@ -3,234 +3,719 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Тестирование</title>
+<title>Quiz — тестовая оболочка</title>
 <style>
+  /* ============ RESET / БАЗА ============ */
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 20px; color: #1a1a2e;
+  :root {
+    --black: #000;
+    --white: #fff;
+    --gray-50: #f7f7f7;
+    --gray-100: #efefef;
+    --gray-200: #e0e0e0;
+    --gray-300: #c8c8c8;
+    --gray-400: #9a9a9a;
+    --gray-500: #6b6b6b;
+    --gray-600: #444;
+    --gray-700: #2a2a2a;
+    --line: 1.5px solid var(--black);
+    --line-thin: 1px solid var(--gray-300);
+    --mono: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    --sans: "Inter", "Helvetica Neue", -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  .card {
-    background: #fff; border-radius: 20px; padding: 28px;
-    width: 100%; max-width: 760px; max-height: 94vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  html, body {
+    background: var(--white);
+    color: var(--black);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
-  h1 { font-size: 1.5rem; margin-bottom: 6px; }
-  h2 { font-size: 1.1rem; margin-bottom: 12px; }
-  .subtitle { color: #6b7280; margin-bottom: 20px; font-size: .92rem; }
 
-  button {
-    padding: 11px 20px; border: none; border-radius: 10px;
-    font-size: .95rem; font-weight: 600; cursor: pointer;
-    transition: all .15s; font-family: inherit;
+  /* ============ LAYOUT ============ */
+  .app {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    min-height: 100vh;
   }
-  button:disabled { opacity: .4; cursor: not-allowed; }
-  .btn-primary { background: #667eea; color: #fff; }
-  .btn-primary:hover:not(:disabled) { background: #5568d3; }
-  .btn-secondary { background: #f3f4f6; color: #374151; }
-  .btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
-  .btn-ai { background: linear-gradient(135deg,#8b5cf6,#6366f1); color: #fff; }
-  .btn-ai:hover:not(:disabled) { filter: brightness(1.08); }
-  .btn-small { padding: 7px 12px; font-size: .85rem; }
-  .icon-btn {
-    width: 34px; height: 34px; padding: 0; border-radius: 8px;
+
+  /* Верхняя шапка */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    border-bottom: var(--line);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -.01em;
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    background: var(--black); color: var(--white);
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 1rem; background: #f3f4f6; color: #374151;
+    font-family: var(--mono); font-size: 14px; font-weight: 700;
   }
-  .icon-btn:hover:not(:disabled) { background: #e5e7eb; }
-  .icon-btn.danger { background: #fee2e2; color: #b91c1c; }
-  .icon-btn.danger:hover:not(:disabled) { background: #fecaca; }
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
 
+  /* ============ ТИПОГРАФИКА ============ */
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  h2 {
+    font-size: 13px;
+    font-family: var(--mono);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 14px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+
+  /* ============ КНОПКИ ============ */
+  button {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 10px 18px;
+    border: var(--line);
+    background: var(--white);
+    color: var(--black);
+    transition: background .12s, color .12s;
+    border-radius: 0;
+    letter-spacing: -.005em;
+  }
+  button:hover:not(:disabled) { background: var(--black); color: var(--white); }
+  button:disabled { opacity: .3; cursor: not-allowed; }
+  button:active:not(:disabled) { transform: translateY(1px); }
+
+  .btn-primary { background: var(--black); color: var(--white); }
+  .btn-primary:hover:not(:disabled) { background: var(--gray-700); color: var(--white); }
+
+  .btn-ghost { border-color: var(--gray-300); color: var(--gray-600); }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--black); background: var(--white); color: var(--black); }
+
+  .btn-small { padding: 6px 12px; font-size: 13px; font-family: var(--mono); }
+
+  /* Иконочные кнопки */
+  .icon-btn {
+    width: 34px; height: 34px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 15px;
+    background: var(--white); border: var(--line-thin); color: var(--black);
+    border-radius: 0;
+  }
+  .icon-btn:hover:not(:disabled) { border-color: var(--black); background: var(--black); color: var(--white); }
+  .icon-btn.danger { border-color: var(--gray-300); color: var(--gray-500); }
+  .icon-btn.danger:hover:not(:disabled) { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* ============ РАЗНОЕ ============ */
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .spacer { flex: 1; }
-
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: .85rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
-  .field input[type="text"], .field input[type="number"],
-  .field textarea, .field select {
-    width: 100%; padding: 9px 12px; border: 1.5px solid #d1d5db;
-    border-radius: 8px; font-size: .95rem; font-family: inherit;
-    transition: border-color .15s; background: #fff;
-  }
-  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: #667eea; }
-  .field textarea { resize: vertical; min-height: 60px; }
-
-  .test-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
-  .test-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px;
-    transition: all .15s;
-  }
-  .test-item:hover { border-color: #a5b4fc; background: #fafaff; }
-  .ti-body { flex: 1; min-width: 0; }
-  .ti-title { font-weight: 600; font-size: 1rem; margin-bottom: 3px; word-break: break-word; }
-  .ti-meta { font-size: .82rem; color: #9ca3af; }
-  .ti-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-  .empty-state {
-    text-align: center; padding: 32px 16px; color: #9ca3af;
-    border: 2px dashed #e5e7eb; border-radius: 12px; margin-bottom: 18px;
-  }
-
-  .q-card {
-    border: 1.5px solid #e5e7eb; border-radius: 12px;
-    padding: 14px; margin-bottom: 12px; background: #fafafa;
-  }
-  .q-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .q-num {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: #667eea; color: #fff; font-size: .8rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .q-card-header .title { font-weight: 600; font-size: .9rem; color: #4b5563; }
-  .opt-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
-  .opt-row input[type="radio"] { width: 18px; height: 18px; accent-color: #667eea; flex-shrink: 0; cursor: pointer; }
-  .opt-row input[type="text"] { flex: 1; padding: 8px 11px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: .92rem; font-family: inherit; }
-  .opt-row input[type="text"]:focus { outline: none; border-color: #667eea; }
-  .opt-row .icon-btn { width: 30px; height: 30px; font-size: .85rem; }
-  .correct-hint { font-size: .78rem; color: #9ca3af; margin-top: 4px; }
-  .add-opt-btn { background: none; color: #667eea; padding: 6px 0; font-size: .85rem; font-weight: 600; }
-  .add-opt-btn:hover { text-decoration: underline; background: none; }
-
-  .resume-banner {
-    background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 12px;
-    padding: 12px 16px; margin-bottom: 16px;
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 12px; flex-wrap: wrap;
-  }
-  .resume-banner .info { font-size: .9rem; color: #3730a3; }
-  .settings {
-    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px;
-    padding: 14px 16px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px;
-  }
-  .settings label { display: flex; align-items: center; gap: 8px; font-size: .92rem; cursor: pointer; }
-  .settings input[type="number"] { width: 70px; padding: 5px 8px; border: 1.5px solid #d1d5db; border-radius: 6px; font-size: .92rem; font-family: inherit; }
-  .meta { font-size: .85rem; color: #6b7280; margin-bottom: 16px; }
-
-  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: .9rem; color: #6b7280; }
-  .timer { font-weight: 600; font-variant-numeric: tabular-nums; }
-  .timer.warning { color: #dc2626; animation: pulse 1s infinite; }
-  @keyframes pulse { 50% { opacity: .5; } }
-  .progress-wrap { height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-bottom: 20px; }
-  .progress-bar { height: 100%; background: linear-gradient(90deg,#667eea,#764ba2); width: 0; transition: width .3s ease; }
-  .question { font-size: 1.12rem; font-weight: 600; margin-bottom: 18px; line-height: 1.4; }
-  .option {
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 15px; border: 2px solid #e5e7eb; border-radius: 12px;
-    margin-bottom: 9px; cursor: pointer; transition: all .15s; user-select: none;
-  }
-  .option:hover { border-color: #a5b4fc; background: #f5f3ff; }
-  .option.selected { border-color: #667eea; background: #eef2ff; }
-  .option .marker {
-    width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1;
-    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    font-size: .7rem; color: #fff; transition: all .15s;
-  }
-  .option.selected .marker { background: #667eea; border-color: #667eea; }
-  .option .marker::after { content: "✓"; opacity: 0; }
-  .option.selected .marker::after { opacity: 1; }
-  .option .key { font-size: .75rem; color: #9ca3af; margin-left: auto; }
-  .nav { display: flex; justify-content: space-between; margin-top: 22px; gap: 10px; }
-  .nav .btn-primary { flex: 1; }
-
-  .result { text-align: center; padding: 8px 0 18px; }
-  .result .score {
-    font-size: 3.4rem; font-weight: 800;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin: 6px 0;
-  }
-  .result .msg { font-size: 1.05rem; color: #4b5563; margin-bottom: 4px; }
-  .result .stats { font-size: .88rem; color: #9ca3af; margin-bottom: 18px; }
-  .review-section { margin-top: 18px; border-top: 1px solid #e5e7eb; padding-top: 18px; }
-  .review-item { margin-bottom: 14px; padding: 13px; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb; }
-  .review-q { font-weight: 600; margin-bottom: 9px; font-size: .93rem; }
-  .review-opt { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: .88rem; margin-bottom: 4px; color: #4b5563; }
-  .review-opt .mark { width: 16px; flex-shrink: 0; font-weight: 700; }
-  .review-opt.correct { background: #dcfce7; color: #166534; }
-  .review-opt.wrong { background: #fee2e2; color: #991b1b; }
-  .review-opt.chosen { font-weight: 600; }
-  .review-note { font-size: .83rem; color: #9ca3af; font-style: italic; margin-top: 4px; }
-
-  .toast {
-    position: fixed; bottom: 20px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #1f2937; color: #fff; padding: 11px 20px; border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.3);
-    transition: transform .3s ease; z-index: 100;
-    max-width: 90%; text-align: center; font-size: .9rem;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
   .hidden { display: none !important; }
 
-  /* ===== Модальное окно ===== */
+  /* ============ БИБЛИОТЕКА ============ */
+  .library-toolbar {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: var(--line-thin);
+  }
+  .library-toolbar > div:first-child { flex: 1; min-width: 200px; }
+
+  .test-list {
+    display: flex; flex-direction: column;
+    border-top: var(--line-thin);
+  }
+  .test-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 4px;
+    border-bottom: var(--line-thin);
+    transition: padding .12s;
+  }
+  .test-item:hover { padding-left: 12px; padding-right: 12px; background: var(--gray-50); }
+  .ti-index {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray-400);
+    width: 32px;
+    flex-shrink: 0;
+    letter-spacing: .05em;
+  }
+  .ti-body { flex: 1; min-width: 0; }
+  .ti-title {
+    font-size: 16px; font-weight: 700; margin-bottom: 3px;
+    letter-spacing: -.01em;
+    word-break: break-word;
+  }
+  .ti-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray-500);
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+  .ti-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--gray-500);
+    border: 1.5px dashed var(--gray-300);
+    font-family: var(--mono);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 16px;
+  }
+
+  .library-footer {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding-top: 20px;
+  }
+
+  /* ============ ФОРМЫ ============ */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-500);
+    margin-bottom: 6px;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="password"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: var(--line);
+    border-radius: 0;
+    background: var(--white);
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--black);
+    transition: background .12s;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    background: var(--gray-50);
+    border-color: var(--black);
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  /* ============ СТАРТ ТЕСТА ============ */
+  .resume-banner {
+    border: var(--line);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: var(--gray-50);
+  }
+  .resume-banner .info {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  .settings {
+    border: var(--line-thin);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .settings label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; cursor: pointer;
+    user-select: none;
+  }
+  .settings input[type="checkbox"] {
+    width: 18px; height: 18px;
+    accent-color: var(--black);
+    cursor: pointer;
+  }
+  .settings input[type="number"] {
+    width: 70px; padding: 6px 10px;
+    border: var(--line); border-radius: 0;
+    font-family: var(--mono); font-size: 13px;
+    text-align: center;
+  }
+  .settings input[type="number"]:focus { outline: none; background: var(--gray-50); }
+
+  .meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 20px;
+    padding: 12px 0;
+    border-top: var(--line-thin);
+    border-bottom: var(--line-thin);
+  }
+
+  /* ============ РЕДАКТОР ============ */
+  .editor-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: var(--line);
+  }
+  .editor-header h1 { font-size: 22px; margin: 0; }
+
+  .q-card {
+    border: var(--line-thin);
+    padding: 16px;
+    margin-bottom: 14px;
+    background: var(--white);
+  }
+  .q-card:hover { border-color: var(--black); }
+
+  .q-card-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .q-num {
+    width: 28px; height: 28px;
+    background: var(--black); color: var(--white);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .q-card-header .title {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-500);
+  }
+
+  .opt-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .opt-row input[type="radio"] {
+    width: 18px; height: 18px;
+    accent-color: var(--black);
+    flex-shrink: 0; cursor: pointer;
+  }
+  .opt-row input[type="text"] {
+    flex: 1;
+    padding: 9px 12px;
+    border: var(--line-thin); border-radius: 0;
+    font-family: var(--sans); font-size: 14px;
+    background: var(--white);
+  }
+  .opt-row input[type="text"]:focus { outline: none; border-color: var(--black); background: var(--gray-50); }
+  .opt-row .icon-btn { width: 32px; height: 32px; font-size: 13px; }
+
+  .correct-hint {
+    font-family: var(--mono);
+    font-size: 11px; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: .04em;
+    margin-top: 8px;
+  }
+
+  .add-opt-btn {
+    background: none; border: none; color: var(--gray-600);
+    padding: 6px 0; font-size: 13px;
+    font-family: var(--mono); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+    cursor: pointer;
+  }
+  .add-opt-btn:hover { background: none; color: var(--black); text-decoration: underline; }
+
+  /* ============ ПРОХОЖДЕНИЕ ТЕСТА ============ */
+  .quiz-top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: var(--line);
+  }
+  .quiz-counter {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+  .quiz-counter .big {
+    font-size: 24px;
+    margin-right: 6px;
+  }
+  .timer {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    padding: 4px 10px;
+    border: var(--line);
+    background: var(--white);
+  }
+  .timer.warning {
+    background: var(--black); color: var(--white);
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 50% { opacity: .4; } }
+
+  /* Сегментированный прогресс-бар */
+  .progress-segments {
+    display: flex; gap: 4px;
+    margin-bottom: 28px;
+    height: 6px;
+  }
+  .progress-segments .seg {
+    flex: 1;
+    background: var(--gray-200);
+    transition: background .15s;
+  }
+  .progress-segments .seg.done { background: var(--black); }
+  .progress-segments .seg.current { background: var(--gray-600); }
+
+  .question {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -.015em;
+    margin-bottom: 28px;
+    padding-top: 8px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: var(--line);
+    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .12s, color .12s;
+    background: var(--white);
+    border-radius: 0;
+  }
+  .option:hover { background: var(--gray-50); }
+  .option.selected { background: var(--black); color: var(--white); }
+
+  .option-marker {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    width: 26px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .option-text { flex: 1; font-size: 15px; line-height: 1.4; }
+  .option-key {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 6px;
+    border: 1px solid var(--gray-300);
+    color: var(--gray-500);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .option.selected .option-key {
+    border-color: var(--gray-600);
+    color: var(--gray-400);
+  }
+
+  .nav {
+    display: flex; gap: 10px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: var(--line-thin);
+  }
+  .nav .btn-primary { flex: 1; }
+
+  /* ============ РЕЗУЛЬТАТ ============ */
+  .result-hero {
+    text-align: center;
+    padding: 32px 0 28px;
+    border-bottom: var(--line);
+    margin-bottom: 28px;
+  }
+  .result-hero .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--gray-500);
+    margin-bottom: 8px;
+  }
+  .result-hero .score {
+    font-size: 88px;
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .result-hero .msg {
+    font-size: 15px;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+  }
+  .result-hero .stats {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 20px;
+  }
+  .result-hero .row { justify-content: center; }
+
+  .review-item {
+    border: var(--line-thin);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .review-q {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .review-q .num {
+    font-family: var(--mono);
+    color: var(--gray-400);
+    margin-right: 6px;
+  }
+  .review-opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+  }
+  .review-opt .mark {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    width: 16px;
+    flex-shrink: 0;
+    color: var(--gray-400);
+  }
+  .review-opt.correct {
+    border-color: var(--black);
+    background: var(--gray-50);
+  }
+  .review-opt.correct .mark { color: var(--black); }
+  .review-opt.wrong {
+    border-color: var(--gray-400);
+    color: var(--gray-600);
+    text-decoration: line-through;
+    text-decoration-color: var(--gray-400);
+  }
+  .review-opt.chosen:not(.correct):not(.wrong) {
+    border-color: var(--gray-300);
+  }
+  .review-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--gray-200);
+  }
+
+  /* ============ МОДАЛКА AI ============ */
   .modal {
-    position: fixed; inset: 0; background: rgba(15, 23, 42, .55);
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px; z-index: 200; backdrop-filter: blur(4px);
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 200;
   }
   .modal-content {
-    background: #fff; border-radius: 18px; padding: 24px;
-    width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
-    animation: pop .2s ease;
+    background: var(--white);
+    border: var(--line);
+    padding: 28px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
   }
-  @keyframes pop { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .modal-content h2 { font-size: 1.2rem; margin-bottom: 6px; }
-  .modal-sub { font-size: .85rem; color: #6b7280; margin-bottom: 18px; }
-  .modal-content .row { flex-wrap: wrap; }
-  .ai-status {
-    margin-top: 12px; padding: 10px 12px; border-radius: 8px;
-    font-size: .88rem; display: none;
+  .modal-content h2 {
+    font-size: 22px;
+    font-family: var(--sans);
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: -.01em;
+    margin-bottom: 6px;
+    color: var(--black);
   }
-  .ai-status.info { background: #eef2ff; color: #3730a3; display: block; }
-  .ai-status.ok { background: #dcfce7; color: #166534; display: block; }
-  .ai-status.err { background: #fee2e2; color: #991b1b; display: block; }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 22px;
+  }
+  .modal-section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--gray-500);
+    font-weight: 700;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 14px;
+    margin-top: 20px;
+  }
+  .modal-section-label:first-of-type { margin-top: 0; }
+
   .ai-note {
-    font-size: .8rem; color: #9ca3af; margin-top: 4px;
-    padding: 8px 10px; background: #f9fafb; border-radius: 8px;
-    border-left: 3px solid #c7d2fe;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray-500);
+    line-height: 1.6;
+    padding: 12px 14px;
+    background: var(--gray-50);
+    border-left: 3px solid var(--black);
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    margin: 16px 0;
+  }
+
+  .ai-status {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    border: 1px solid var(--gray-300);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    display: none;
+  }
+  .ai-status.info { display: block; background: var(--gray-50); }
+  .ai-status.ok { display: block; background: var(--black); color: var(--white); border-color: var(--black); }
+  .ai-status.err { display: block; border-color: var(--black); border-left-width: 3px; }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    z-index: 300;
+    transition: transform .25s ease;
+    max-width: calc(100% - 40px);
+    text-align: center;
+    border: 2px solid var(--white);
+    outline: 2px solid var(--black);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ============ МОБИЛЬНЫЙ ============ */
+  @media (max-width: 640px) {
+    .app { padding: 20px 16px 60px; }
+    h1 { font-size: 22px; }
+    .question { font-size: 18px; }
+    .result-hero .score { font-size: 64px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .library-toolbar { flex-direction: column; align-items: stretch; }
+    .library-toolbar > div:first-child { width: 100%; }
+    .ti-index { display: none; }
+    .quiz-counter .big { font-size: 18px; }
+    .modal { padding: 12px; }
+    .modal-content { padding: 20px; }
   }
 </style>
 </head>
 <body>
 
-<div class="card" id="app">
+<div class="app">
+
+  <!-- ВЕРХНЯЯ ШАПКА -->
+  <header class="header">
+    <div class="brand">
+      <span class="brand-mark">Q</span>
+      <span>QUIZ / TEST STUDIO</span>
+    </div>
+    <div class="header-meta" id="headerMeta">MV / v2.0</div>
+  </header>
 
   <!-- ========== БИБЛИОТЕКА ========== -->
   <div id="libraryScreen">
-    <div class="row" style="margin-bottom:14px; align-items:flex-start">
-      <div style="flex:1; min-width:180px">
-        <h1>📚 Мои тесты</h1>
-        <p class="subtitle" style="margin-bottom:0">Создавайте тесты, редактируйте вопросы и проходите их.</p>
+    <div class="library-toolbar">
+      <div>
+        <h1>Библиотека тестов</h1>
+        <p class="subtitle" style="margin-bottom:0">Создавайте, редактируйте и проходите тесты.</p>
       </div>
-      <button class="btn-ai" onclick="openAiModal('test')">🤖 AI Создать</button>
       <button class="btn-primary" onclick="openEditor(null)">＋ Создать</button>
+      <button class="btn-ghost" onclick="openAiModal('test')">🤖 AI Создать</button>
     </div>
     <div class="test-list" id="testList"></div>
-    <div class="row" style="gap:8px">
-      <button class="btn-secondary btn-small" onclick="document.getElementById('fileInput').click()">📁 Импорт JSON</button>
-      <button class="btn-secondary btn-small" onclick="exportAll()">💾 Экспорт JSON</button>
-      <div class="spacer"></div>
+    <div class="library-footer">
+      <button class="btn-ghost btn-small" onclick="document.getElementById('fileInput').click()">ИМПОРТ JSON</button>
+      <button class="btn-ghost btn-small" onclick="exportAll()">ЭКСПОРТ JSON</button>
     </div>
     <input type="file" id="fileInput" accept="application/json,.json" class="hidden" onchange="importJSON(event)">
   </div>
 
   <!-- ========== СТАРТ ========== -->
   <div id="startScreen" class="hidden">
-    <div class="row" style="margin-bottom:12px">
+    <div class="editor-header">
       <button class="icon-btn" onclick="show('libraryScreen')">←</button>
-      <div class="spacer"></div>
+      <h1 id="startTitle"></h1>
     </div>
-    <h1 id="startTitle"></h1>
     <p class="subtitle" id="startDesc"></p>
     <div id="resumeBanner" class="resume-banner hidden">
       <div class="info" id="resumeInfo"></div>
-      <div class="actions row" style="gap:6px">
-        <button class="btn-secondary btn-small" onclick="discardSaved()">Удалить</button>
-        <button class="btn-primary btn-small" onclick="resumeTest()">Продолжить</button>
+      <div class="row" style="gap:6px">
+        <button class="btn-ghost btn-small" onclick="discardSaved()">УДАЛИТЬ</button>
+        <button class="btn-primary btn-small" onclick="resumeTest()">ПРОДОЛЖИТЬ</button>
       </div>
     </div>
     <div class="settings">
@@ -241,14 +726,14 @@
       </label>
     </div>
     <div class="meta" id="startMeta"></div>
-    <button class="btn-primary" style="width:100%" onclick="startTest()">Начать тест</button>
+    <button class="btn-primary" style="width:100%; padding:14px" onclick="startTest()">НАЧАТЬ ТЕСТ →</button>
   </div>
 
   <!-- ========== РЕДАКТОР ========== -->
   <div id="editorScreen" class="hidden">
-    <div class="row" style="margin-bottom:14px">
+    <div class="editor-header">
       <button class="icon-btn" onclick="closeEditor()">←</button>
-      <h1 id="editorTitle" style="margin:0; font-size:1.25rem">Новый тест</h1>
+      <h1 id="editorTitle">Новый тест</h1>
     </div>
 
     <div class="field">
@@ -264,52 +749,53 @@
       <input type="number" id="edTime" min="0" max="300" value="0">
     </div>
 
-    <h2 style="margin-top:20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap">
-      Вопросы <span id="qCount" style="font-size:.85rem; color:#9ca3af; font-weight:400"></span>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:24px; padding-top:20px; border-top: var(--line-thin); flex-wrap:wrap;">
+      <h2 style="margin:0">Вопросы <span id="qCount" style="color:var(--gray-400)"></span></h2>
       <div class="spacer"></div>
-      <button class="btn-ai btn-small" onclick="openAiModal('questions')">🤖 AI Вопросы</button>
-    </h2>
-    <div id="edQuestions"></div>
-    <button class="btn-secondary" style="width:100%; margin-bottom:20px" onclick="addQuestion()">＋ Добавить вопрос</button>
+      <button class="btn-ghost btn-small" onclick="openAiModal('questions')">🤖 AI ВОПРОСЫ</button>
+    </div>
+    <div id="edQuestions" style="margin-top:16px;"></div>
+    <button class="btn-ghost" style="width:100%; margin-bottom:20px; padding:14px" onclick="addQuestion()">＋ ДОБАВИТЬ ВОПРОС</button>
 
-    <div class="row" style="gap:8px; padding-top:14px; border-top:1px solid #e5e7eb">
-      <button class="btn-secondary" onclick="closeEditor()">Отмена</button>
+    <div style="display:flex; gap:8px; padding-top:20px; border-top: var(--line);">
+      <button class="btn-ghost" onclick="closeEditor()">ОТМЕНА</button>
       <div class="spacer"></div>
-      <button class="btn-primary" onclick="saveTest()">💾 Сохранить тест</button>
+      <button class="btn-primary" onclick="saveTest()">💾 СОХРАНИТЬ ТЕСТ</button>
     </div>
   </div>
 
   <!-- ========== ТЕСТ ========== -->
   <div id="quizScreen" class="hidden">
-    <div class="quiz-header">
-      <div id="counter"></div>
+    <div class="quiz-top">
+      <div class="quiz-counter">
+        <span class="big" id="counterBig">01</span>
+        <span id="counterSmall" style="color:var(--gray-400)">/ 10</span>
+      </div>
       <div class="timer" id="timer"></div>
     </div>
-    <div class="progress-wrap"><div class="progress-bar" id="progress"></div></div>
+    <div class="progress-segments" id="progressSegments"></div>
     <div class="question" id="questionText"></div>
     <div id="options"></div>
     <div class="nav">
-      <button class="btn-secondary" id="prevBtn" onclick="prevQuestion()">← Назад</button>
-      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">Далее →</button>
+      <button class="btn-ghost" id="prevBtn" onclick="prevQuestion()">← НАЗАД</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">ДАЛЕЕ →</button>
     </div>
   </div>
 
   <!-- ========== РЕЗУЛЬТАТ ========== -->
   <div id="resultScreen" class="hidden">
-    <div class="result">
-      <h1>Результат</h1>
-      <div class="score" id="scoreText"></div>
+    <div class="result-hero">
+      <div class="label">Результат</div>
+      <div class="score" id="scoreText">—</div>
       <p class="msg" id="scoreMsg"></p>
       <p class="stats" id="scoreStats"></p>
-      <div class="row" style="gap:8px; justify-content:center">
-        <button class="btn-secondary" onclick="show('libraryScreen')">К тестам</button>
-        <button class="btn-primary" onclick="restart()">Пройти заново</button>
+      <div class="row">
+        <button class="btn-ghost" onclick="show('libraryScreen')">К ТЕСТАМ</button>
+        <button class="btn-primary" onclick="restart()">ЕЩЁ РАЗ</button>
       </div>
     </div>
-    <div class="review-section">
-      <h2>Разбор ответов</h2>
-      <div id="reviewList"></div>
-    </div>
+    <h2>Разбор ответов</h2>
+    <div id="reviewList"></div>
   </div>
 </div>
 
@@ -317,15 +803,17 @@
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2 id="aiModalTitle">🤖 Создать тест с AI</h2>
-    <p class="modal-sub" id="aiModalSub">AI сгенерирует тест с вариантами ответов по вашей теме.</p>
+    <p class="modal-sub" id="aiModalSub">AI сгенерирует вопросы с вариантами ответов по вашей теме.</p>
+
+    <div class="modal-section-label">Параметры генерации</div>
 
     <div class="field">
       <label>Тема *</label>
       <input type="text" id="aiTopic" placeholder="Например: История России, Python, CSS-флексбоксы">
     </div>
 
-    <div class="row" style="gap:10px">
-      <div class="field" style="flex:1; min-width:120px; margin:0">
+    <div class="row" style="gap:10px; align-items:flex-start">
+      <div class="field" style="flex:1; min-width:110px; margin:0">
         <label>Вопросов</label>
         <input type="number" id="aiCount" value="5" min="1" max="20">
       </div>
@@ -341,16 +829,15 @@
     </div>
 
     <div class="ai-note">
-      ⚡ Работает на <b>Pollinations AI</b> — бесплатно, без ключа и регистрации.
-      Запрос может занять <b>10–40 секунд</b> или больше при высокой нагрузке.
-      Повторные запросы подряд могут временно блокироваться.
+      ⚡ POLLINATIONS AI — БЕСПЛАТНО, БЕЗ КЛЮЧА.<br>
+      ОЖИДАНИЕ: 10–40 СЕКУНД. ПОВТОРНЫЕ ЗАПРОСЫ МОГУТ БЛОКИРОВАТЬСЯ (429).
     </div>
 
     <div class="ai-status" id="aiStatus"></div>
 
-    <div class="row" style="gap:8px; justify-content:flex-end; margin-top:18px">
-      <button class="btn-secondary" onclick="closeAiModal()">Отмена</button>
-      <button class="btn-ai" id="aiGenBtn" onclick="generateWithAi()">✨ Сгенерировать</button>
+    <div class="row" style="gap:8px; justify-content:flex-end; margin-top:20px">
+      <button class="btn-ghost" onclick="closeAiModal()">ОТМЕНА</button>
+      <button class="btn-primary" id="aiGenBtn" onclick="generateWithAi()">✨ СГЕНЕРИРОВАТЬ</button>
     </div>
   </div>
 </div>
@@ -391,6 +878,7 @@ function showToast(msg){
   t._tid = setTimeout(() => t.classList.remove("show"), 2500);
 }
 function uid(){ return "t" + Date.now() + Math.random().toString(36).slice(2, 6); }
+function pad(n){ return String(n).padStart(2, "0"); }
 
 /* ==========================================================
    ДЕМО-ТЕСТ
@@ -459,7 +947,7 @@ async function loadTests(){
 }
 function saveTests(){
   try { localStorage.setItem(TESTS_KEY, JSON.stringify(tests)); }
-  catch(e){ showToast("⚠ Не удалось сохранить (хранилище переполнено)"); }
+  catch(e){ showToast("⚠ НЕ УДАЛОСЬ СОХРАНИТЬ"); }
 }
 
 /* ==========================================================
@@ -469,6 +957,14 @@ function show(id){
   ["libraryScreen","startScreen","editorScreen","quizScreen","resultScreen"]
     .forEach(s => $(s).classList.toggle("hidden", s !== id));
   window.scrollTo({ top: 0 });
+  const names = {
+    libraryScreen: "LIBRARY",
+    startScreen: "TEST / START",
+    editorScreen: "TEST / EDIT",
+    quizScreen: "TEST / IN PROGRESS",
+    resultScreen: "TEST / RESULT"
+  };
+  $("headerMeta").textContent = "MV / v2.0 · " + (names[id] || "");
 }
 
 /* ==========================================================
@@ -477,22 +973,22 @@ function show(id){
 function renderLibrary(){
   const box = $("testList");
   if (!tests.length){
-    box.innerHTML = `<div class="empty-state">Пока нет тестов.<br>Нажмите «Создать» или «🤖 AI Создать».</div>`;
+    box.innerHTML = `<div class="empty-state">Тестов пока нет · создайте первый</div>`;
     return;
   }
-  box.innerHTML = tests.map(t => `
+  box.innerHTML = tests.map((t, idx) => `
     <div class="test-item">
+      <div class="ti-index">${pad(idx + 1)}</div>
       <div class="ti-body">
         <div class="ti-title">${escapeHtml(t.title || "Без названия")}</div>
         <div class="ti-meta">
-          ${t.questions.length} вопр.
-          ${t.timeLimit ? ` · ${Math.round(t.timeLimit/60)} мин` : ""}
+          ${t.questions.length} вопр.${t.timeLimit ? ` · ${Math.round(t.timeLimit/60)} мин` : " · без лимита"}
         </div>
       </div>
       <div class="ti-actions">
         <button class="icon-btn" title="Пройти" onclick="openStart('${t.id}')" ${t.questions.length ? "" : "disabled"}>▶</button>
         <button class="icon-btn" title="Редактировать" onclick="openEditor('${t.id}')">✎</button>
-        <button class="icon-btn danger" title="Удалить" onclick="deleteTest('${t.id}')">🗑</button>
+        <button class="icon-btn danger" title="Удалить" onclick="deleteTest('${t.id}')">✕</button>
       </div>
     </div>
   `).join("");
@@ -505,20 +1001,20 @@ function deleteTest(id){
   tests = tests.filter(x => x.id !== id);
   saveTests();
   renderLibrary();
-  showToast("Тест удалён");
+  showToast("ТЕСТ УДАЛЁН");
 }
 
 /* ==========================================================
-   СТАРТ ТЕСТА
+   СТАРТ
    ========================================================== */
 function openStart(id){
   TEST = tests.find(t => t.id === id);
   if (!TEST) return;
-  $("startTitle").textContent = "📝 " + (TEST.title || "Тест");
+  $("startTitle").textContent = TEST.title || "Тест";
   $("startDesc").textContent = TEST.description || "";
   $("startMeta").textContent =
-    `Вопросов: ${TEST.questions.length}` +
-    (TEST.timeLimit ? ` · Время: ${Math.round(TEST.timeLimit/60)} мин` : " · Без лимита времени");
+    `ВОПРОСОВ: ${TEST.questions.length}` +
+    (TEST.timeLimit ? ` · ВРЕМЯ: ${Math.round(TEST.timeLimit/60)} МИН` : " · БЕЗ ЛИМИТА");
   $("optTime").value = TEST.timeLimit ? Math.round(TEST.timeLimit/60) : 0;
 
   pendingSaved = loadSaved();
@@ -528,7 +1024,7 @@ function openStart(id){
   if (pendingSaved){
     banner.classList.remove("hidden");
     $("resumeInfo").textContent =
-      `Незавершённая попытка: вопрос ${pendingSaved.current + 1} из ${pendingSaved.questions.length}` +
+      `Незавершено · вопрос ${pendingSaved.current + 1} из ${pendingSaved.questions.length}` +
       (pendingSaved.totalTime > 0 ? ` · осталось ${formatTime(pendingSaved.timeLeft)}` : "");
   } else {
     banner.classList.add("hidden");
@@ -589,11 +1085,11 @@ function discardSaved(){
   localStorage.removeItem(STATE_KEY);
   pendingSaved = null;
   openStart(TEST.id);
-  showToast("Сохранение удалено");
+  showToast("СОХРАНЕНИЕ УДАЛЕНО");
 }
 function resumeTest(){
   const saved = pendingSaved || loadSaved();
-  if (!saved){ showToast("Сохранение не найдено"); return; }
+  if (!saved){ showToast("СОХРАНЕНИЕ НЕ НАЙДЕНО"); return; }
   state = saved;
   TEST = tests.find(t => t.id === state.testId) || TEST;
   show("quizScreen");
@@ -617,7 +1113,7 @@ function startTimer(){
     if (state.timeLeft <= 0){
       updateTimer();
       clearInterval(timerId); timerId = null;
-      showToast("⏰ Время вышло!");
+      showToast("⏰ ВРЕМЯ ВЫШЛО");
       finish(true);
       return;
     }
@@ -628,7 +1124,7 @@ function startTimer(){
 function updateTimer(){
   const el = $("timer");
   if (!state || state.totalTime <= 0){ el.textContent = ""; el.classList.remove("warning"); return; }
-  el.textContent = "⏱ " + formatTime(state.timeLeft);
+  el.textContent = formatTime(state.timeLeft);
   el.classList.toggle("warning", state.timeLeft <= 30);
 }
 
@@ -637,24 +1133,38 @@ function updateTimer(){
    ========================================================== */
 function renderQuestion(){
   const q = state.questions[state.current];
+  const total = state.questions.length;
+
   $("questionText").textContent = q.question;
-  $("counter").textContent = `Вопрос ${state.current + 1} из ${state.questions.length}`;
-  $("progress").style.width = `${((state.current + 1) / state.questions.length) * 100}%`;
+  $("counterBig").textContent = pad(state.current + 1);
+  $("counterSmall").textContent = "/ " + pad(total);
+
+  // сегментированный прогресс
+  const segs = [];
+  for (let i = 0; i < total; i++){
+    let cls = "seg";
+    if (state.answers[i] !== null) cls += " done";
+    if (i === state.current) cls += " current";
+    segs.push(`<div class="${cls}"></div>`);
+  }
+  $("progressSegments").innerHTML = segs.join("");
 
   const box = $("options");
   box.innerHTML = "";
   q.options.forEach((text, i) => {
     const el = document.createElement("div");
     el.className = "option" + (state.answers[state.current] === i ? " selected" : "");
-    el.innerHTML = `<div class="marker"></div><div>${escapeHtml(text)}</div>` +
-      (i < 9 ? `<div class="key">${i + 1}</div>` : "");
+    el.innerHTML = `
+      <span class="option-marker">${state.answers[state.current] === i ? "■" : "□"}</span>
+      <span class="option-text">${escapeHtml(text)}</span>
+      ${i < 9 ? `<span class="option-key">${i + 1}</span>` : ""}
+    `;
     el.onclick = () => selectOption(i);
     box.appendChild(el);
   });
 
   $("prevBtn").disabled = state.current === 0;
-  $("nextBtn").textContent = state.current === state.questions.length - 1
-    ? "Завершить ✓" : "Далее →";
+  $("nextBtn").textContent = state.current === total - 1 ? "ЗАВЕРШИТЬ ✓" : "ДАЛЕЕ →";
   $("nextBtn").disabled = state.answers[state.current] === null;
 }
 function selectOption(i){
@@ -685,7 +1195,7 @@ function finish(byTimeout){
   show("resultScreen");
   $("scoreText").textContent = `${percent}%`;
   $("scoreMsg").textContent =
-    (byTimeout ? "⏰ Время истекло. " : "") +
+    (byTimeout ? "⏰ ВРЕМЯ ИСТЕКЛО. " : "") +
     `Правильных ответов: ${correctCount} из ${total}.`;
   $("scoreStats").textContent =
     `Отвечено: ${answeredCount}/${total}` +
@@ -694,9 +1204,9 @@ function finish(byTimeout){
   const html = [];
   state.questions.forEach((q, i) => {
     const ua = state.answers[i];
-    html.push(`<div class="review-item"><div class="review-q">${i + 1}. ${escapeHtml(q.question)}</div>`);
+    html.push(`<div class="review-item"><div class="review-q"><span class="num">${pad(i+1)}</span>${escapeHtml(q.question)}</div>`);
     q.options.forEach((opt, j) => {
-      let cls = "review-opt", mark = "";
+      let cls = "review-opt", mark = "○";
       if (j === q.correct){ cls += " correct"; mark = "✓"; }
       if (j === ua && ua !== q.correct){ cls += " wrong"; mark = "✗"; }
       if (j === ua) cls += " chosen";
@@ -750,12 +1260,12 @@ function renderEditor(){
   $("edQuestions").innerHTML = editing.questions.map((q, i) => `
     <div class="q-card" data-qi="${i}">
       <div class="q-card-header">
-        <div class="q-num">${i + 1}</div>
+        <div class="q-num">${pad(i + 1)}</div>
         <div class="title">Вопрос</div>
         <div class="spacer"></div>
         <button class="icon-btn" title="Выше" onclick="moveQuestion(${i},-1)" ${i === 0 ? "disabled" : ""}>↑</button>
         <button class="icon-btn" title="Ниже" onclick="moveQuestion(${i},1)" ${i === editing.questions.length - 1 ? "disabled" : ""}>↓</button>
-        <button class="icon-btn danger" title="Удалить вопрос" onclick="deleteQuestion(${i})">🗑</button>
+        <button class="icon-btn danger" title="Удалить вопрос" onclick="deleteQuestion(${i})">✕</button>
       </div>
       <div class="field" style="margin-bottom:10px">
         <input type="text" class="q-text" data-i="${i}"
@@ -773,15 +1283,15 @@ function renderEditor(){
                   ${q.options.length <= 2 ? "disabled" : ""}>✕</button>
         </div>
       `).join("")}
-      <button class="add-opt-btn" onclick="addOption(${i})">＋ Добавить вариант</button>
-      <div class="correct-hint">Кружок слева отмечает правильный ответ</div>
+      <button class="add-opt-btn" onclick="addOption(${i})">＋ ДОБАВИТЬ ВАРИАНТ</button>
+      <div class="correct-hint">Кружок слева — правильный ответ</div>
     </div>
   `).join("");
 }
 
 function addQuestion(){ editing.questions.push(blankQuestion()); renderEditor(); }
 function deleteQuestion(i){
-  if (editing.questions.length <= 1){ showToast("Нужен хотя бы один вопрос"); return; }
+  if (editing.questions.length <= 1){ showToast("НУЖЕН ХОТЯ БЫ ОДИН ВОПРОС"); return; }
   if (!confirm(`Удалить вопрос ${i + 1}?`)) return;
   editing.questions.splice(i, 1);
   renderEditor();
@@ -796,7 +1306,7 @@ function moveQuestion(i, dir){
 function addOption(i){ editing.questions[i].options.push(""); renderEditor(); }
 function deleteOption(i, j){
   const q = editing.questions[i];
-  if (q.options.length <= 2){ showToast("Нужно минимум 2 варианта"); return; }
+  if (q.options.length <= 2){ showToast("МИНИМУМ 2 ВАРИАНТА"); return; }
   q.options.splice(j, 1);
   if (q.correct === j) q.correct = 0;
   else if (q.correct > j) q.correct--;
@@ -820,20 +1330,20 @@ $("edQuestions").addEventListener("change", e => {
 });
 
 function saveTest(){
-  if (!editing){ showToast("Редактор закрыт"); return; }
+  if (!editing){ showToast("РЕДАКТОР ЗАКРЫТ"); return; }
   editing.title = $("edTitle").value.trim();
   editing.description = $("edDesc").value.trim();
   editing.timeLimit = Math.max(0, parseInt($("edTime").value, 10) || 0) * 60;
 
-  if (!editing.title){ showToast("Введите название теста"); $("edTitle").focus(); return; }
-  if (!editing.questions.length){ showToast("Добавьте хотя бы один вопрос"); return; }
+  if (!editing.title){ showToast("ВВЕДИТЕ НАЗВАНИЕ"); $("edTitle").focus(); return; }
+  if (!editing.questions.length){ showToast("ДОБАВЬТЕ ВОПРОС"); return; }
   for (let i = 0; i < editing.questions.length; i++){
     const q = editing.questions[i];
-    if (!q.question.trim()){ showToast(`Вопрос ${i + 1}: введите текст`); return; }
-    if (q.options.length < 2){ showToast(`Вопрос ${i + 1}: нужно минимум 2 варианта`); return; }
-    if (q.options.some(o => !o.trim())){ showToast(`Вопрос ${i + 1}: заполните все варианты`); return; }
+    if (!q.question.trim()){ showToast(`ВОПРОС ${i + 1}: ВВЕДИТЕ ТЕКСТ`); return; }
+    if (q.options.length < 2){ showToast(`ВОПРОС ${i + 1}: МИНИМУМ 2 ВАРИАНТА`); return; }
+    if (q.options.some(o => !o.trim())){ showToast(`ВОПРОС ${i + 1}: ЗАПОЛНИТЕ ВАРИАНТЫ`); return; }
     if (q.correct < 0 || q.correct >= q.options.length){
-      showToast(`Вопрос ${i + 1}: выберите правильный вариант`); return;
+      showToast(`ВОПРОС ${i + 1}: ВЫБЕРИТЕ ОТВЕТ`); return;
     }
   }
 
@@ -854,7 +1364,7 @@ function saveTest(){
   editing = null;
   renderLibrary();
   show("libraryScreen");
-  showToast("✓ Тест сохранён");
+  showToast("✓ ТЕСТ СОХРАНЁН");
 }
 
 /* ==========================================================
@@ -868,7 +1378,7 @@ function exportAll(){
   a.download = "tests-" + new Date().toISOString().slice(0, 10) + ".json";
   a.click();
   URL.revokeObjectURL(a.href);
-  showToast("Файл экспортирован");
+  showToast("ФАЙЛ ЭКСПОРТИРОВАН");
 }
 
 function importJSON(event){
@@ -896,10 +1406,10 @@ function importJSON(event){
         });
         added++;
       }
-      if (!added){ alert("В файле не найдено корректных тестов."); return; }
+      if (!added){ alert("В файле нет корректных тестов."); return; }
       saveTests();
       renderLibrary();
-      showToast(`Импортировано тестов: ${added}`);
+      showToast(`ИМПОРТИРОВАНО: ${added}`);
     } catch(err){
       alert("Ошибка чтения JSON: " + err.message);
     }
@@ -921,7 +1431,7 @@ function isValidTest(t){
 }
 
 /* ==========================================================
-   🤖 POLLINATIONS AI (бесплатно, без ключа)
+   🤖 POLLINATIONS AI
    ========================================================== */
 function openAiModal(mode){
   aiMode = mode;
@@ -930,7 +1440,7 @@ function openAiModal(mode){
   $("aiCount").value = 5;
   $("aiDiff").value = "medium";
   setStatus("", "");
-  $("aiGenBtn").textContent = "✨ Сгенерировать";
+  $("aiGenBtn").textContent = "✨ СГЕНЕРИРОВАТЬ";
   $("aiGenBtn").onclick = generateWithAi;
   $("aiGenBtn").disabled = false;
 
@@ -939,7 +1449,7 @@ function openAiModal(mode){
     $("aiModalSub").textContent = "AI допишет вопросы к текущему тесту. Потом можно отредактировать.";
   } else {
     $("aiModalTitle").textContent = "🤖 Создать тест с AI";
-    $("aiModalSub").textContent = "AI сгенерирует тест с вариантами ответов по вашей теме.";
+    $("aiModalSub").textContent = "AI сгенерирует вопросы с вариантами ответов по вашей теме.";
   }
   $("aiModal").classList.remove("hidden");
   setTimeout(() => $("aiTopic").focus(), 50);
@@ -958,46 +1468,45 @@ function setStatus(msg, kind){
 
 async function callPollinations(messages){
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 сек максимум
+  const timeoutId = setTimeout(() => controller.abort(), 90000);
 
   try {
     const res = await fetch("https://text.pollinations.ai/openai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "openai",           // можно "mistral", "qwen" и др.
+        model: "openai",
         messages,
         temperature: 0.8,
         max_tokens: 4096
       }),
       signal: controller.signal
     });
-
     clearTimeout(timeoutId);
 
     if (!res.ok){
       let body = "";
       try { body = await res.text(); } catch(e){}
       let msg;
-      if (res.status === 429) msg = "Слишком много запросов к Pollinations. Подождите 15–30 секунд и попробуйте снова.";
-      else if (res.status >= 500) msg = "Сервер Pollinations временно недоступен. Попробуйте позже.";
-      else msg = `Ошибка Pollinations API ${res.status}: ${body.slice(0, 200)}`;
+      if (res.status === 429) msg = "Слишком много запросов (429). Подождите 15–30 секунд.";
+      else if (res.status >= 500) msg = "Сервер Pollinations недоступен. Попробуйте позже.";
+      else msg = `Ошибка API ${res.status}: ${body.slice(0, 200)}`;
       throw new Error(msg);
     }
 
     const data = await res.json();
     if (!data.choices || !data.choices[0] || !data.choices[0].message){
-      throw new Error("Неожиданный ответ от Pollinations API");
+      throw new Error("Неожиданный ответ API");
     }
     return data.choices[0].message.content;
 
   } catch (err){
     clearTimeout(timeoutId);
     if (err.name === "AbortError"){
-      throw new Error("Превышено время ожидания (90 сек). Pollinations перегружен — попробуйте позже или уменьшите число вопросов.");
+      throw new Error("Превышено время ожидания (90 сек). Попробуйте позже или меньше вопросов.");
     }
     if (err.message && err.message.includes("fetch")){
-      throw new Error("Сеть недоступна или запрос заблокирован. Проверьте интернет/VPN.");
+      throw new Error("Сеть недоступна или запрос заблокирован.");
     }
     throw err;
   }
@@ -1034,10 +1543,7 @@ function normalizeQuestions(raw){
 }
 
 async function generateWithAi(){
-  if (aiResult){
-    applyAiResult();
-    return;
-  }
+  if (aiResult){ applyAiResult(); return; }
 
   const topic = $("aiTopic").value.trim();
   const count = Math.min(20, Math.max(1, parseInt($("aiCount").value, 10) || 5));
@@ -1076,8 +1582,8 @@ async function generateWithAi(){
 
   const btn = $("aiGenBtn");
   btn.disabled = true;
-  btn.textContent = "⏳ Генерирую...";
-  setStatus("Pollinations AI генерирует ответ. Обычно 10–40 секунд…", "info");
+  btn.textContent = "⏳ ГЕНЕРИРУЮ...";
+  setStatus("Запрос к Pollinations AI. Обычно 10–40 секунд…", "info");
 
   try {
     const content = await callPollinations([
@@ -1087,14 +1593,12 @@ async function generateWithAi(){
 
     let parsed;
     try { parsed = parseJsonLoose(content); }
-    catch (e){
-      throw new Error("AI вернул не-JSON. Первые символы: " + content.slice(0, 120));
-    }
+    catch (e){ throw new Error("AI вернул не-JSON: " + content.slice(0, 100)); }
     if (!parsed.questions || !Array.isArray(parsed.questions)){
       throw new Error("AI вернул JSON без поля questions");
     }
     const questions = normalizeQuestions(parsed.questions);
-    if (!questions.length) throw new Error("AI не вернул ни одного валидного вопроса");
+    if (!questions.length) throw new Error("AI не вернул вопросов");
 
     aiResult = {
       title: String(parsed.title || `Тест по теме: ${topic}`).trim(),
@@ -1104,20 +1608,20 @@ async function generateWithAi(){
     };
 
     setStatus(`✓ Готово: ${questions.length} вопросов. Нажмите «Применить».`, "ok");
-    btn.textContent = "✓ Применить";
+    btn.textContent = "✓ ПРИМЕНИТЬ";
     btn.disabled = false;
     btn.onclick = applyAiResult;
 
   } catch (err){
     setStatus("❌ " + err.message, "err");
     btn.disabled = false;
-    btn.textContent = "✨ Сгенерировать";
+    btn.textContent = "✨ СГЕНЕРИРОВАТЬ";
     btn.onclick = generateWithAi;
   }
 }
 
 function applyAiResult(){
-  if (!aiResult){ showToast("Сначала сгенерируйте"); return; }
+  if (!aiResult){ showToast("СНАЧАЛА СГЕНЕРИРУЙТЕ"); return; }
 
   if (aiMode === "questions" && editing){
     if (editing.questions.length === 1 && !editing.questions[0].question.trim()){
@@ -1126,7 +1630,7 @@ function applyAiResult(){
     editing.questions.push(...deepCopy(aiResult.questions));
     renderEditor();
     closeAiModal();
-    showToast(`✓ Добавлено ${aiResult.questions.length} вопросов`);
+    showToast(`✓ ДОБАВЛЕНО ${aiResult.questions.length} ВОПРОСОВ`);
     return;
   }
 
@@ -1139,7 +1643,7 @@ function applyAiResult(){
   };
   closeAiModal();
   openEditor(draft);
-  showToast("✓ Тест сгенерирован — проверьте и сохраните");
+  showToast("✓ ТЕСТ СГЕНЕРИРОВАН — ПРОВЕРЬТЕ И СОХРАНИТЕ");
 }
 
 /* Enter в модалке */
