@@ -1192,4 +1192,816 @@ async function generateWithAi(){
   try{
     if(aiTab==='batch'){
       const topics=$('aiBatchTopics').value.split(',').map(s=>s.trim()).filter(Boolean);
-      if
+      if(topics.length<1)throw new Error('Введите темы');
+      aiStatus('Генерирую '+topics.length+' тестов…','info');
+      const results=[];
+      for(const topic of topics){
+        const content=await callAI([{role:'system',content:'Отвечай только валидным JSON.'},{role:'user',content:`Создай ${Math.min(5,count)} вопросов по "${topic}". JSON: {"title":"${topic}","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}. correct=0..3`}]);
+        const p=parseJSON(content);
+        if(p.questions)results.push({title:p.title||topic,description:'AI',tags:[topic.toLowerCase()],timeLimit:0,questions:p.questions.map(q=>({type:'single',question:String(q.question),options:(q.options||[]).map((t,i)=>({text:String(t),correct:i===q.correct})),explanation:''}))});
+      }
+      aiResult=results;aiStatus('✓ Готово: '+results.length,'ok');
+      btn.textContent='✓ Применить все';btn.disabled=false;btn.onclick=applyAiResult;return;
+    }
+    let prompt='';
+    if(aiTab==='topic'){const topic=$('aiTopic').value.trim();if(!topic)throw new Error('Введите тему');prompt=`Создай ${count} тестовых вопросов по "${topic}". Уровень: ${diffLabel}.`;}
+    else{const text=$('aiText').value.trim();if(text.length<50)throw new Error('Текст короткий');prompt=`Создай ${count} вопросов по тексту:\n\n${text.slice(0,4000)}`;}
+    if(custom)prompt+='\nСтиль: '+custom;
+    prompt+=`\nОтвет ТОЛЬКО JSON: {"title":"Название","questions":[{"question":"","options":["A","B","C","D"],"correct":0,"explanation":""}]}. 4 варианта, correct=0..3, на русском.`;
+    aiStatus('Запрос к AI. 10-40 сек…','info');
+    const content=await callAI([{role:'system',content:'Методист. Отвечай только валидным JSON.'},{role:'user',content:prompt}]);
+    const parsed=parseJSON(content);
+    if(!parsed.questions)throw new Error('Нет questions');
+    aiResult={title:parsed.title||'AI Тест',description:'',tags:[],timeLimit:0,questions:parsed.questions.map(q=>({type:'single',question:String(q.question),options:(q.options||[]).map((t,i)=>({text:String(t),correct:i===q.correct})),explanation:String(q.explanation||'')}))};
+    aiStatus('✓ Готово: '+aiResult.questions.length,'ok');
+    btn.textContent='✓ Применить';btn.disabled=false;btn.onclick=applyAiResult;playS('correct');
+  }catch(err){aiStatus('❌ '+err.message,'err');btn.disabled=false;btn.textContent='✨ Сгенерировать';btn.onclick=generateWithAi;}
+}
+function applyAiResult(){
+  if(!aiResult)return;
+  if(Array.isArray(aiResult)){
+    aiResult.forEach(t=>{t.id=uid();tests.push(norm(t));});
+    game.aiGenerated=(game.aiGenerated||0)+aiResult.length;
+    toast('✓ +'+aiResult.length+' тестов');closeAiModal();renderLib();saveTests();saveGame();return;
+  }
+  if(aiMode==='questions'&&editing){pushHist();editing.questions.push(...deep(aiResult.questions));renderEditor();}
+  else{const t={id:uid(),...deep(aiResult)};tests.push(norm(t));saveTests();renderLib();}
+  game.aiGenerated=(game.aiGenerated||0)+1;saveGame();closeAiModal();toast('✓ Готово');
+}
+async function getHint(){
+  const q=normQ(state.questions[state.current]);
+  const box=$('hintBox');box.classList.remove('hidden');box.textContent='⏳…';
+  try{const content=await callAI([{role:'system',content:'Краткая подсказка. Не выдавай ответ.'},{role:'user',content:`Вопрос: "${q.question}". Подсказка 1-2 предложения.`}]);box.textContent=content.trim();}
+  catch(err){box.textContent='❌ '+err.message;}
+}
+
+function openEditor(idOrTest){
+  let existing=null;
+  if(typeof idOrTest==='string')existing=tests.find(t=>t.id===idOrTest);
+  else if(idOrTest&&typeof idOrTest==='object')existing=idOrTest;
+  if(!existing){try{const d=localStorage.getItem(K.DRAFT);if(d&&confirm('Восстановить черновик?'))existing=JSON.parse(d);}catch(e){}}
+  editing=existing?deep(existing):{id:uid(),title:'',description:'',tags:[],timeLimit:0,theory:'',questions:[blankQ()],history:[],fav:false};
+  editing.questions=editing.questions.map(normQ);
+  editHistory=[];editFuture=[];
+  $('editorTitle').textContent=existing&&tests.find(t=>t.id===existing.id)?'Редактирование':'Новый тест';
+  $('edTitle').value=editing.title;$('edDesc').value=editing.description||'';$('edTags').value=(editing.tags||[]).join(', ');$('edTheory').value=editing.theory||'';$('edTime').value=editing.timeLimit?Math.round(editing.timeLimit/60):0;
+  renderEditor();show('editorScreen');
+}
+function closeEditor(){
+  if(editing&&(editing.title||editing.questions.some(q=>q.question&&q.question.trim()))){if(!confirm('Выйти без сохранения?'))return;try{localStorage.setItem(K.DRAFT,JSON.stringify(editing));}catch(e){}}
+  editing=null;renderLib();show('welcomeScreen');
+}
+function blankQ(){return {type:'single',question:'',options:[{text:'',correct:true},{text:'',correct:false}],explanation:'',image:null};}
+function renderEditor(){
+  $('qCount').textContent='('+editing.questions.length+')';
+  $('edQuestions').innerHTML=editing.questions.map((q,i)=>{
+    const nq=normQ(q);let inner='';
+    if(nq.type==='text')inner=`<div class="field"><label>Ответ</label><input type="text" class="q-answer" data-i="${i}" value="${esc(nq.answer||'')}"></div>`;
+    else if(nq.type==='truefalse')inner=`<div class="row" style="margin-bottom:10px"><button class="set-btn ${nq.answer?'active':''}" onclick="setTF(${i},true)">✓ Правда</button><button class="set-btn ${!nq.answer?'active':''}" onclick="setTF(${i},false)">✗ Ложь</button></div>`;
+    else if(nq.type==='fill')inner=`<div class="field"><label>Текст (___ для пропусков)</label><textarea class="fill-text" data-i="${i}" rows="3">${esc(nq.text||'')}</textarea></div><div class="field"><label>Ответы через запятую</label><input type="text" class="fill-answers" data-i="${i}" value="${esc((nq.blanks||[]).join(', '))}"></div>`;
+    else if(nq.type==='image')inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="radio" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" placeholder="Подпись" value="${esc(opt.text||'')}"><input type="url" class="opt-img" data-i="${i}" data-j="${j}" placeholder="URL картинки" value="${esc(opt.image||'')}" style="flex:1;padding:8px"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;
+    else if(nq.type==='matching')inner=nq.pairs.map((p,j)=>`<div class="opt-row"><input type="text" class="pair-left" data-i="${i}" data-j="${j}" value="${esc(p.left)}" placeholder="Левая"><span>→</span><input type="text" class="pair-right" data-i="${i}" data-j="${j}" value="${esc(p.right)}" placeholder="Правая"><button class="icon-btn danger" onclick="deletePair(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addPair(${i})">+ Пара</button>`;
+    else if(nq.type==='sort')inner=nq.items.map((it,j)=>`<div class="opt-row"><span style="width:20px;text-align:center">${j+1}</span><input type="text" class="sort-input" data-i="${i}" data-j="${j}" value="${esc(it)}"><button class="icon-btn danger" onclick="deleteSortItem(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addSortItem(${i})">+ Элемент</button>`;
+    else if(nq.type==='file')inner=`<div class="field"><label>Тип файла</label><input type="text" class="file-type" data-i="${i}" value="${esc(nq.fileType||'any')}"></div>`;
+    else{const t=nq.type==='multi'?'checkbox':'radio';inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="${t}" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" value="${esc(opt.text)}"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;}
+    return `<div class="q-card" data-qi="${i}" style="--i:${i}"><div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div><select class="q-type-select" onchange="changeType(${i},this.value)"><option value="single" ${nq.type==='single'?'selected':''}>Один</option><option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option><option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option><option value="text" ${nq.type==='text'?'selected':''}>Текст</option><option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option><option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option><option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option><option value="image" ${nq.type==='image'?'selected':''}>Картинки</option><option value="file" ${nq.type==='file'?'selected':''}>Файл</option></select><div class="spacer"></div><button class="icon-btn danger" onclick="deleteQ(${i})">✕</button></div><div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div><div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение">${esc(nq.explanation||'')}</textarea></div>${inner}</div>`;
+  }).join('');
+  setupDnD();
+}
+function changeType(i,nt){
+  const q=editing.questions[i];const old=q.type;if(old===nt)return;pushHist();
+  if(nt==='text'){q.options=[];q.answer='';}
+  else if(nt==='truefalse'){q.answer=true;delete q.options;}
+  else if(nt==='fill'){q.text='';q.blanks=[];delete q.options;}
+  else if(nt==='matching'){q.pairs=[{left:'',right:''},{left:'',right:''}];delete q.options;}
+  else if(nt==='sort'){q.items=['','',''];delete q.options;}
+  else if(nt==='image'){q.options=[{text:'',image:'',correct:true},{text:'',image:'',correct:false}];}
+  else if(nt==='file'){q.fileType='any';delete q.options;}
+  else{q.options=[{text:'',correct:true},{text:'',correct:false}];}
+  q.type=nt;renderEditor();
+}
+function setTF(i,v){pushHist();editing.questions[i].answer=v;renderEditor();}
+function addOption(i){pushHist();const q=editing.questions[i];if(!q.options)q.options=[];q.options.push({text:'',image:'',correct:false});renderEditor();}
+function deleteOption(i,j){const q=editing.questions[i];if(q.options.length<=2){toast('Мин 2');return;}pushHist();q.options.splice(j,1);if(q.type==='single'&&!q.options.some(o=>o.correct))q.options[0].correct=true;renderEditor();}
+function addPair(i){pushHist();editing.questions[i].pairs.push({left:'',right:''});renderEditor();}
+function deletePair(i,j){const q=editing.questions[i];if(q.pairs.length<=2){toast('Мин 2');return;}pushHist();q.pairs.splice(j,1);renderEditor();}
+function addSortItem(i){pushHist();editing.questions[i].items.push('');renderEditor();}
+function deleteSortItem(i,j){const q=editing.questions[i];if(q.items.length<=2){toast('Мин 2');return;}pushHist();q.items.splice(j,1);renderEditor();}
+function deleteQ(i){if(editing.questions.length<=1){toast('Мин 1');return;}if(!confirm('Удалить?'))return;pushHist();editing.questions.splice(i,1);renderEditor();}
+function addQuestion(){pushHist();editing.questions.push(blankQ());renderEditor();}
+function pushHist(){if(!editing)return;editHistory.push(deep(editing));if(editHistory.length>30)editHistory.shift();editFuture=[];}
+function undoEdit(){if(!editHistory.length){toast('Нечего');return;}editFuture.push(deep(editing));editing=editHistory.pop();renderEditor();}
+function redoEdit(){if(!editFuture.length){toast('Нечего');return;}editHistory.push(deep(editing));editing=editFuture.pop();renderEditor();}
+function setupDnD(){
+  document.querySelectorAll('#edQuestions .q-card').forEach(card=>{
+    const h=card.querySelector('.drag-handle');if(!h)return;
+    h.addEventListener('dragstart',e=>{dragSrc={type:'q',i:parseInt(card.dataset.qi)};e.dataTransfer.effectAllowed='move';card.style.opacity='.4';});
+    h.addEventListener('dragend',()=>{card.style.opacity='';document.querySelectorAll('.q-card').forEach(c=>c.style.borderColor='transparent');dragSrc=null;});
+    card.addEventListener('dragover',e=>{if(dragSrc&&dragSrc.type==='q'){e.preventDefault();card.style.borderColor='var(--accent)';}});
+    card.addEventListener('dragleave',()=>{card.style.borderColor='transparent';});
+    card.addEventListener('drop',e=>{if(dragSrc&&dragSrc.type==='q'){e.preventDefault();const from=dragSrc.i,to=parseInt(card.dataset.qi);if(from!==to){pushHist();const [q]=editing.questions.splice(from,1);editing.questions.splice(to,0,q);renderEditor();}}});
+  });
+}
+$('edQuestions').addEventListener('input',e=>{
+  const el=e.target;if(!editing||el.dataset.i===undefined)return;
+  const i=+el.dataset.i,q=editing.questions[i];
+  if(el.classList.contains('q-text'))q.question=el.value;
+  else if(el.classList.contains('opt-text'))q.options[+el.dataset.j].text=el.value;
+  else if(el.classList.contains('opt-img'))q.options[+el.dataset.j].image=el.value;
+  else if(el.classList.contains('q-explanation'))q.explanation=el.value;
+  else if(el.classList.contains('q-answer'))q.answer=el.value;
+  else if(el.classList.contains('fill-text'))q.text=el.value;
+  else if(el.classList.contains('fill-answers'))q.blanks=el.value.split(',').map(s=>s.trim()).filter(Boolean);
+  else if(el.classList.contains('pair-left'))q.pairs[+el.dataset.j].left=el.value;
+  else if(el.classList.contains('pair-right'))q.pairs[+el.dataset.j].right=el.value;
+  else if(el.classList.contains('sort-input'))q.items[+el.dataset.j]=el.value;
+  else if(el.classList.contains('file-type'))q.fileType=el.value;
+  scheduleDraft();
+});
+$('edQuestions').addEventListener('change',e=>{
+  const el=e.target;if(!editing||!el.classList.contains('opt-correct'))return;
+  const i=+el.dataset.i,j=+el.dataset.j;const q=editing.questions[i];pushHist();
+  if(q.type==='multi'||q.type==='image')q.options[j].correct=el.checked;
+  else q.options.forEach((o,k)=>{o.correct=(k===j);});
+  scheduleDraft();
+});
+['edTitle','edDesc','edTags','edTheory','edTime'].forEach(id=>{
+  const el=$(id);if(el)el.addEventListener('input',()=>{
+    if(!editing)return;
+    if(id==='edTitle')editing.title=el.value;
+    else if(id==='edDesc')editing.description=el.value;
+    else if(id==='edTags')editing.tags=el.value.split(',').map(s=>s.trim()).filter(Boolean);
+    else if(id==='edTheory')editing.theory=el.value;
+    else if(id==='edTime')editing.timeLimit=Math.max(0,parseInt(el.value)||0)*60;
+    scheduleDraft();
+  });
+});
+let draftT=null;
+function scheduleDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{if(editing)try{localStorage.setItem(K.DRAFT,JSON.stringify(editing));}catch(e){}},1500);}
+function saveTest(){
+  if(!editing)return;
+  editing.title=$('edTitle').value.trim();
+  editing.description=$('edDesc').value.trim();
+  editing.tags=$('edTags').value.split(',').map(s=>s.trim()).filter(Boolean);
+  editing.theory=$('edTheory').value.trim();
+  editing.timeLimit=Math.max(0,parseInt($('edTime').value)||0)*60;
+  if(!editing.title){toast('Введите название');shake($('edTitle'));return;}
+  for(let i=0;i<editing.questions.length;i++)if(!editing.questions[i].question.trim()){toast('Вопрос '+(i+1)+' пуст');return;}
+  const idx=tests.findIndex(t=>t.id===editing.id);
+  editing.history=editing.history||[];
+  editing.history.push({ts:Date.now(),action:idx>=0?'edited':'created'});
+  if(editing.history.length>20)editing.history.shift();
+  if(idx>=0)tests[idx]=editing;else tests.push(editing);
+  saveTests();localStorage.removeItem(K.DRAFT);
+  game.totalTests=(game.totalTests||0)+1;saveGame();checkAchievements();
+  editing=null;renderLib();show('welcomeScreen');toast('✓ Сохранено');
+}
+
+function exportAll(){
+  const blob=new Blob([JSON.stringify(tests,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aq-tests.json';a.click();toast('Экспорт');
+}
+function importJSON(event){
+  const f=event.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{try{const data=JSON.parse(e.target.result);const arr=Array.isArray(data)?data:[data];let added=0;for(const raw of arr){if(!raw.title||!Array.isArray(raw.questions))continue;tests.push(norm({...raw,id:uid()}));added++;}saveTests();renderLib();toast('Импорт: '+added);}catch(err){alert(err.message);}};
+  r.readAsText(f);event.target.value='';
+}
+function copyResult(){
+  const c=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
+  const pct=Math.round(c/state.questions.length*100);
+  const txt=`${c} из ${state.questions.length} (${pct}%) — ${TEST?TEST.title:''}`;
+  navigator.clipboard.writeText(txt).then(()=>toast('✓ Скопировано')).catch(()=>prompt('',txt));
+}
+function exportResultCsv(){
+  const rows=[['Вопрос','OK']];state.questions.forEach((q,i)=>rows.push([q.question,isCorrect(q,state.answers[i])?'✓':'✗']));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='result.csv';a.click();toast('CSV');
+}
+function printResult(){
+  const w=window.open('','_blank');
+  const c=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
+  const pct=Math.round(c/state.questions.length*100);
+  w.document.write(`<html><head><title>Результат</title></head><body style="font-family:Georgia;padding:20px"><h1>Результат: ${pct}%</h1><p>${c} из ${state.questions.length}</p>${state.questions.map((q,i)=>`<div style="margin:10px 0;page-break-inside:avoid"><b>${i+1}. ${esc(q.question)}</b> ${isCorrect(q,state.answers[i])?'✓':'✗'}</div>`).join('')}</body></html>`);
+  w.document.close();setTimeout(()=>w.print(),300);
+}
+function showCertificate(){
+  const c=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
+  const pct=Math.round(c/state.questions.length*100);const date=new Date().toLocaleDateString('ru-RU');
+  $('certRender').innerHTML=`<div class="cert-label">Certificate of Achievement</div><div class="cert-title">AuraQuiz</div><div style="font-size:16px;margin-bottom:8px">Подтверждается прохождение</div><div class="cert-testname">«${esc(TEST?TEST.title:'Тест')}»</div><div class="cert-score">${pct}%</div><div>${c} из ${state.questions.length} правильных</div><div class="cert-footer"><div><b>AuraQuiz</b></div><div>${date}</div></div>`;
+  $('certModal').classList.remove('hidden');
+}
+async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
+function confetti(opts){if(window.confetti)window.confetti({particleCount:150,spread:70,origin:{y:0.6},...opts});}
+
+function openSettings(){renderSettingsButtons();$('settingsModal').classList.remove('hidden');}
+function closeSettings(){$('settingsModal').classList.add('hidden');}
+function renderSettingsButtons(){
+  document.querySelectorAll('#setTheme .set-btn').forEach(b=>{const need=parseInt(b.dataset.lvl)||0;b.classList.toggle('locked',game.level<need);b.classList.toggle('active',b.dataset.v===settings.theme);});
+  document.querySelectorAll('#setFontFamily .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.fontFamily));
+  document.querySelectorAll('#setFont .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.fontSize));
+  document.querySelectorAll('#setSound .set-btn').forEach(b=>b.classList.toggle('active',(settings.sound?'on':'off')===b.dataset.v));
+  document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.classList.toggle('active',(settings.autoTheme?'on':'off')===b.dataset.v));
+  document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.aiProvider));
+}
+document.querySelectorAll('#setTheme .set-btn').forEach(b=>b.onclick=()=>{const need=parseInt(b.dataset.lvl)||0;if(game.level<need){toast('🔒 Lv.'+need);return;}settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll('#setFontFamily .set-btn').forEach(b=>b.onclick=()=>{settings.fontFamily=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll('#setFont .set-btn').forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll('#setSound .set-btn').forEach(b=>b.onclick=()=>{settings.sound=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
+document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.onclick=()=>{settings.autoTheme=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
+document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.onclick=()=>{settings.aiProvider=b.dataset.v;localStorage.setItem(K.AI,settings.aiProvider);saveSettings();renderSettingsButtons();});
+function resetProgress(){if(!confirm('Сбросить прогресс?'))return;game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};saveGame();toast('Сброшено');}
+
+const ONBOARD=[
+  {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов с AI и геймификацией.'},
+  {title:'🎯 Проходите тесты',text:'6 режимов + мультиплеер с PIN-комнатами для класса.'},
+  {title:'🏆 Зарабатывайте XP',text:'+10 XP за правильный ответ. Стрики, достижения, уровни.'},
+];
+function startOnboard(){if(localStorage.getItem('aq_onboarded_v8'))return;onboardStep=0;renderOnboard();$('onboardModal').classList.remove('hidden');}
+function renderOnboard(){$('onboardTitle').textContent=ONBOARD[onboardStep].title;$('onboardText').textContent=ONBOARD[onboardStep].text;document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));}
+function nextOnboard(){onboardStep++;if(onboardStep>=ONBOARD.length){$('onboardModal').classList.add('hidden');localStorage.setItem('aq_onboarded_v8','1');return;}renderOnboard();}
+
+function startDailyChallenge(){
+  if(tests.length<1){toast('Сначала создайте тесты');return;}
+  const allQ=[];tests.forEach(t=>t.questions.forEach(q=>allQ.push({q,tid:t.id})));
+  const picked=shuffle(allQ).slice(0,5);
+  if(!picked.length){toast('Нет вопросов');return;}
+  TEST={id:'daily',title:'🎯 Челлендж дня',description:new Date().toDateString(),tags:[],questions:picked.map(p=>p.q)};
+  $('startTitle').textContent=TEST.title;$('startDesc').textContent=TEST.description;$('startTags').innerHTML='';
+  $('theoryBox').classList.add('hidden');$('resumeBanner').classList.add('hidden');$('optTime').value=0;
+  selectMode('normal');show('startScreen');
+}
+
+/* ==========================================================
+   MULTIPLAYER v8.0 — с БД, QR, Anonymous Auth, postgres_changes
+   ========================================================== */
+function generatePin(){return Math.floor(100000+Math.random()*900000).toString();}
+
+function openMultiplayerMenu(){
+  const urlPin = new URLSearchParams(location.search).get('pin');
+  show('multiplayerMenuScreen');
+  if(urlPin){setTimeout(()=>{$('joinPinInput').value=urlPin;},100);}
+}
+
+// === ХОСТ: Создать комнату ===
+async function hostCreateRoom(){
+  if(!await initSupabase()) return;
+  if(!TEST){toast('Сначала выберите тест');return;}
+  
+  const pin = generatePin();
+  const channelName = 'aq-room-'+pin;
+  
+  if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
+  if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){}}
+
+  // 1. Создаем комнату в БД
+  const { error: err } = await sbClient.from('rooms').insert({
+    pin: pin,
+    host_id: myDeviceId,
+    test_id: TEST.id,
+    test_title: TEST.title,
+    status: 'waiting',
+    current_question: 0
+  });
+  if (err) { toast('❌ Ошибка БД: '+err.message); return; }
+
+  multiplayerState = { pin, players:[], scores:{}, testId:TEST.id, testTitle:TEST.title, questions:TEST.questions, currentQ:0, answers:{} };
+  isHost = true;
+  currentUser = { id: myDeviceId, name: 'Учитель', role: 'host' };
+
+  // 2. Подписка на Presence (список игроков)
+  currentChannel = sbClient.channel(channelName, {
+    config: { presence: { key: 'host-' + myDeviceId } }
+  });
+
+  currentChannel.on('presence', { event: 'sync' }, () => {
+    const state = currentChannel.presenceState();
+    const players = [];
+    Object.values(state).flat().forEach(p => {
+      if (p.role === 'player' && p.name) players.push(p.name);
+    });
+    multiplayerState.players = players;
+    updateLobbyUI();
+  });
+
+  // 3. Приём ответов
+  currentChannel.on('broadcast', { event: 'player-answer' }, (msg) => {
+    handleIncomingAnswer(msg.payload.player, msg.payload.answer, msg.payload.questionIndex);
+  });
+
+  await currentChannel.subscribe(async (status) => {
+    if (status === 'SUBSCRIBED') {
+      await currentChannel.track({ role: 'host', name: 'Учитель', user_id: myDeviceId });
+      $('roomPinDisplay').textContent = pin;
+      $('roomTestName').textContent = TEST.title;
+      
+      const url = location.origin + location.pathname + '?pin=' + pin;
+      $('qrContainer').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" alt="QR">`;
+      
+      show('multiplayerLobbyScreen');
+      toast('✓ Комната создана: ' + pin);
+    } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+      toast('❌ Ошибка подключения Supabase');
+    }
+  });
+}
+
+// === ИГРОК: Войти ===
+async function playerJoinRoom(){
+  if(!await initSupabase()) return;
+  const pin = ($('joinPinInput').value||'').trim();
+  const name = ($('joinNameInput').value||'').trim();
+  
+  if(!pin||pin.length!==6){toast('Введите 6-значный PIN');return;}
+  if(!name){toast('Введите имя');return;}
+
+  // 1. Проверяем комнату
+  const { data: room, error: rErr } = await sbClient.from('rooms').select('*').eq('pin', pin).maybeSingle();
+  if (rErr) { toast('❌ Ошибка БД: '+rErr.message); return; }
+  if (!room) { toast('❌ Комната не найдена'); return; }
+  if (room.status === 'finished') { toast('❌ Игра уже завершена'); return; }
+
+  // 2. Добавляем игрока в БД
+  const { error: pErr } = await sbClient.from('room_players').insert({
+    room_pin: pin,
+    user_id: myDeviceId,
+    name: name,
+    score: 0,
+    status: 'ready'
+  });
+  if (pErr && !pErr.message.includes('duplicate')) { toast('❌ Ошибка входа: '+pErr.message); return; }
+
+  const channelName = 'aq-room-'+pin;
+  if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
+  if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){}}
+
+  isHost = false;
+  currentUser = { id: myDeviceId, name: name, role: 'player' };
+  multiplayerState = { pin, players:[], scores:{}, currentQ:0, answers:{}, questions:[] };
+
+  // 3. Слушаем Broadcast (вопросы, счёт, кик)
+  currentChannel = sbClient.channel(channelName, {
+    config: { presence: { key: 'player-' + myDeviceId } }
+  });
+
+  currentChannel.on('broadcast', { event: 'game-started' }, (msg) => {
+    if (!msg || !msg.payload) return;
+    startMultiplayerQuiz({
+      testTitle: msg.payload.testTitle,
+      questions: msg.payload.questions,
+      pin: pin
+    });
+  });
+
+  currentChannel.on('broadcast', { event: 'score-update' }, (msg) => {
+    if(multiplayerState){multiplayerState.scores = msg.payload.scores;renderMultiplayerScore();}
+  });
+
+  currentChannel.on('broadcast', { event: 'new-question' }, (msg) => {
+    if(state && state.multiplayer){
+      multiplayerState.currentQ = msg.payload.index;
+      renderMultiplayerQuestion(msg.payload.question);
+    }
+  });
+
+  currentChannel.on('broadcast', { event: 'game-ended' }, () => {
+    finishMultiplayer();
+  });
+
+  currentChannel.on('broadcast', { event: 'kick' }, (msg) => {
+    if (msg.payload.target === myDeviceId) {
+      toast('❌ Вас исключили из комнаты');
+      leaveMultiplayer();
+    }
+  });
+
+  // 4. Слушаем изменения в БД (для кика и завершения)
+  roomStateChannel = sbClient.channel('room-state-'+pin)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'pin=eq.'+pin }, payload => {
+      if (payload.new.status === 'finished' && state) finishMultiplayer();
+    })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'room_players', filter: 'room_pin=eq.'+pin }, payload => {
+      if (payload.old.user_id === myDeviceId) {
+        toast('❌ Вас исключили');
+        leaveMultiplayer();
+      }
+    })
+    .subscribe();
+
+  await currentChannel.subscribe(async (status) => {
+    if (status === 'SUBSCRIBED') {
+      await currentChannel.track({ role: 'player', name: name, user_id: myDeviceId });
+      $('waitRoomPin').textContent = pin;
+      $('waitPlayerName').textContent = name;
+      show('multiplayerWaitScreen');
+      toast('✓ Вы в комнате. Ждём учителя…');
+    }
+  });
+}
+
+function updateLobbyUI(){
+  const list = $('lobbyPlayerList'); if(!list||!multiplayerState)return;
+  const players = multiplayerState.players;
+  $('playerCount').textContent = players.length;
+  if(!players.length){list.innerHTML='<div style="color:var(--text-muted);padding:20px">Ждём учеников…</div>';return;}
+  list.innerHTML = players.map(n=>`<div style="padding:10px 16px;background:rgba(255,255,255,0.5);border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:6px">👤 ${esc(n)}</div>`).join('');
+}
+
+// === ХОСТ: Начать игру ===
+async function hostStartGame(){
+  if(!isHost || !multiplayerState) return;
+  if(multiplayerState.players.length===0 && !confirm('Нет игроков. Начать в одиночку?')) return;
+
+  // 1. Обновляем статус в БД
+  await sbClient.from('rooms').update({
+    status: 'playing',
+    current_question: 0,
+    question_started_at: new Date().toISOString()
+  }).eq('pin', multiplayerState.pin);
+
+  // 2. Сжимаем вопросы и отправляем через Broadcast
+  const cleanQuestions = multiplayerState.questions.map(raw => {
+    const nq = normQ(raw);
+    const clean = {
+      type: nq.type,
+      question: String(nq.question || '').slice(0, 400),
+      explanation: String(nq.explanation || '').slice(0, 200)
+    };
+    if (nq.type === 'single' || nq.type === 'multi' || nq.type === 'image') {
+      clean.options = (nq.options || []).map(o => ({
+        text: String(o.text || '').slice(0, 150),
+        correct: !!o.correct
+      }));
+    } else if (nq.type === 'truefalse' || nq.type === 'text') {
+      clean.answer = nq.answer;
+    }
+    return clean;
+  });
+
+  try {
+    const payloadSize = JSON.stringify(cleanQuestions).length;
+    if (payloadSize > 8000) {
+      toast('⏳ Отправка ' + cleanQuestions.length + ' вопросов...');
+      for (let i = 0; i < cleanQuestions.length; i++) {
+        await currentChannel.send({
+          type: 'broadcast',
+          event: 'new-question',
+          payload: { question: cleanQuestions[i], index: i, total: cleanQuestions.length }
+        });
+        await new Promise(r => setTimeout(r, 80));
+      }
+      await currentChannel.send({
+        type: 'broadcast',
+        event: 'game-started',
+        payload: { testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin }
+      });
+    } else {
+      await currentChannel.send({
+        type: 'broadcast',
+        event: 'game-started',
+        payload: { testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin }
+      });
+    }
+  } catch(e) {
+    toast('❌ Ошибка отправки: ' + e.message);
+    return;
+  }
+
+  startMultiplayerQuiz({
+    testTitle: TEST.title,
+    questions: cleanQuestions,
+    pin: multiplayerState.pin
+  });
+}
+
+// === ЗАПУСК ИГРЫ (у всех) ===
+function startMultiplayerQuiz(data){
+  try {
+    document.body.classList.add('multiplayer-active');
+    multiplayerState = multiplayerState || {};
+    if (data.questions && data.questions.length) {
+      multiplayerState.questions = data.questions.map(normQ);
+    }
+    multiplayerState.currentQ = 0;
+    if(!multiplayerState.scores) multiplayerState.scores = {};
+    multiplayerState.pin = data.pin;
+    
+    state = {
+      testId: 'multiplayer',
+      questions: multiplayerState.questions || [],
+      answers: [],
+      current: 0,
+      multiplayer: true,
+      totalTime: 0
+    };
+    
+    show('quizScreen');
+    renderMultiplayerQuestion(multiplayerState.questions[0], 0);
+  } catch(e) {
+    toast('❌ Ошибка запуска: ' + e.message);
+  }
+}
+
+// === ОТРИСОВКА ВОПРОСА (с задержкой) ===
+function renderMultiplayerQuestion(q, index){
+  if (!q) return;
+  q = normQ(q);
+  multiplayerState.currentQ = index;
+  
+  $('questionText').innerHTML = md(q.question);
+  rMath($('questionText'));
+  $('counterBig').textContent = pad(index + 1);
+  $('counterSmall').textContent = '/ ' + pad(multiplayerState.questions.length);
+  $('questionImage').style.display = 'none';
+  $('qActions').innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding:6px 12px;background:rgba(255,255,255,0.3);border-radius:8px">🎮 PIN: ${multiplayerState.pin} · ${esc(currentUser?currentUser.name:'')}</span>`;
+  
+  const box = $('options');
+  box.innerHTML = '<div style="text-align:center;padding:40px;font-size:20px;color:var(--text-muted)">⏳ Варианты появятся через 3 секунды...</div>';
+  
+  setTimeout(() => {
+    box.innerHTML = '';
+    const type = q.type;
+    if (!['single','multi','truefalse'].includes(type)) {
+      box.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted)">Тип вопроса не поддерживается в мультиплеере</div>';
+      setupMultiplayerNav(index);
+      return;
+    }
+    
+    if (type === 'truefalse') {
+      [['Правда', q.answer === true], ['Ложь', q.answer === false]].forEach(([text, isCorrect], i) => {
+        const el = document.createElement('div');
+        el.className = 'option option-delayed';
+        el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${text}</span>`;
+        el.onclick = () => handleMultiplayerClick(el, i, index);
+        box.appendChild(el);
+        setTimeout(() => el.classList.add('show'), 50 * i);
+      });
+    } else if (type === 'multi') {
+      const selected = new Set();
+      q.options.forEach((opt, i) => {
+        const el = document.createElement('div');
+        el.className = 'option option-delayed';
+        el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${md(opt.text)}</span>`;
+        rMath(el.querySelector('.option-text'));
+        el.onclick = () => {
+          if (el.dataset.locked) return;
+          if (selected.has(i)) { selected.delete(i); el.classList.remove('selected'); el.querySelector('.option-marker').textContent = '□'; }
+          else { selected.add(i); el.classList.add('selected'); el.querySelector('.option-marker').textContent = '■'; }
+        };
+        box.appendChild(el);
+        setTimeout(() => el.classList.add('show'), 50 * i);
+      });
+      const submitBtn = document.createElement('button');
+      submitBtn.className = 'btn-primary';
+      submitBtn.style.cssText = 'margin-top:12px;width:100%';
+      submitBtn.textContent = '✓ Отправить';
+      submitBtn.onclick = () => {
+        if (selected.size === 0) { toast('Выберите хотя бы один'); return; }
+        const arr = Array.from(selected).sort((a,b)=>a-b);
+        box.querySelectorAll('.option').forEach(c => { c.dataset.locked = '1'; c.style.pointerEvents = 'none'; });
+        submitBtn.disabled = true; submitBtn.textContent = '✓ Отправлено';
+        sendMultiplayerAnswer(index, arr);
+      };
+      box.appendChild(submitBtn);
+    } else {
+      q.options.forEach((opt, i) => {
+        const el = document.createElement('div');
+        el.className = 'option option-delayed';
+        el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${md(opt.text)}</span>`;
+        rMath(el.querySelector('.option-text'));
+        el.onclick = () => handleMultiplayerClick(el, i, index);
+        box.appendChild(el);
+        setTimeout(() => el.classList.add('show'), 50 * i);
+      });
+    }
+    setupMultiplayerNav(index);
+    renderMultiplayerScore();
+  }, 3000);
+}
+
+function handleMultiplayerClick(el, answerIndex, questionIndex) {
+  if (el.dataset.picked) return;
+  const box = $('options');
+  Array.from(box.children).forEach(c => { if (c.classList.contains('option')) c.style.pointerEvents = 'none'; });
+  el.dataset.picked = '1';
+  el.classList.add('selected');
+  el.querySelector('.option-marker').textContent = '■';
+  sendMultiplayerAnswer(questionIndex, answerIndex);
+}
+
+function sendMultiplayerAnswer(questionIndex, answer){
+  if(!currentChannel || !currentUser) return;
+  const q = multiplayerState.questions[questionIndex];
+  const ok = isCorrect(q, answer);
+  
+  currentChannel.send({
+    type: 'broadcast',
+    event: 'player-answer',
+    payload: { player: currentUser.name, answer, questionIndex, isCorrect: ok }
+  });
+  
+  sbClient.from('room_answers').insert({
+    room_pin: multiplayerState.pin,
+    user_id: currentUser.id,
+    question_index: questionIndex,
+    answer: JSON.stringify(answer),
+    is_correct: ok
+  }).then();
+
+  if (isHost) handleIncomingAnswer(currentUser.name, answer, questionIndex);
+  else toast(ok ? '✓ Ответ отправлен' : 'Ответ отправлен');
+}
+
+async function handleIncomingAnswer(player, answer, questionIndex){
+  if(!isHost || !multiplayerState) return;
+  if(!multiplayerState.answers) multiplayerState.answers = {};
+  if(!multiplayerState.answers[questionIndex]) multiplayerState.answers[questionIndex] = {};
+  if(multiplayerState.answers[questionIndex][player]) return;
+  
+  const q = multiplayerState.questions[questionIndex];
+  const ok = isCorrect(q, answer);
+  multiplayerState.answers[questionIndex][player] = { answer, isCorrect: ok };
+  
+  if(ok){
+    multiplayerState.scores[player] = (multiplayerState.scores[player]||0) + 100;
+    await sbClient.from('room_players').update({ score: multiplayerState.scores[player] })
+      .eq('room_pin', multiplayerState.pin).eq('name', player);
+  }
+  
+  if(currentChannel){
+    currentChannel.send({
+      type: 'broadcast',
+      event: 'score-update',
+      payload: { scores: multiplayerState.scores }
+    });
+  }
+  renderMultiplayerScore();
+}
+
+function setupMultiplayerNav(index){
+  $('prevBtn').style.display = 'none';
+  if (isHost) {
+    $('nextBtn').style.display = 'inline-flex';
+    $('nextBtn').disabled = false;
+    $('nextBtn').textContent = index + 1 < multiplayerState.questions.length ? 'Следующий →' : 'Завершить';
+    $('nextBtn').onclick = async () => {
+      if (index + 1 < multiplayerState.questions.length) {
+        const next = index + 1;
+        await sbClient.from('rooms').update({ current_question: next }).eq('pin', multiplayerState.pin);
+        currentChannel.send({
+          type: 'broadcast',
+          event: 'new-question',
+          payload: { question: multiplayerState.questions[next], index: next }
+        });
+        renderMultiplayerQuestion(multiplayerState.questions[next], next);
+      } else {
+        await sbClient.from('rooms').update({ status: 'finished' }).eq('pin', multiplayerState.pin);
+        currentChannel.send({ type: 'broadcast', event: 'game-ended' });
+        finishMultiplayer();
+      }
+    };
+  } else {
+    $('nextBtn').style.display = 'none';
+  }
+}
+
+function renderMultiplayerScore(){
+  const scores = (multiplayerState && multiplayerState.scores) || {};
+  let el = document.getElementById('multiplayerScore');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'multiplayerScore';
+    const q = document.querySelector('#questionText');
+    if(q) q.after(el);
+  }
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  el.innerHTML = '<div style="font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">🏆 Счёт</div>' +
+    (sorted.length
+      ? sorted.map(([name,score],i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:14px"><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(name)}</span><span style="font-family:var(--mono);font-weight:700">${score}</span></div>`).join('')
+      : '<div style="color:var(--text-muted);font-size:12px">Пока никто не ответил</div>');
+}
+
+async function finishMultiplayer(){
+  document.body.classList.remove('multiplayer-active');
+  const scores = (multiplayerState&&multiplayerState.scores) || {};
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const scoreEl = document.getElementById('multiplayerScore');
+  if(scoreEl) scoreEl.remove();
+  
+  // Сохраняем историю
+  if (currentUser && multiplayerState) {
+    try {
+      await sbClient.from('game_history').insert({
+        room_pin: multiplayerState.pin,
+        test_id: multiplayerState.testId || 'unknown',
+        user_id: currentUser.id,
+        name: currentUser.name,
+        score: scores[currentUser.name] || 0,
+        total_questions: (multiplayerState.questions || []).length
+      });
+    } catch(e) { console.warn('[History]', e); }
+  }
+
+  show('resultScreen');
+  $('scoreText').textContent = '🏁';
+  $('scoreMsg').textContent = 'Игра завершена!';
+  $('scoreStats').innerHTML = sorted.length
+    ? sorted.map(([name,score],i)=>`<div>${['🥇','🥈','🥉'][i]||(i+1)+'.'} <b>${esc(name)}</b> — ${score} XP</div>`).join('')
+    : 'Никто не играл';
+  $('btnCert').classList.add('hidden');
+  $('reviewList').innerHTML = '';
+  
+  if(currentUser && scores[currentUser.name]) addXP(scores[currentUser.name]);
+  game.multiplayerGames = (game.multiplayerGames||0)+1;
+  saveGame(); checkAchievements();
+  if(sorted.length && sorted[0][1] > 0) confetti();
+  
+  state = null;
+  multiplayerState = null;
+}
+
+async function leaveMultiplayer(){
+  if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){} currentChannel=null;}
+  if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){} roomStateChannel=null;}
+  
+  // Удаляем игрока из БД
+  if (currentUser && multiplayerState && !isHost) {
+    try { await sbClient.from('room_players').delete().eq('room_pin', multiplayerState.pin).eq('user_id', myDeviceId); } catch(e){}
+  }
+  
+  isHost=false; currentUser=null; multiplayerState=null; state=null;
+  document.body.classList.remove('multiplayer-active');
+  const scoreEl = document.getElementById('multiplayerScore');
+  if(scoreEl) scoreEl.remove();
+  show('welcomeScreen');
+  toast('Вы вышли');
+}
+
+function selectTestForHost(){
+  if(!tests.length){toast('Сначала создайте тест');return;}
+  const list = tests.map((t,i)=>`${i+1}. ${t.title} (${t.questions.length} вопр.)`).join('\n');
+  const idx = prompt('Выберите номер теста:\n\n'+list);
+  if(!idx)return;
+  const n = parseInt(idx)-1;
+  if(n>=0 && n<tests.length){
+    TEST = tests[n];
+    hostCreateRoom();
+  }
+}
+
+/* ============ KEYBOARD + AUTO THEME ============ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(!$('aiModal').classList.contains('hidden')){closeAiModal();return;}
+    if(!$('settingsModal').classList.contains('hidden')){closeSettings();return;}
+    if(!$('trashModal').classList.contains('hidden')){closeTrash();return;}
+  }
+  if((e.ctrlKey||e.metaKey)&&!$('editorScreen').classList.contains('hidden')){
+    const t=(e.target.tagName||'').toLowerCase();
+    if(t==='input'||t==='textarea')return;
+    if(e.key==='z'){e.preventDefault();if(e.shiftKey)redoEdit();else undoEdit();}
+    else if(e.key==='y'){e.preventDefault();redoEdit();}
+  }
+  if(e.key==='/'&&!$('welcomeScreen').classList.contains('hidden')){
+    const t=(e.target.tagName||'').toLowerCase();
+    if(t!=='input'&&t!=='textarea'){e.preventDefault();$('searchInput').focus();}
+  }
+  if(!$('quizScreen').classList.contains('hidden')&&state&&!state.multiplayer){
+    if(e.key==='ArrowLeft'&&!state.strict){e.preventDefault();prevQuestion();}
+    else if(e.key==='ArrowRight'){e.preventDefault();nextQuestion();}
+    else if(/^[1-9]$/.test(e.key)){
+      const i=parseInt(e.key)-1;
+      const q=normQ(state.questions[state.current]);
+      if(['text','matching','sort','fill','file'].includes(q.type))return;
+      if(q.type==='truefalse'){const flip=state.questions[state.current]._flip;state.answers[state.current]=i===0?!flip:flip;saveState();renderQ();}
+      else if(i<(q.options||[]).length){
+        if(q.type==='multi'){let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];const idx=a.indexOf(i);state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];}
+        else state.answers[state.current]=i;
+        saveState();renderQ();
+      }
+    }
+  }
+});
+
+function autoThemeCheck(){
+  if(!settings.autoTheme)return;
+  const h=new Date().getHours();
+  const want=(h>=20||h<7)?'dark':'light';
+  if(settings.theme!==want&&(want==='light'||want==='dark')){settings.theme=want;applySettings();}
+}
+setInterval(autoThemeCheck,60000);
+
+/* ============ INIT ============ */
+loadAll();loadTests();loadTrash();loadAttempts();
+$('settingsBtn').innerHTML=ic('settings');
+$('undoBtn').innerHTML=ic('undo');
+$('redoBtn').innerHTML=ic('redo');
+$('btnNew').innerHTML=ic('plus')+' Создать';
+$('btnAiNew').innerHTML='🤖 AI';
+$('welcomeCreate').innerHTML=ic('plus')+' Новый тест';
+$('btnSaveTest').innerHTML=ic('edit')+' Сохранить';
+$('startBtn').innerHTML='Начать →';
+renderLib();show('welcomeScreen');startOnboard();checkHash();autoThemeCheck();addXP(0);
+</script>
+</body>
+</html>
