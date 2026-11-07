@@ -5,7 +5,7 @@
 
 ## 🚀 Демо
 
-▶ **[Открыть приложение](https://ZXCDEMOON.github.io/quiz-app/)**
+▶ **[Открыть приложение](https://zxcdemoon.github.io/quiz-app/)**
 
 ## ✨ Возможности
 
