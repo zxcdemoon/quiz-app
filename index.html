@@ -2184,4 +2184,91 @@ async function aiTranslateTest(){
 }
 
 async function aiAnalyzeErrors(){
- 
+  if (!state || !TEST){showToast("НЕТ РЕЗУЛЬТАТА");return;}
+  const wrongQuestions = state.questions.filter((q,i)=>!isAnswerCorrect(q, state.answers[i]));
+  if (!wrongQuestions.length){showToast("ОШИБОК НЕТ 🎉");return;}
+
+  const summary = wrongQuestions.slice(0,10).map(q=>normalizeQ(q).question).join("; ");
+  showToast("⏳ AI АНАЛИЗИРУЕТ…");
+
+  try {
+    const content = await callAI([
+      {role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},
+      {role:"user",content:`Пользователь ошибся в вопросах: ${summary}
+Сгенерируй 5 новых вопросов по этим же темам (чтобы закрепить слабые места).
+Ответ ТОЛЬКО JSON: {"title":"Закрепление","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}
+На русском, 5 вопросов, 4 варианта, correct=0..3.`}
+    ]);
+    const parsed = parseJsonLoose(content);
+    const qs = normalizeAiQuestions(parsed.questions || []);
+    if (!qs.length) throw new Error("нет вопросов");
+    const draft = {
+      id: uid(),
+      title: `Закрепление — ${TEST.title}`,
+      description: "Сгенерировано по ошибкам в предыдущем тесте",
+      tags: ["закрепление", ...(TEST.tags||[])],
+      timeLimit: 0,
+      questions: qs
+    };
+    openEditor(draft);
+    showToast("✓ ТЕСТ ПО ОШИБКАМ СОЗДАН");
+  } catch(err){
+    showToast("❌ "+err.message);
+  }
+}
+
+$("aiTopic").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiCount").focus();}});
+$("aiCount").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiGenBtn").click();}});
+
+document.addEventListener("keydown",e=>{
+  if (e.key==="Escape"){
+    if (!$("aiModal").classList.contains("hidden")){closeAiModal();return;}
+    if (!$("settingsModal").classList.contains("hidden")){closeSettings();return;}
+  }
+  if (e.key==="/"&&!$("libraryScreen").classList.contains("hidden")){
+    const tag=(e.target.tagName||"").toLowerCase();
+    if (tag!=="input"&&tag!=="textarea"){
+      e.preventDefault();$("searchInput").focus();$("searchInput").select();return;
+    }
+  }
+  if (!$("quizScreen").classList.contains("hidden")&&state){
+    if (e.key==="ArrowLeft"){e.preventDefault();prevQuestion();}
+    else if (e.key==="ArrowRight"){e.preventDefault();nextQuestion();}
+    else if (/^[1-9]$/.test(e.key)){
+      const i=parseInt(e.key,10)-1;
+      const q=normalizeQ(state.questions[state.current]);
+      if (q.type==="text"||q.type==="matching"||q.type==="sort") return;
+      if (i<(q.options||[]).length){
+        if (q.type==="multi"){
+          let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];
+          const idx=a.indexOf(i);
+          state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];
+        } else state.answers[state.current]=i;
+        userJustPicked=true;
+        saveState();renderQuestion();
+      }
+    }
+    return;
+  }
+  if ($("libraryScreen").classList.contains("hidden")) return;
+  if (e.ctrlKey||e.metaKey||e.altKey) return;
+  const tag=(e.target.tagName||"").toLowerCase();
+  if (tag==="input"||tag==="textarea") return;
+  if (e.key==="n"||e.key==="N"||e.key==="т"||e.key==="Т"){e.preventDefault();openEditor(null);}
+  else if (e.key==="a"||e.key==="A"||e.key==="ф"||e.key==="Ф"){e.preventDefault();openAiModal("test");}
+  else if (e.key==="Enter"){
+    const list=filterTests();
+    if (list.length===1){e.preventDefault();openStart(list[0].id);}
+  }
+});
+
+loadSettings();
+loadAttempts();
+loadTests().then(()=>{
+  renderLibrary();
+  show("libraryScreen");
+  checkHashImport();
+});
+</script>
+</body>
+</html>
