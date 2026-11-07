@@ -63,14 +63,12 @@ body.font-large h1{font-size:30px;}
 
 .layout{display:flex;flex:1;overflow:hidden;min-height:0;gap:16px;transition:gap .3s;}
 
-/* ZEN MODE */
 body.zen-mode .app{padding:0;}
 body.zen-mode .header{margin-bottom:0;border-radius:0;}
 body.zen-mode .sidebar{display:none;}
 body.zen-mode .layout{gap:0;}
 body.zen-mode .main{border-radius:0;box-shadow:none;}
 
-/* SIDEBAR */
 .sidebar{
   width:360px;flex-shrink:0;padding:24px;display:flex;flex-direction:column;gap:20px;
   overflow-y:auto;border-radius:var(--r-lg);
@@ -120,18 +118,15 @@ body.dark .empty-state{border-color:rgba(255,255,255,0.1);}
 .empty-state .hint{display:block;margin-top:12px;font-size:11px;text-transform:none;letter-spacing:0;}
 .empty-state .hint kbd{display:inline-block;padding:2px 8px;background:rgba(0,0,0,0.05);font-family:var(--mono);font-size:11px;margin:0 2px;border-radius:4px;}
 
-/* MAIN */
 .main{flex:1;overflow-y:auto;padding:32px 40px 80px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:var(--r-lg);box-shadow:var(--shadow-md);}
 .main > div{max-width:960px;margin:0 auto;}
 
-/* WELCOME */
 .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 200px);text-align:center;gap:24px;}
 .welcome-mark{width:100px;height:100px;border-radius:var(--r-xl);margin-bottom:12px;box-shadow:var(--shadow-lg);animation:score-in .5s cubic-bezier(.2,.9,.3,1) both;display:flex;align-items:center;justify-content:center;}
 .welcome h1{font-size:42px;margin-bottom:8px;letter-spacing:-.04em;}
 .welcome-desc{color:var(--text-muted);max-width:480px;font-size:16px;margin-bottom:16px;line-height:1.6;}
 .welcome-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 
-/* BUTTONS */
 button{
   font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;
   padding:12px 20px;border:none;background:rgba(255,255,255,0.6);color:var(--text);
@@ -223,12 +218,79 @@ body.dark .q-card:hover{background:rgba(255,255,255,0.06);}
 .add-q-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(139,92,246,0.05);transform:translateY(-2px);}
 .add-q-btn svg{width:16px;height:16px;}
 
+/* ============ НОВАЯ КНОПКА «НАЧАТЬ ТЕСТ» ============ */
+.start-test-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 36px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: #fff;
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #f472b6 100%);
+  background-size: 200% 200%;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow:
+    0 4px 20px rgba(139, 92, 246, 0.35),
+    0 2px 8px rgba(244, 114, 182, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition:
+    transform .25s cubic-bezier(.2,.9,.3,1.4),
+    box-shadow .25s ease,
+    background-position .6s ease;
+  position: relative;
+  overflow: hidden;
+}
+.start-test-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left .6s ease;
+}
+.start-test-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  background-position: 100% 50%;
+  box-shadow:
+    0 8px 28px rgba(139, 92, 246, 0.45),
+    0 4px 14px rgba(244, 114, 182, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.start-test-btn:hover::before {
+  left: 100%;
+}
+.start-test-btn:active {
+  transform: translateY(0) scale(.98);
+  box-shadow:
+    0 2px 10px rgba(139, 92, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.start-test-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform .3s cubic-bezier(.2,.9,.3,1.4);
+}
+.start-test-btn:hover svg {
+  transform: translateX(4px);
+}
+.start-test-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+/* ============================================== */
+
 .q-image-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
 .q-image{max-width:260px;max-height:160px;border:1px solid var(--glass-border);object-fit:contain;background:rgba(255,255,255,0.3);border-radius:var(--r-md);}
 .q-ai-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px dashed var(--glass-border);}
 .q-ai-row button{font-size:12px;padding:8px 12px;font-family:var(--mono);border-radius:var(--r-md);}
 
-/* QUIZ */
 .quiz-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
 .quiz-counter{font-family:var(--mono);font-size:15px;font-weight:700;}
 .quiz-counter .big{font-size:32px;margin-right:8px;color:var(--accent);}
@@ -282,7 +344,6 @@ body.dark .uncertain-row{background:rgba(0,0,0,0.2);}
 .nav{display:flex;gap:16px;margin-top:40px;}
 .nav .btn-primary{flex:1;}
 
-/* FLASHCARDS */
 .flashcard-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 300px);gap:32px;}
 .flashcard{width:100%;max-width:640px;min-height:280px;padding:48px 40px;background:rgba(255,255,255,0.7);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:all .3s;backdrop-filter:blur(20px);}
 body.dark .flashcard{background:rgba(255,255,255,0.05);}
@@ -296,7 +357,6 @@ body.dark .flashcard-answer{color:#34d399;background:rgba(16,185,129,0.1);}
 .flashcard-stats .known{color:#10b981;}
 .flashcard-stats .unknown{color:#ef4444;}
 
-/* RESULT */
 .result-hero{text-align:center;padding:48px 0 40px;}
 .result-hero .score{font-size:120px;font-weight:900;letter-spacing:-.05em;line-height:1;margin-bottom:24px;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .result-hero .msg{font-size:18px;color:var(--text-muted);font-weight:500;}
@@ -319,7 +379,6 @@ body.dark .review-opt.correct{color:#34d399;}
 .review-opt.wrong{background:rgba(239,68,68,0.1);color:#991b1b;text-decoration:line-through;}
 body.dark .review-opt.wrong{color:#f87171;}
 
-/* CERTIFICATE */
 .certificate-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:24px;z-index:400;backdrop-filter:blur(12px);}
 .certificate-content{max-width:900px;width:100%;max-height:95vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
 .certificate-actions{display:flex;gap:12px;justify-content:center;}
@@ -334,7 +393,6 @@ body.dark .review-opt.wrong{color:#f87171;}
 .cert-logo{display:flex;align-items:center;gap:8px;font-weight:700;}
 .cert-logo svg{width:24px;height:24px;}
 
-/* MODAL */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:200;animation:fade-in .2s ease;}
 .modal-content{background:rgba(255,255,255,0.9);backdrop-filter:blur(30px);color:var(--text);padding:40px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border-radius:var(--r-xl);box-shadow:var(--shadow-lg);animation:modal-in .3s cubic-bezier(.2,.9,.3,1) both;}
 body.dark .modal-content{background:rgba(17,24,39,0.9);}
@@ -349,7 +407,6 @@ body.dark .set-btn{background:rgba(255,255,255,0.05);}
 .set-btn:hover{background:#fff;}
 .set-btn.active{background:var(--accent);color:#fff;}
 
-/* AI TABS */
 .ai-tabs{display:flex;gap:4px;margin-bottom:24px;background:rgba(0,0,0,0.05);padding:4px;border-radius:var(--r-md);}
 body.dark .ai-tabs{background:rgba(255,255,255,0.05);}
 .ai-tab{flex:1;padding:10px 16px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;border-radius:var(--r-sm);color:var(--text-muted);transition:all .2s;font-family:var(--sans);}
@@ -362,7 +419,6 @@ body.dark .ai-tab.active{background:rgba(255,255,255,0.1);}
 .ai-status.ok{display:block;background:var(--accent);color:#fff;}
 .ai-status.err{display:block;background:rgba(239,68,68,0.1);color:#dc2626;}
 
-/* TOAST */
 .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(120px);background:rgba(17,24,39,0.95);color:#fff;padding:16px 28px;font-family:var(--mono);font-size:14px;border-radius:var(--r-md);z-index:500;transition:transform .3s cubic-bezier(.2,.9,.3,1);box-shadow:var(--shadow-lg);backdrop-filter:blur(10px);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
@@ -395,7 +451,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
       <span>AuraQuiz</span>
     </div>
     <div class="header-actions">
-      <div class="header-meta" id="headerMeta">v5.0</div>
+      <div class="header-meta" id="headerMeta">v5.1</div>
       <button class="icon-btn" title="Zen режим (Ctrl+Shift+Z)" onclick="toggleZen()" id="zenBtn"></button>
       <button class="icon-btn" title="Настройки" data-act="settings" onclick="openSettings()" id="settingsBtn"></button>
     </div>
@@ -477,7 +533,10 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
           <label>Спринт — сек на вопрос (0 = выкл): <input type="number" id="optSprint" value="0" min="0" max="300"></label>
         </div>
         <div class="meta" id="startMeta" style="font-family:var(--mono);font-size:13px;margin-bottom:32px;color:var(--text-muted);"></div>
-        <button class="btn-primary" style="width:100%;padding:20px;font-size:16px;" onclick="startTest()" id="startBtn"></button>
+
+        <div style="display:flex;justify-content:center;margin-top:8px;">
+          <button class="start-test-btn" onclick="startTest()" id="startBtn"></button>
+        </div>
       </div>
 
       <div id="editorScreen" class="hidden">
@@ -587,7 +646,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
   </div>
 </div>
 
-<!-- AI MODAL -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2 id="aiModalTitle">🤖 AI Генератор</h2>
@@ -623,7 +681,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
   </div>
 </div>
 
-<!-- SETTINGS MODAL -->
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
@@ -639,7 +696,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
   </div>
 </div>
 
-<!-- CERTIFICATE MODAL -->
 <div id="certModal" class="certificate-modal hidden">
   <div class="certificate-content">
     <div id="certRender"></div>
@@ -653,9 +709,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ==========================================================
-   SVG ИКОНКИ
-   ========================================================== */
 const ICONS = {
   createBox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4" ry="4"/><path d="M12 8v8M8 12h8"/></svg>',
   aiSparkle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-2.5 4-6 8-9 9.5 3 1.5 6.5 5.5 9 9.5 2.5-4 6-8 9-9.5-3-1.5-6.5-5.5-9-9.5z"/><path d="M19 4v4m-2-2h4"/><path d="M19 16v4m-2-2h4"/></svg>',
@@ -709,7 +762,7 @@ function initStaticIcons(){
   $("btnSaveTest").innerHTML = ic('exportArrow') + ' СОХРАНИТЬ ТЕСТ';
   $("prevBtn").innerHTML = ic('arrowLeft') + ' НАЗАД';
   $("nextBtn").innerHTML = 'ДАЛЕЕ ' + ic('arrowRight');
-  $("startBtn").innerHTML = 'НАЧАТЬ ТЕСТ ' + ic('arrowRight');
+  $("startBtn").innerHTML = 'Начать тест ' + ic('arrowRight');
   $("speakBtn").innerHTML = ic('speak') + ' Озвучить';
   $("hintBtn").innerHTML = ic('lightbulb') + ' Подсказка';
   $("btnCopyRes").innerHTML = ic('clipboard') + ' КОПИРОВАТЬ';
@@ -724,9 +777,6 @@ function initStaticIcons(){
   sw.insertBefore(iconEl.firstChild, sw.firstChild);
 }
 
-/* ==========================================================
-   ХРАНИЛИЩЕ
-   ========================================================== */
 const TESTS_KEY = "quiz_tests_v5";
 const STATE_KEY = "quiz_state_v5";
 const SETTINGS_KEY = "quiz_settings_v5";
@@ -743,10 +793,7 @@ function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function formatTime(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=sec%60;return `${m}:${s.toString().padStart(2,"0")}`;}
 function uid(){return "t"+Date.now()+Math.random().toString(36).slice(2,6);}
-function showToast(msg){
-  const t=$("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove("show"),2500);
-}
+function showToast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove("show"),2500);}
 function shakeEl(el){if(!el)return;el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");setTimeout(()=>el.classList.remove("shake"),500);}
 function md(text){
   if (!text) return "";
@@ -760,48 +807,36 @@ function md(text){
 function renderMath(el){
   if (typeof renderMathInElement !== "function" || !el) return;
   try { renderMathInElement(el, {
-    delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},
-      {left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}],
+    delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}],
     throwOnError:false
   }); } catch(e){}
 }
 
-/* ==========================================================
-   ЗВУК
-   ========================================================== */
 let _audioCtx = null;
-function getAudio(){
-  if (!_audioCtx) { try { _audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
-  return _audioCtx;
-}
-function playTone(freq, dur, type='sine', vol=0.06){
-  if (!settings.sound) return;
-  const ctx = getAudio();
-  if (!ctx) return;
-  try {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type; osc.frequency.value = freq;
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start(); osc.stop(ctx.currentTime + dur);
-  } catch(e){}
+function getAudio(){if(!_audioCtx){try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return _audioCtx;}
+function playTone(freq,dur,type='sine',vol=0.06){
+  if(!settings.sound)return;
+  const ctx=getAudio();if(!ctx)return;
+  try{
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
+    osc.type=type;osc.frequency.value=freq;
+    gain.gain.setValueAtTime(vol,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+dur);
+  }catch(e){}
 }
 function playSound(name){
-  if (!settings.sound) return;
+  if(!settings.sound)return;
   switch(name){
-    case 'click': playTone(600,0.06,'sine',0.04); break;
-    case 'correct': playTone(880,0.1); setTimeout(()=>playTone(1100,0.15),80); break;
-    case 'wrong': playTone(300,0.15,'sawtooth',0.05); break;
-    case 'complete': playTone(523,0.12); setTimeout(()=>playTone(659,0.12),100); setTimeout(()=>playTone(784,0.25),220); break;
-    case 'whoosh': playTone(400,0.12,'sine',0.03); break;
+    case 'click':playTone(600,0.06,'sine',0.04);break;
+    case 'correct':playTone(880,0.1);setTimeout(()=>playTone(1100,0.15),80);break;
+    case 'wrong':playTone(300,0.15,'sawtooth',0.05);break;
+    case 'complete':playTone(523,0.12);setTimeout(()=>playTone(659,0.12),100);setTimeout(()=>playTone(784,0.25),220);break;
+    case 'whoosh':playTone(400,0.12,'sine',0.03);break;
   }
 }
 
-/* ==========================================================
-   НАСТРОЙКИ
-   ========================================================== */
 let settings = { theme:"light", fontSize:"normal", density:"normal", aiProvider:"pollinations", sound:true };
 let proxyUrl = "";
 
@@ -811,10 +846,7 @@ function loadSettings(){
   try { const p = localStorage.getItem(AI_PROVIDER_KEY); if(p) settings.aiProvider = p; } catch(e){}
   applySettings();
 }
-function saveSettings(){
-  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch(e){}
-  applySettings();
-}
+function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}catch(e){}applySettings();}
 function applySettings(){
   document.body.classList.toggle("dark", settings.theme==="dark");
   document.body.classList.toggle("font-large", settings.fontSize==="large");
@@ -837,18 +869,12 @@ document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.onclick=()=>{sett
 document.querySelectorAll("#setSound .set-btn").forEach(b=>b.onclick=()=>{settings.sound=b.dataset.v==="on";saveSettings();renderSettingsButtons();playSound('click');});
 document.querySelectorAll("#setAiProvider .set-btn").forEach(b=>b.onclick=()=>{settings.aiProvider=b.dataset.v;try{localStorage.setItem(AI_PROVIDER_KEY,settings.aiProvider);}catch(e){}saveSettings();renderSettingsButtons();showToast("AI: "+b.textContent);});
 
-/* ==========================================================
-   ZEN MODE
-   ========================================================== */
 function toggleZen(){
   document.body.classList.toggle("zen-mode");
   showToast(document.body.classList.contains("zen-mode")?"◎ ZEN":"◉ ВЫХОД ИЗ ZEN");
   playSound('whoosh');
 }
 
-/* ==========================================================
-   МОДЕЛЬ ВОПРОСА (с truefalse)
-   ========================================================== */
 function blankQuestion(){ return { type:"single", question:"", options:[{text:"",correct:true},{text:"",correct:false}], explanation:"", image:null }; }
 function normalizeQ(q){
   if (!q.type) q.type = "single";
@@ -871,9 +897,6 @@ function normalizeQ(q){
   return q;
 }
 
-/* ==========================================================
-   ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-   ========================================================== */
 let tests = [];
 let TEST = null;
 let editing = null;
@@ -936,26 +959,17 @@ async function loadTests(){
   tests = defaultTests();
   saveTests();
 }
-function saveTests(){
-  try { localStorage.setItem(TESTS_KEY, JSON.stringify(tests)); }
-  catch(e){ showToast("⚠ ХРАНИЛИЩЕ ПЕРЕПОЛНЕНО"); }
-}
+function saveTests(){try{localStorage.setItem(TESTS_KEY,JSON.stringify(tests));}catch(e){showToast("⚠ ХРАНИЛИЩЕ ПЕРЕПОЛНЕНО");}}
 function loadAttempts(){try{const raw=localStorage.getItem(ATTEMPTS_KEY);attempts=raw?JSON.parse(raw):[];if(!Array.isArray(attempts))attempts=[];}catch(e){attempts=[];}}
 function saveAttempts(){try{localStorage.setItem(ATTEMPTS_KEY,JSON.stringify(attempts));}catch(e){}}
 
-/* ==========================================================
-   НАВИГАЦИЯ
-   ========================================================== */
 function show(id){
   ["welcomeScreen","startScreen","editorScreen","quizScreen","flashcardScreen","resultScreen"].forEach(s=>$(s).classList.toggle("hidden",s!==id));
   const main = document.querySelector(".main"); if (main) main.scrollTop = 0;
   const names={welcomeScreen:"WELCOME",startScreen:"START",editorScreen:"EDIT",quizScreen:"IN PROGRESS",flashcardScreen:"FLASHCARDS",resultScreen:"RESULT"};
-  $("headerMeta").textContent = "v5.0 · " + (names[id]||"");
+  $("headerMeta").textContent = "v5.1 · " + (names[id]||"");
 }
 
-/* ==========================================================
-   БИБЛИОТЕКА
-   ========================================================== */
 function filterTests(){
   return tests.filter(t=>{
     if (searchQuery){
@@ -1055,9 +1069,6 @@ function checkHashImport(){
   history.replaceState(null,"",location.pathname+location.search);
 }
 
-/* ==========================================================
-   СТАРТ
-   ========================================================== */
 function selectMode(mode){
   startMode=mode;
   document.querySelectorAll(".mode-card").forEach(c=>c.classList.toggle("active",c.dataset.mode===mode));
@@ -1096,7 +1107,7 @@ function prepareQuestions(questions,shufQ,shufA,sampleN){
   return qs.map(q=>{
     const nq=deepCopy(normalizeQ(q));
     if(nq.type==="single"||nq.type==="multi"){if(shufA)nq.options=shuffle(nq.options);}
-    else if(nq.type==="truefalse"){if(shufA){nq._flip=Math.random()<0.5;}/*showTrueFirst*/}
+    else if(nq.type==="truefalse"){if(shufA){nq._flip=Math.random()<0.5;}}
     else if(nq.type==="matching"){nq._rightShuffled=shuffle(nq.pairs.map((p,i)=>({...p,_orig:i})));}
     else if(nq.type==="sort"){nq._userOrder=shuffle(nq.items.map((it,i)=>({...it,_orig:i})));}
     return nq;
@@ -1122,12 +1133,9 @@ function startTest(){
   };
   saveState();
   if (startMode === "flashcards"){
-    show("flashcardScreen");
-    renderFlashcard();
+    show("flashcardScreen");renderFlashcard();
   } else {
-    show("quizScreen");
-    renderQuestion();
-    startTimer();
+    show("quizScreen");renderQuestion();startTimer();
   }
 }
 function saveState(){if(!state)return;try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}catch(e){}}
@@ -1140,9 +1148,6 @@ function resumeTest(){
   else {show("quizScreen");renderQuestion();if(state.totalTime===0||state.timeLeft>0)startTimer();else finish(true);}
 }
 
-/* ==========================================================
-   ТАЙМЕР (с учётом sprint)
-   ========================================================== */
 function startTimer(){
   if(timerId)clearInterval(timerId);
   updateTimer();
@@ -1174,9 +1179,6 @@ function updateTimer(){
 }
 function resetSprintTimer(){if(state.sprintTime>0)state.questionTimeLeft=state.sprintTime;}
 
-/* ==========================================================
-   ПРОХОЖДЕНИЕ
-   ========================================================== */
 function hasAnswer(ans,q){
   const nq=normalizeQ(q);
   if(nq.type==="text")return typeof ans==="string"&&ans.trim()!=="";
@@ -1322,9 +1324,6 @@ function advanceToNext(forced){
 }
 function nextQuestion(){if(!hasAnswer(state.answers[state.current],state.questions[state.current]))return;advanceToNext(false);}
 
-/* ==========================================================
-   ОЗВУЧКА И ПОДСКАЗКА
-   ========================================================== */
 function speakQuestion(){
   if (!('speechSynthesis' in window)) { showToast("TTS НЕДОСТУПНО"); return; }
   const q=normalizeQ(state.questions[state.current]);
@@ -1349,9 +1348,6 @@ async function getHint(){
   }
 }
 
-/* ==========================================================
-   ФЛЕШ-КАРТОЧКИ
-   ========================================================== */
 function renderFlashcard(){
   const raw=state.questions[state.current];
   const q=normalizeQ(raw);
@@ -1415,14 +1411,9 @@ function finishFlashcards(){
   $("weakSection").classList.add("hidden");
   $("reviewList").innerHTML=`<div class="review-item" style="text-align:center;padding:32px;">${percent>=80?"🎉 Отличный результат!":percent>=50?"💪 Хорошо, но можно лучше":"📚 Стоит повторить материал"}</div>`;
   document.querySelectorAll(".result-actions button").forEach(b=>b.style.display="none");
-  document.querySelectorAll(".result-actions button").forEach(b=>{if(["К ТЕСТАМ","AI АНАЛИЗ"].some(t=>b.textContent.includes(t)))b.style.display="";});
-  $("btnAiAnalyze").style.display="none";
   document.querySelectorAll(".result-actions button").forEach(b=>{if(b.textContent.includes("К ТЕСТАМ")||b.textContent.includes("ЕЩЁ РАЗ"))b.style.display="";});
 }
 
-/* ==========================================================
-   ОЦЕНКА
-   ========================================================== */
 function isAnswerCorrect(question,answer){
   const q=normalizeQ(question);
   if(answer===null||answer===undefined)return false;
@@ -1568,9 +1559,6 @@ function renderReview(){
 }
 function restart(){if(TEST)openStart(TEST.id);else show("welcomeScreen");}
 
-/* ==========================================================
-   РЕЗУЛЬТАТ (копия / csv / pdf / сертификат)
-   ========================================================== */
 function copyResult(ev){
   const total=state.questions.length;
   const correct=state.questions.reduce((acc,q,i)=>acc+(isAnswerCorrect(q,state.answers[i])?1:0),0);
@@ -1650,9 +1638,6 @@ async function downloadCert(){
   }catch(err){showToast("❌ Ошибка: "+err.message);}
 }
 
-/* ==========================================================
-   РЕДАКТОР (с D&D и Undo/Redo)
-   ========================================================== */
 function openEditor(idOrTest){
   let existing=null;
   if(typeof idOrTest==="string")existing=tests.find(t=>t.id===idOrTest);
@@ -1797,7 +1782,6 @@ function setTF(i,val){
 }
 
 function setupDragAndDrop(){
-  // Questions
   document.querySelectorAll('#edQuestions .q-card').forEach(card=>{
     const handle=card.querySelector('.q-card-header .drag-handle');
     if(!handle)return;
@@ -1839,7 +1823,6 @@ function setupDragAndDrop(){
       playSound('whoosh');
     });
   });
-  // Options
   document.querySelectorAll('#edQuestions .opt-row').forEach(row=>{
     const handle=row.querySelector('.drag-handle');
     if(!handle)return;
@@ -1875,7 +1858,6 @@ function setupDragAndDrop(){
       let targetIdx = before ? to : to + 1;
       if (targetIdx > from) targetIdx--;
       pushHistory();
-      // Determine which array to move
       const nq=normalizeQ(q);
       let arr = null;
       if (nq.type==="matching") arr = q.pairs;
@@ -1967,7 +1949,6 @@ async function aiGenerateImage(i){
   try {
     const prompt=encodeURIComponent("illustration, "+q.question.slice(0,200));
     const url=`https://image.pollinations.ai/prompt/${prompt}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*1000000)}`;
-    // Verify it loads
     const img=new Image();
     img.crossOrigin="anonymous";
     await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url;setTimeout(rej,30000);});
@@ -2038,9 +2019,6 @@ function saveTest(){
   editing=null;renderLibrary();show("welcomeScreen");showToast("✓ ТЕСТ СОХРАНЁН");playSound('complete');
 }
 
-/* ==========================================================
-   ИМПОРТ / ЭКСПОРТ
-   ========================================================== */
 function exportAll(){
   const blob=new Blob([JSON.stringify(tests,null,2)],{type:"application/json"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);
@@ -2094,9 +2072,6 @@ function importCsv(event){
   reader.readAsText(file);
 }
 
-/* ==========================================================
-   AI
-   ========================================================== */
 async function callAI(messages){
   const provider=settings.aiProvider||"pollinations";
   let url,headers={"Content-Type":"application/json"},body;
@@ -2296,12 +2271,8 @@ async function aiAnalyzeErrors(){
   }catch(err){showToast("❌ "+err.message);}
 }
 
-/* ==========================================================
-   PWA
-   ========================================================== */
 let deferredPrompt = null;
 function setupPWA(){
-  // Manifest via data URL
   const svgIcon=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23a78bfa"/><stop offset="100%" style="stop-color:%23f472b6"/></linearGradient></defs><rect width="512" height="512" rx="120" fill="url(%23g)"/><circle cx="240" cy="240" r="110" stroke="white" stroke-width="40" fill="none"/><line x1="320" y1="320" x2="400" y2="400" stroke="white" stroke-width="40" stroke-linecap="round"/></svg>`;
   const manifest={
     name:"AuraQuiz",short_name:"AuraQuiz",description:"AI-powered quiz builder",
@@ -2312,13 +2283,9 @@ function setupPWA(){
   let link=document.querySelector('link[rel="manifest"]');
   if(!link){link=document.createElement('link');link.rel="manifest";document.head.appendChild(link);}
   link.href=manifestUrl;
-
-  // Try to register SW (works if sw.js exists)
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('sw.js').catch(()=>{/*silent*/});
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
-
-  // Install prompt
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();
     deferredPrompt=e;
@@ -2331,9 +2298,6 @@ function installPWA(){
   deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});
 }
 
-/* ==========================================================
-   ХОТКЕИ
-   ========================================================== */
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){
     if(!$("aiModal").classList.contains("hidden")){closeAiModal();return;}
@@ -2342,7 +2306,7 @@ document.addEventListener("keydown",e=>{
   }
   if((e.ctrlKey||e.metaKey)&&!$("editorScreen").classList.contains("hidden")){
     const tag=(e.target.tagName||"").toLowerCase();
-    if(tag==="input"||tag==="textarea")return; // native undo in fields
+    if(tag==="input"||tag==="textarea")return;
     if(e.key==="z"||e.key==="я"){e.preventDefault();if(e.shiftKey)redoEdit();else undoEdit();return;}
     if(e.key==="y"||e.key==="н"){e.preventDefault();redoEdit();return;}
   }
@@ -2384,14 +2348,10 @@ document.addEventListener("keydown",e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return;
   const tag=(e.target.tagName||"").toLowerCase();
   if(tag==="input"||tag==="textarea")return;
-  if(!$("libraryScreen")&&$("libraryScreen").classList.contains("hidden")&&$("welcomeScreen").classList.contains("hidden"))return;
   if(e.key==="n"||e.key==="N"||e.key==="т"||e.key==="Т"){e.preventDefault();openEditor(null);}
   else if(e.key==="a"||e.key==="A"||e.key==="ф"||e.key==="Ф"){e.preventDefault();openAiModal("test");}
 });
 
-/* ==========================================================
-   ЗАПУСК
-   ========================================================== */
 initStaticIcons();
 loadSettings();
 loadAttempts();
