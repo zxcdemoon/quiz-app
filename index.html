@@ -3,690 +3,383 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz — тестовая оболочка</title>
+<title>Quiz — Test Studio Pro</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <style>
-  /* ============ RESET / БАЗА ============ */
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --black: #000;
-    --white: #fff;
-    --gray-50: #f7f7f7;
-    --gray-100: #efefef;
-    --gray-200: #e0e0e0;
-    --gray-300: #c8c8c8;
-    --gray-400: #9a9a9a;
-    --gray-500: #6b6b6b;
-    --gray-600: #444;
-    --gray-700: #2a2a2a;
-    --line: 1.5px solid var(--black);
-    --line-thin: 1px solid var(--gray-300);
-    --mono: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
-    --sans: "Inter", "Helvetica Neue", -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-  html, body {
-    background: var(--white);
-    color: var(--black);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-  }
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#000;--white:#fff;--gray-50:#f7f7f7;--gray-100:#efefef;--gray-200:#e0e0e0;
+  --gray-300:#c8c8c8;--gray-400:#9a9a9a;--gray-500:#6b6b6b;--gray-600:#444;--gray-700:#2a2a2a;
+  --line:1.5px solid var(--black);--line-thin:1px solid var(--gray-300);
+  --mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:"Inter","Helvetica Neue",-apple-system,sans-serif;
+}
+body.dark{--black:#f5f5f5;--white:#0a0a0a;--gray-50:#141414;--gray-100:#1c1c1c;
+  --gray-200:#252525;--gray-300:#3a3a3a;--gray-400:#6a6a6a;--gray-500:#8a8a8a;
+  --gray-600:#b0b0b0;--gray-700:#d0d0d0;}
+body.font-large{font-size:17px;}
+body.font-large h1{font-size:34px;}
+body.font-large .question{font-size:26px;}
+body.density-compact .test-item{padding:10px 4px;}
+body.density-compact .q-card{padding:12px;margin-bottom:10px;}
+body.density-spacious .test-item{padding:26px 4px;}
+body.density-spacious .q-card{padding:20px;margin-bottom:20px;}
+body.density-spacious .option{padding:20px 22px;}
+html,body{background:var(--white);color:var(--black);font-family:var(--sans);font-size:15px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .15s,color .15s;}
+.app{max-width:920px;margin:0 auto;padding:32px 24px 80px;min-height:100vh;}
 
-  /* ============ LAYOUT ============ */
-  .app {
-    max-width: 880px;
-    margin: 0 auto;
-    padding: 32px 24px 80px;
-    min-height: 100vh;
-  }
+.header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-bottom:20px;margin-bottom:32px;border-bottom:var(--line);flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:700;font-size:15px;}
+.brand-mark{width:28px;height:28px;background:var(--black);color:var(--white);
+  display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.header-meta{font-family:var(--mono);font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;}
 
-  /* Верхняя шапка */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-bottom: 20px;
-    margin-bottom: 32px;
-    border-bottom: var(--line);
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--mono);
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: -.01em;
-  }
-  .brand-mark {
-    width: 28px; height: 28px;
-    background: var(--black); color: var(--white);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 14px; font-weight: 700;
-  }
-  .header-meta {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-  }
+h1{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:4px;}
+h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+.subtitle{font-size:14px;color:var(--gray-500);margin-bottom:24px;}
 
-  /* ============ ТИПОГРАФИКА ============ */
-  h1 {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -.02em;
-    line-height: 1.15;
-    margin-bottom: 4px;
-  }
-  h2 {
-    font-size: 13px;
-    font-family: var(--mono);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    margin-bottom: 14px;
-  }
-  .subtitle {
-    font-size: 14px;
-    color: var(--gray-500);
-    margin-bottom: 24px;
-  }
+button{font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;
+  padding:10px 18px;border:var(--line);background:var(--white);color:var(--black);
+  transition:background .12s,color .12s;border-radius:0;letter-spacing:-.005em;}
+button:hover:not(:disabled){background:var(--black);color:var(--white);}
+button:disabled{opacity:.3;cursor:not-allowed;}
+button:active:not(:disabled){transform:translateY(1px);}
+.btn-primary{background:var(--black);color:var(--white);}
+.btn-primary:hover:not(:disabled){background:var(--gray-700);color:var(--white);}
+.btn-ghost{border-color:var(--gray-300);color:var(--gray-600);}
+.btn-ghost:hover:not(:disabled){border-color:var(--black);background:var(--white);color:var(--black);}
+.btn-small{padding:6px 12px;font-size:13px;font-family:var(--mono);}
+.btn-ai{background:var(--black);color:var(--white);border-color:var(--black);}
+.btn-ai:hover:not(:disabled){background:var(--gray-700);}
 
-  /* ============ КНОПКИ ============ */
-  button {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 10px 18px;
-    border: var(--line);
-    background: var(--white);
-    color: var(--black);
-    transition: background .12s, color .12s;
-    border-radius: 0;
-    letter-spacing: -.005em;
-  }
-  button:hover:not(:disabled) { background: var(--black); color: var(--white); }
-  button:disabled { opacity: .3; cursor: not-allowed; }
-  button:active:not(:disabled) { transform: translateY(1px); }
+.icon-btn{width:34px;height:34px;padding:0;display:inline-flex;align-items:center;
+  justify-content:center;font-family:var(--mono);font-size:15px;background:var(--white);
+  border:var(--line-thin);color:var(--black);border-radius:0;}
+.icon-btn:hover:not(:disabled){border-color:var(--black);background:var(--black);color:var(--white);}
+.icon-btn.danger{border-color:var(--gray-300);color:var(--gray-500);}
+.icon-btn.danger:hover:not(:disabled){background:var(--black);color:var(--white);border-color:var(--black);}
 
-  .btn-primary { background: var(--black); color: var(--white); }
-  .btn-primary:hover:not(:disabled) { background: var(--gray-700); color: var(--white); }
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.spacer{flex:1;}
+.hidden{display:none!important;}
 
-  .btn-ghost { border-color: var(--gray-300); color: var(--gray-600); }
-  .btn-ghost:hover:not(:disabled) { border-color: var(--black); background: var(--white); color: var(--black); }
+.library-toolbar{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.library-toolbar > div:first-child{flex:1;min-width:200px;}
+.search-bar{width:100%;padding:10px 12px;border:var(--line);background:var(--white);
+  color:var(--black);font-family:var(--sans);font-size:14px;margin-bottom:12px;}
+.search-bar:focus{outline:none;background:var(--gray-50);}
+.tag-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:16px;border-bottom:var(--line-thin);}
+.tag-chip{display:inline-flex;align-items:center;font-family:var(--mono);font-size:11px;
+  padding:3px 8px;border:1px solid var(--gray-400);background:var(--white);color:var(--gray-700);
+  cursor:pointer;text-transform:lowercase;}
+.tag-chip:hover{background:var(--black);color:var(--white);border-color:var(--black);}
+.tag-chip.active{background:var(--black);color:var(--white);border-color:var(--black);}
 
-  .btn-small { padding: 6px 12px; font-size: 13px; font-family: var(--mono); }
+.test-list{display:flex;flex-direction:column;border-top:var(--line-thin);}
+.test-item{display:flex;align-items:center;gap:14px;padding:18px 4px;
+  border-bottom:var(--line-thin);transition:padding .12s;}
+.test-item:hover{padding-left:12px;padding-right:12px;background:var(--gray-50);}
+.ti-index{font-family:var(--mono);font-size:11px;color:var(--gray-400);width:32px;flex-shrink:0;}
+.ti-body{flex:1;min-width:0;}
+.ti-title{font-size:16px;font-weight:700;margin-bottom:3px;word-break:break-word;}
+.ti-meta{font-family:var(--mono);font-size:11px;color:var(--gray-500);text-transform:uppercase;
+  letter-spacing:.03em;margin-bottom:4px;}
+.ti-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.ti-tags .tag-chip{padding:1px 6px;font-size:10px;}
+.ti-actions{display:flex;gap:3px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
 
-  /* Иконочные кнопки */
-  .icon-btn {
-    width: 34px; height: 34px; padding: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 15px;
-    background: var(--white); border: var(--line-thin); color: var(--black);
-    border-radius: 0;
-  }
-  .icon-btn:hover:not(:disabled) { border-color: var(--black); background: var(--black); color: var(--white); }
-  .icon-btn.danger { border-color: var(--gray-300); color: var(--gray-500); }
-  .icon-btn.danger:hover:not(:disabled) { background: var(--black); color: var(--white); border-color: var(--black); }
+.empty-state{text-align:center;padding:48px 24px;color:var(--gray-500);
+  border:1.5px dashed var(--gray-300);font-family:var(--mono);font-size:13px;
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px;}
+.empty-state .hint{display:block;margin-top:12px;font-size:11px;color:var(--gray-400);
+  text-transform:none;letter-spacing:0;}
+.empty-state .hint kbd{display:inline-block;padding:1px 6px;border:1px solid var(--gray-400);
+  font-family:var(--mono);font-size:11px;margin:0 2px;}
 
-  /* ============ РАЗНОЕ ============ */
-  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .spacer { flex: 1; }
-  .hidden { display: none !important; }
+.library-footer{display:flex;gap:8px;flex-wrap:wrap;padding-top:20px;}
 
-  /* ============ БИБЛИОТЕКА ============ */
-  .library-toolbar {
-    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: var(--line-thin);
-  }
-  .library-toolbar > div:first-child { flex: 1; min-width: 200px; }
+.field{margin-bottom:16px;}
+.field label{display:block;font-family:var(--mono);font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--gray-500);margin-bottom:6px;}
+.field input[type="text"],.field input[type="number"],.field input[type="url"],.field input[type="password"],
+.field textarea,.field select{width:100%;padding:10px 12px;border:var(--line);border-radius:0;
+  background:var(--white);color:var(--black);font-family:var(--sans);font-size:14px;}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;background:var(--gray-50);border-color:var(--black);}
+.field textarea{resize:vertical;min-height:70px;}
 
-  .test-list {
-    display: flex; flex-direction: column;
-    border-top: var(--line-thin);
-  }
-  .test-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 18px 4px;
-    border-bottom: var(--line-thin);
-    transition: padding .12s;
-  }
-  .test-item:hover { padding-left: 12px; padding-right: 12px; background: var(--gray-50); }
-  .ti-index {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray-400);
-    width: 32px;
-    flex-shrink: 0;
-    letter-spacing: .05em;
-  }
-  .ti-body { flex: 1; min-width: 0; }
-  .ti-title {
-    font-size: 16px; font-weight: 700; margin-bottom: 3px;
-    letter-spacing: -.01em;
-    word-break: break-word;
-  }
-  .ti-meta {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray-500);
-    letter-spacing: .03em;
-    text-transform: uppercase;
-  }
-  .ti-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.resume-banner{border:var(--line);padding:14px 16px;margin-bottom:20px;display:flex;
+  justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--gray-50);}
+.resume-banner .info{font-family:var(--mono);font-size:12px;color:var(--gray-700);
+  text-transform:uppercase;letter-spacing:.03em;}
 
-  .empty-state {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--gray-500);
-    border: 1.5px dashed var(--gray-300);
-    font-family: var(--mono);
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 16px;
-  }
+.settings-box{border:var(--line-thin);padding:16px 18px;margin-bottom:20px;
+  display:flex;flex-direction:column;gap:10px;}
+.settings-box label{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;user-select:none;}
+.settings-box input[type="checkbox"]{width:18px;height:18px;accent-color:var(--black);cursor:pointer;}
+.settings-box input[type="number"]{width:70px;padding:6px 10px;border:var(--line);
+  font-family:var(--mono);font-size:13px;text-align:center;}
+.meta{font-family:var(--mono);font-size:12px;color:var(--gray-500);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:20px;padding:12px 0;border-top:var(--line-thin);border-bottom:var(--line-thin);}
 
-  .library-footer {
-    display: flex; gap: 8px; flex-wrap: wrap;
-    padding-top: 20px;
-  }
+.editor-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;
+  padding-bottom:16px;border-bottom:var(--line);flex-wrap:wrap;}
+.editor-header h1{font-size:22px;margin:0;}
+.q-card{border:var(--line-thin);padding:16px;margin-bottom:14px;background:var(--white);}
+.q-card:hover{border-color:var(--black);}
+.q-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.q-num{width:28px;height:28px;background:var(--black);color:var(--white);display:inline-flex;
+  align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;
+  font-weight:700;flex-shrink:0;}
+.q-type-select{padding:4px 8px;border:var(--line-thin);background:var(--white);
+  color:var(--black);font-family:var(--mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:.04em;cursor:pointer;}
+.q-type-select:focus{outline:none;border-color:var(--black);}
+.opt-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.opt-row input[type="radio"],.opt-row input[type="checkbox"]{width:18px;height:18px;
+  accent-color:var(--black);flex-shrink:0;cursor:pointer;}
+.opt-row input[type="text"]{flex:1;padding:9px 12px;border:var(--line-thin);
+  font-family:var(--sans);font-size:14px;background:var(--white);color:var(--black);}
+.opt-row input[type="text"]:focus{outline:none;border-color:var(--black);background:var(--gray-50);}
+.opt-row .icon-btn{width:32px;height:32px;font-size:13px;}
+.correct-hint{font-family:var(--mono);font-size:11px;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:.04em;margin-top:8px;}
+.add-opt-btn{background:none;border:none;color:var(--gray-600);padding:6px 0;
+  font-size:13px;font-family:var(--mono);font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;cursor:pointer;}
+.add-opt-btn:hover{background:none;color:var(--black);text-decoration:underline;}
 
-  /* ============ ФОРМЫ ============ */
-  .field { margin-bottom: 16px; }
-  .field label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--gray-500);
-    margin-bottom: 6px;
-  }
-  .field input[type="text"],
-  .field input[type="number"],
-  .field input[type="password"],
-  .field textarea,
-  .field select {
-    width: 100%;
-    padding: 10px 12px;
-    border: var(--line);
-    border-radius: 0;
-    background: var(--white);
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--black);
-    transition: background .12s;
-  }
-  .field input:focus,
-  .field textarea:focus,
-  .field select:focus {
-    outline: none;
-    background: var(--gray-50);
-    border-color: var(--black);
-  }
-  .field textarea { resize: vertical; min-height: 70px; }
+.q-image-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.q-image{max-width:260px;max-height:160px;border:var(--line-thin);object-fit:contain;background:var(--gray-50);}
+.upload-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+  border:var(--line-thin);font-family:var(--mono);font-size:12px;text-transform:uppercase;
+  letter-spacing:.04em;cursor:pointer;color:var(--gray-600);}
+.upload-btn:hover{border-color:var(--black);color:var(--black);}
+.upload-btn input{display:none;}
 
-  /* ============ СТАРТ ТЕСТА ============ */
-  .resume-banner {
-    border: var(--line);
-    padding: 14px 16px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    background: var(--gray-50);
-  }
-  .resume-banner .info {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--gray-700);
-    text-transform: uppercase;
-    letter-spacing: .03em;
-  }
+.q-ai-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;
+  border-top:1px dashed var(--line-thin);}
+.q-ai-row button{font-size:12px;padding:5px 10px;font-family:var(--mono);}
 
-  .settings {
-    border: var(--line-thin);
-    padding: 16px 18px;
-    margin-bottom: 20px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .settings label {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 14px; cursor: pointer;
-    user-select: none;
-  }
-  .settings input[type="checkbox"] {
-    width: 18px; height: 18px;
-    accent-color: var(--black);
-    cursor: pointer;
-  }
-  .settings input[type="number"] {
-    width: 70px; padding: 6px 10px;
-    border: var(--line); border-radius: 0;
-    font-family: var(--mono); font-size: 13px;
-    text-align: center;
-  }
-  .settings input[type="number"]:focus { outline: none; background: var(--gray-50); }
+/* Quiz */
+.quiz-top{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:var(--line);flex-wrap:wrap;}
+.quiz-counter{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.03em;}
+.quiz-counter .big{font-size:24px;margin-right:6px;}
+.streak-badge{font-family:var(--mono);font-size:12px;padding:4px 10px;
+  border:var(--line);background:var(--white);text-transform:uppercase;letter-spacing:.04em;}
+.streak-badge.hot{background:var(--black);color:var(--white);}
+.timer{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;
+  padding:4px 10px;border:var(--line);background:var(--white);}
+.timer.warning{background:var(--black);color:var(--white);animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:.4;}}
 
-  .meta {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 20px;
-    padding: 12px 0;
-    border-top: var(--line-thin);
-    border-bottom: var(--line-thin);
-  }
+.progress-segments{display:flex;gap:4px;margin-bottom:28px;height:6px;}
+.progress-segments .seg{flex:1;background:var(--gray-200);transition:background .15s;}
+.progress-segments .seg.done{background:var(--black);}
+.progress-segments .seg.current{background:var(--gray-600);}
+.progress-segments .seg.uncertain{background:var(--gray-400);}
 
-  /* ============ РЕДАКТОР ============ */
-  .editor-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: var(--line);
-  }
-  .editor-header h1 { font-size: 22px; margin: 0; }
+.question{font-size:22px;font-weight:700;line-height:1.35;letter-spacing:-.015em;
+  margin-bottom:20px;padding-top:8px;}
+.question code,.option-text code,.explanation code{font-family:var(--mono);
+  font-size:.92em;padding:1px 5px;background:var(--gray-100);border:1px solid var(--gray-200);}
+.q-image-wrap{margin-bottom:16px;}
+.q-image-wrap img{max-width:100%;max-height:320px;border:var(--line);display:block;object-fit:contain;}
 
-  .q-card {
-    border: var(--line-thin);
-    padding: 16px;
-    margin-bottom: 14px;
-    background: var(--white);
-  }
-  .q-card:hover { border-color: var(--black); }
+.option{display:flex;align-items:center;gap:14px;padding:16px 18px;border:var(--line);
+  margin-bottom:10px;cursor:pointer;user-select:none;transition:background .12s,color .12s;
+  background:var(--white);border-radius:0;}
+.option:hover{background:var(--gray-50);}
+.option.selected{background:var(--black);color:var(--white);}
+.option-marker{font-family:var(--mono);font-size:12px;font-weight:700;width:26px;
+  flex-shrink:0;text-align:center;}
+.option-text{flex:1;font-size:15px;line-height:1.5;}
+.option-key{font-family:var(--mono);font-size:11px;padding:2px 6px;
+  border:1px solid var(--gray-300);color:var(--gray-500);margin-left:auto;flex-shrink:0;}
+.option.selected .option-key{border-color:var(--gray-600);color:var(--gray-400);}
 
-  .q-card-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 14px;
-  }
-  .q-num {
-    width: 28px; height: 28px;
-    background: var(--black); color: var(--white);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    flex-shrink: 0;
-  }
-  .q-card-header .title {
-    font-family: var(--mono);
-    font-size: 11px; font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--gray-500);
-  }
+.text-answer-input{width:100%;padding:16px 18px;border:var(--line);
+  background:var(--white);color:var(--black);font-family:var(--sans);font-size:15px;}
+.text-answer-input:focus{outline:none;background:var(--gray-50);}
 
-  .opt-row {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 8px;
-  }
-  .opt-row input[type="radio"] {
-    width: 18px; height: 18px;
-    accent-color: var(--black);
-    flex-shrink: 0; cursor: pointer;
-  }
-  .opt-row input[type="text"] {
-    flex: 1;
-    padding: 9px 12px;
-    border: var(--line-thin); border-radius: 0;
-    font-family: var(--sans); font-size: 14px;
-    background: var(--white);
-  }
-  .opt-row input[type="text"]:focus { outline: none; border-color: var(--black); background: var(--gray-50); }
-  .opt-row .icon-btn { width: 32px; height: 32px; font-size: 13px; }
+/* matching */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.match-item{padding:12px 14px;border:var(--line);background:var(--white);}
+.match-item.left{font-weight:600;}
+.match-item select{width:100%;padding:8px;border:var(--line-thin);
+  background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;}
 
-  .correct-hint {
-    font-family: var(--mono);
-    font-size: 11px; color: var(--gray-400);
-    text-transform: uppercase; letter-spacing: .04em;
-    margin-top: 8px;
-  }
+/* sort */
+.sort-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.sort-item{display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border:var(--line);background:var(--white);}
+.sort-item .handle{font-family:var(--mono);font-size:12px;color:var(--gray-400);
+  width:24px;flex-shrink:0;}
+.sort-item .sort-text{flex:1;}
+.sort-item .sort-btns{display:flex;gap:4px;}
+.sort-item .icon-btn{width:28px;height:28px;font-size:12px;}
 
-  .add-opt-btn {
-    background: none; border: none; color: var(--gray-600);
-    padding: 6px 0; font-size: 13px;
-    font-family: var(--mono); font-weight: 700;
-    text-transform: uppercase; letter-spacing: .05em;
-    cursor: pointer;
-  }
-  .add-opt-btn:hover { background: none; color: var(--black); text-decoration: underline; }
+.uncertain-row{display:flex;align-items:center;gap:8px;margin:16px 0;
+  padding:10px 14px;border:1px dashed var(--gray-300);}
+.uncertain-row input{width:16px;height:16px;accent-color:var(--black);cursor:pointer;}
+.uncertain-row label{font-family:var(--mono);font-size:12px;color:var(--gray-600);
+  text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;}
 
-  /* ============ ПРОХОЖДЕНИЕ ТЕСТА ============ */
-  .quiz-top {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: var(--line);
-  }
-  .quiz-counter {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: .03em;
-  }
-  .quiz-counter .big {
-    font-size: 24px;
-    margin-right: 6px;
-  }
-  .timer {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: .03em;
-    padding: 4px 10px;
-    border: var(--line);
-    background: var(--white);
-  }
-  .timer.warning {
-    background: var(--black); color: var(--white);
-    animation: blink 1s infinite;
-  }
-  @keyframes blink { 50% { opacity: .4; } }
+.nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:var(--line-thin);}
+.nav .btn-primary{flex:1;}
 
-  /* Сегментированный прогресс-бар */
-  .progress-segments {
-    display: flex; gap: 4px;
-    margin-bottom: 28px;
-    height: 6px;
-  }
-  .progress-segments .seg {
-    flex: 1;
-    background: var(--gray-200);
-    transition: background .15s;
-  }
-  .progress-segments .seg.done { background: var(--black); }
-  .progress-segments .seg.current { background: var(--gray-600); }
+/* Result */
+.result-hero{text-align:center;padding:32px 0 28px;border-bottom:var(--line);margin-bottom:28px;}
+.result-hero .label{font-family:var(--mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--gray-500);margin-bottom:8px;}
+.result-hero .score{font-size:88px;font-weight:900;letter-spacing:-.04em;
+  line-height:1;margin-bottom:12px;}
+.result-hero .msg{font-size:15px;color:var(--gray-600);margin-bottom:4px;}
+.result-hero .stats{font-family:var(--mono);font-size:12px;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:20px;}
+.result-hero .row{justify-content:center;}
 
-  .question {
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1.35;
-    letter-spacing: -.015em;
-    margin-bottom: 28px;
-    padding-top: 8px;
-  }
+.result-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
 
-  .option {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 18px;
-    border: var(--line);
-    margin-bottom: 10px;
-    cursor: pointer;
-    user-select: none;
-    transition: background .12s, color .12s;
-    background: var(--white);
-    border-radius: 0;
-  }
-  .option:hover { background: var(--gray-50); }
-  .option.selected { background: var(--black); color: var(--white); }
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;margin-bottom:24px;}
+.stat-card{border:var(--line);padding:14px 16px;}
+.stat-card .stat-label{font-family:var(--mono);font-size:10px;color:var(--gray-500);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.stat-card .stat-value{font-family:var(--mono);font-size:24px;font-weight:800;}
 
-  .option-marker {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    width: 26px;
-    flex-shrink: 0;
-    text-align: center;
-  }
-  .option-text { flex: 1; font-size: 15px; line-height: 1.4; }
-  .option-key {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 2px 6px;
-    border: 1px solid var(--gray-300);
-    color: var(--gray-500);
-    margin-left: auto;
-    flex-shrink: 0;
-  }
-  .option.selected .option-key {
-    border-color: var(--gray-600);
-    color: var(--gray-400);
-  }
+.chart-box{border:var(--line-thin);padding:16px;margin-bottom:24px;}
+.chart-box h3{font-family:var(--mono);font-size:11px;color:var(--gray-500);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;font-weight:700;}
+.chart-svg{width:100%;height:auto;display:block;}
 
-  .nav {
-    display: flex; gap: 10px;
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: var(--line-thin);
-  }
-  .nav .btn-primary { flex: 1; }
+.weak-section{border:var(--line);padding:16px;margin-bottom:24px;}
+.weak-section h3{font-family:var(--mono);font-size:12px;margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.06em;}
+.weak-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--gray-200);}
+.weak-item:last-child{border-bottom:none;}
+.weak-item .wi-text{flex:1;font-size:13px;}
+.weak-item .wi-count{font-family:var(--mono);font-size:12px;color:var(--gray-500);
+  padding:2px 8px;border:1px solid var(--gray-300);}
 
-  /* ============ РЕЗУЛЬТАТ ============ */
-  .result-hero {
-    text-align: center;
-    padding: 32px 0 28px;
-    border-bottom: var(--line);
-    margin-bottom: 28px;
-  }
-  .result-hero .label {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    color: var(--gray-500);
-    margin-bottom: 8px;
-  }
-  .result-hero .score {
-    font-size: 88px;
-    font-weight: 900;
-    letter-spacing: -.04em;
-    line-height: 1;
-    margin-bottom: 12px;
-  }
-  .result-hero .msg {
-    font-size: 15px;
-    color: var(--gray-600);
-    margin-bottom: 4px;
-  }
-  .result-hero .stats {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 20px;
-  }
-  .result-hero .row { justify-content: center; }
+.review-item{border:var(--line-thin);padding:16px;margin-bottom:12px;}
+.review-q{font-weight:700;font-size:15px;margin-bottom:12px;line-height:1.4;}
+.review-q .num{font-family:var(--mono);color:var(--gray-400);margin-right:6px;}
+.review-q .badge{font-family:var(--mono);font-size:10px;padding:2px 6px;
+  border:1px solid var(--gray-400);margin-left:8px;text-transform:uppercase;}
+.review-q .badge.uncertain{background:var(--black);color:var(--white);border-color:var(--black);}
+.review-opt{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;
+  font-size:14px;border:1px solid transparent;margin-bottom:4px;}
+.review-opt .mark{font-family:var(--mono);font-size:12px;font-weight:700;
+  width:16px;flex-shrink:0;color:var(--gray-400);}
+.review-opt.correct{border-color:var(--black);background:var(--gray-50);}
+.review-opt.correct .mark{color:var(--black);}
+.review-opt.wrong{border-color:var(--gray-400);color:var(--gray-600);
+  text-decoration:line-through;text-decoration-color:var(--gray-400);}
+.review-note{font-family:var(--mono);font-size:11px;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:.05em;margin-top:8px;padding-top:8px;
+  border-top:1px dashed var(--gray-200);}
+.explanation{margin-top:10px;padding:10px 14px;background:var(--gray-50);
+  border-left:3px solid var(--black);font-size:13px;line-height:1.5;color:var(--gray-600);}
+.explanation::before{content:"💡 ";}
 
-  .review-item {
-    border: var(--line-thin);
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-  .review-q {
-    font-weight: 700;
-    font-size: 15px;
-    margin-bottom: 12px;
-    line-height: 1.4;
-  }
-  .review-q .num {
-    font-family: var(--mono);
-    color: var(--gray-400);
-    margin-right: 6px;
-  }
-  .review-opt {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 1px solid transparent;
-    margin-bottom: 4px;
-  }
-  .review-opt .mark {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    width: 16px;
-    flex-shrink: 0;
-    color: var(--gray-400);
-  }
-  .review-opt.correct {
-    border-color: var(--black);
-    background: var(--gray-50);
-  }
-  .review-opt.correct .mark { color: var(--black); }
-  .review-opt.wrong {
-    border-color: var(--gray-400);
-    color: var(--gray-600);
-    text-decoration: line-through;
-    text-decoration-color: var(--gray-400);
-  }
-  .review-opt.chosen:not(.correct):not(.wrong) {
-    border-color: var(--gray-300);
-  }
-  .review-note {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed var(--gray-200);
-  }
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;
+  align-items:center;justify-content:center;padding:24px;z-index:200;}
+.modal-content{background:var(--white);color:var(--black);border:var(--line);
+  padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal-content h2{font-size:22px;font-family:var(--sans);font-weight:800;
+  text-transform:none;letter-spacing:-.01em;margin-bottom:6px;color:var(--black);}
+.modal-sub{font-size:13px;color:var(--gray-500);margin-bottom:22px;}
+.ai-note{font-family:var(--mono);font-size:11px;color:var(--gray-500);line-height:1.6;
+  padding:12px 14px;background:var(--gray-50);border-left:3px solid var(--black);
+  text-transform:uppercase;letter-spacing:.02em;margin:16px 0;}
+.ai-status{font-family:var(--mono);font-size:12px;padding:10px 14px;
+  margin-top:12px;border:1px solid var(--gray-300);text-transform:uppercase;
+  letter-spacing:.03em;display:none;}
+.ai-status.info{display:block;background:var(--gray-50);}
+.ai-status.ok{display:block;background:var(--black);color:var(--white);border-color:var(--black);}
+.ai-status.err{display:block;border-color:var(--black);border-left-width:3px;}
 
-  /* ============ МОДАЛКА AI ============ */
-  .modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, .85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    z-index: 200;
-  }
-  .modal-content {
-    background: var(--white);
-    border: var(--line);
-    padding: 28px;
-    width: 100%;
-    max-width: 520px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal-content h2 {
-    font-size: 22px;
-    font-family: var(--sans);
-    font-weight: 800;
-    text-transform: none;
-    letter-spacing: -.01em;
-    margin-bottom: 6px;
-    color: var(--black);
-  }
-  .modal-sub {
-    font-size: 13px;
-    color: var(--gray-500);
-    margin-bottom: 22px;
-  }
-  .modal-section-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    color: var(--gray-500);
-    font-weight: 700;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--gray-200);
-    margin-bottom: 14px;
-    margin-top: 20px;
-  }
-  .modal-section-label:first-of-type { margin-top: 0; }
+.skeleton{padding:20px 0;}
+.skeleton-bar{height:12px;background:linear-gradient(90deg,var(--gray-100) 0%,
+  var(--gray-200) 50%,var(--gray-100) 100%);background-size:200% 100%;
+  animation:sk 1.2s linear infinite;margin-bottom:10px;}
+.skeleton-bar:nth-child(1){width:80%;}
+.skeleton-bar:nth-child(2){width:60%;}
+.skeleton-bar:nth-child(3){width:70%;}
+@keyframes sk{from{background-position:200% 0;}to{background-position:-200% 0;}}
 
-  .ai-note {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray-500);
-    line-height: 1.6;
-    padding: 12px 14px;
-    background: var(--gray-50);
-    border-left: 3px solid var(--black);
-    text-transform: uppercase;
-    letter-spacing: .02em;
-    margin: 16px 0;
-  }
+.set-group{margin-bottom:22px;}
+.set-group h3{font-family:var(--mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--gray-500);margin-bottom:10px;font-weight:700;}
+.set-row{display:flex;gap:6px;flex-wrap:wrap;}
+.set-btn{padding:8px 14px;border:var(--line-thin);background:var(--white);
+  color:var(--black);font-size:13px;font-family:var(--sans);cursor:pointer;}
+.set-btn:hover{border-color:var(--black);}
+.set-btn.active{background:var(--black);color:var(--white);border-color:var(--black);}
 
-  .ai-status {
-    font-family: var(--mono);
-    font-size: 12px;
-    padding: 10px 14px;
-    margin-top: 12px;
-    border: 1px solid var(--gray-300);
-    text-transform: uppercase;
-    letter-spacing: .03em;
-    display: none;
-  }
-  .ai-status.info { display: block; background: var(--gray-50); }
-  .ai-status.ok { display: block; background: var(--black); color: var(--white); border-color: var(--black); }
-  .ai-status.err { display: block; border-color: var(--black); border-left-width: 3px; }
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+  background:var(--black);color:var(--white);padding:12px 20px;font-family:var(--mono);
+  font-size:12px;text-transform:uppercase;letter-spacing:.04em;z-index:300;
+  transition:transform .25s ease;max-width:calc(100% - 40px);text-align:center;
+  border:2px solid var(--white);outline:2px solid var(--black);}
+.toast.show{transform:translateX(-50%) translateY(0);}
 
-  /* ============ TOAST ============ */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    background: var(--black);
-    color: var(--white);
-    padding: 12px 20px;
-    font-family: var(--mono);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    z-index: 300;
-    transition: transform .25s ease;
-    max-width: calc(100% - 40px);
-    text-align: center;
-    border: 2px solid var(--white);
-    outline: 2px solid var(--black);
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+@media(max-width:640px){
+  .app{padding:20px 16px 60px;}
+  h1{font-size:22px;}
+  .question{font-size:18px;}
+  .result-hero .score{font-size:64px;}
+  .header{flex-direction:column;align-items:flex-start;gap:8px;}
+  .library-toolbar{flex-direction:column;align-items:stretch;}
+  .ti-index{display:none;}
+  .ti-actions{width:100%;justify-content:flex-start;margin-top:8px;}
+  .quiz-counter .big{font-size:18px;}
+  .modal{padding:12px;}
+  .modal-content{padding:20px;}
+  .test-item{flex-wrap:wrap;}
+  .match-grid{grid-template-columns:1fr;}
+}
 
-  /* ============ МОБИЛЬНЫЙ ============ */
-  @media (max-width: 640px) {
-    .app { padding: 20px 16px 60px; }
-    h1 { font-size: 22px; }
-    .question { font-size: 18px; }
-    .result-hero .score { font-size: 64px; }
-    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .library-toolbar { flex-direction: column; align-items: stretch; }
-    .library-toolbar > div:first-child { width: 100%; }
-    .ti-index { display: none; }
-    .quiz-counter .big { font-size: 18px; }
-    .modal { padding: 12px; }
-    .modal-content { padding: 20px; }
-  }
+@media print{
+  body{background:white!important;color:black!important;}
+  .app{max-width:100%!important;padding:0!important;}
+  .header,.library-toolbar,.search-bar,.tag-filter-row,.library-footer,
+  .nav,button,.toast,.modal,.progress-segments,.quiz-top,.quiz-counter,.timer,
+  .resume-banner,.settings-box,.result-actions,.chart-box{display:none!important;}
+  .test-item{border-bottom:1px solid #ccc;}
+  .ti-actions{display:none;}
+  .option{border:1px solid #999!important;background:white!important;color:black!important;}
+  .option.selected{background:#f0f0f0!important;color:black!important;}
+  .option-marker,.option-text{color:black!important;}
+  .review-item{page-break-inside:avoid;border:1px solid #ccc;}
+  .review-opt.correct{background:#f0f0f0!important;}
+  .review-opt.wrong{color:#000!important;text-decoration:line-through;}
+  .explanation{border-left:2px solid black;}
+  .question,.review-q{page-break-after:avoid;}
+}
 </style>
 </head>
 <body>
 
 <div class="app">
-
-  <!-- ВЕРХНЯЯ ШАПКА -->
   <header class="header">
     <div class="brand">
       <span class="brand-mark">Q</span>
-      <span>QUIZ / TEST STUDIO</span>
+      <span>QUIZ / TEST STUDIO PRO</span>
     </div>
-    <div class="header-meta" id="headerMeta">MV / v2.0</div>
+    <div class="header-actions">
+      <div class="header-meta" id="headerMeta">v3.0</div>
+      <button class="icon-btn" title="Настройки" onclick="openSettings()">⚙</button>
+    </div>
   </header>
 
-  <!-- ========== БИБЛИОТЕКА ========== -->
+  <!-- БИБЛИОТЕКА -->
   <div id="libraryScreen">
     <div class="library-toolbar">
       <div>
@@ -694,23 +387,29 @@
         <p class="subtitle" style="margin-bottom:0">Создавайте, редактируйте и проходите тесты.</p>
       </div>
       <button class="btn-primary" onclick="openEditor(null)">＋ Создать</button>
-      <button class="btn-ghost" onclick="openAiModal('test')">🤖 AI Создать</button>
+      <button class="btn-ai" onclick="openAiModal('test')">🤖 AI Создать</button>
     </div>
+    <input type="text" class="search-bar" id="searchInput"
+      placeholder="Поиск по названию, описанию, тегам…  (нажмите /)" oninput="onSearch(this.value)">
+    <div class="tag-filter-row" id="tagFilterRow"></div>
     <div class="test-list" id="testList"></div>
     <div class="library-footer">
       <button class="btn-ghost btn-small" onclick="document.getElementById('fileInput').click()">ИМПОРТ JSON</button>
-      <button class="btn-ghost btn-small" onclick="exportAll()">ЭКСПОРТ JSON</button>
+      <button class="btn-ghost btn-small" onclick="importCsvDialog()">ИМПОРТ CSV</button>
+      <button class="btn-ghost btn-small" onclick="exportAll()">ЭКСПОРТ ВСЕХ</button>
     </div>
     <input type="file" id="fileInput" accept="application/json,.json" class="hidden" onchange="importJSON(event)">
+    <input type="file" id="csvInput" accept=".csv,.txt" class="hidden" onchange="importCsv(event)">
   </div>
 
-  <!-- ========== СТАРТ ========== -->
+  <!-- СТАРТ -->
   <div id="startScreen" class="hidden">
     <div class="editor-header">
-      <button class="icon-btn" onclick="show('libraryScreen')">←</button>
+      <button class="icon-btn" onclick="backToLibrary()">←</button>
       <h1 id="startTitle"></h1>
     </div>
     <p class="subtitle" id="startDesc"></p>
+    <div class="ti-tags" id="startTags" style="margin-bottom:16px;"></div>
     <div id="resumeBanner" class="resume-banner hidden">
       <div class="info" id="resumeInfo"></div>
       <div class="row" style="gap:6px">
@@ -718,18 +417,22 @@
         <button class="btn-primary btn-small" onclick="resumeTest()">ПРОДОЛЖИТЬ</button>
       </div>
     </div>
-    <div class="settings">
+    <div class="settings-box">
       <label><input type="checkbox" id="optShuffleQ" checked> Перемешать вопросы</label>
       <label><input type="checkbox" id="optShuffleA" checked> Перемешать варианты</label>
+      <label><input type="checkbox" id="optSample" onchange="toggleSample()"> Случайная выборка N из M</label>
+      <label id="sampleRow" class="hidden" style="padding-left:26px;">
+        Взять вопросов: <input type="number" id="optSampleN" value="5" min="1" max="200" style="width:70px;">
+      </label>
       <label>Лимит времени, мин (0 = без лимита):
         <input type="number" id="optTime" value="0" min="0" max="300">
       </label>
     </div>
     <div class="meta" id="startMeta"></div>
-    <button class="btn-primary" style="width:100%; padding:14px" onclick="startTest()">НАЧАТЬ ТЕСТ →</button>
+    <button class="btn-primary" style="width:100%;padding:14px" onclick="startTest()">НАЧАТЬ ТЕСТ →</button>
   </div>
 
-  <!-- ========== РЕДАКТОР ========== -->
+  <!-- РЕДАКТОР -->
   <div id="editorScreen" class="hidden">
     <div class="editor-header">
       <button class="icon-btn" onclick="closeEditor()">←</button>
@@ -745,79 +448,105 @@
       <textarea id="edDesc" placeholder="Краткое описание (необязательно)"></textarea>
     </div>
     <div class="field">
+      <label>Теги (через запятую)</label>
+      <input type="text" id="edTags" placeholder="python, основы, для новичков">
+    </div>
+    <div class="field">
       <label>Лимит времени, мин (0 = без лимита)</label>
       <input type="number" id="edTime" min="0" max="300" value="0">
     </div>
 
-    <div style="display:flex; align-items:center; gap:10px; margin-top:24px; padding-top:20px; border-top: var(--line-thin); flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:10px;margin-top:24px;
+      padding-top:20px;border-top:var(--line-thin);flex-wrap:wrap;">
       <h2 style="margin:0">Вопросы <span id="qCount" style="color:var(--gray-400)"></span></h2>
       <div class="spacer"></div>
-      <button class="btn-ghost btn-small" onclick="openAiModal('questions')">🤖 AI ВОПРОСЫ</button>
+      <button class="btn-ai btn-small" onclick="openAiModal('questions')">🤖 AI ВОПРОСЫ</button>
+      <button class="btn-ghost btn-small" onclick="aiTranslateTest()">🌐 AI ПЕРЕВОД</button>
     </div>
     <div id="edQuestions" style="margin-top:16px;"></div>
-    <button class="btn-ghost" style="width:100%; margin-bottom:20px; padding:14px" onclick="addQuestion()">＋ ДОБАВИТЬ ВОПРОС</button>
+    <button class="btn-ghost" style="width:100%;margin-bottom:20px;padding:14px"
+      onclick="addQuestion()">＋ ДОБАВИТЬ ВОПРОС</button>
 
-    <div style="display:flex; gap:8px; padding-top:20px; border-top: var(--line);">
+    <div style="display:flex;gap:8px;padding-top:20px;border-top:var(--line);flex-wrap:wrap;">
       <button class="btn-ghost" onclick="closeEditor()">ОТМЕНА</button>
       <div class="spacer"></div>
       <button class="btn-primary" onclick="saveTest()">💾 СОХРАНИТЬ ТЕСТ</button>
     </div>
   </div>
 
-  <!-- ========== ТЕСТ ========== -->
+  <!-- ТЕСТ -->
   <div id="quizScreen" class="hidden">
     <div class="quiz-top">
       <div class="quiz-counter">
         <span class="big" id="counterBig">01</span>
         <span id="counterSmall" style="color:var(--gray-400)">/ 10</span>
       </div>
-      <div class="timer" id="timer"></div>
+      <div class="row" style="gap:8px;">
+        <div class="streak-badge" id="streakBadge">🔥 0</div>
+        <div class="timer" id="timer"></div>
+      </div>
     </div>
     <div class="progress-segments" id="progressSegments"></div>
+    <div class="q-image-wrap" id="questionImage" style="display:none;"></div>
     <div class="question" id="questionText"></div>
     <div id="options"></div>
+    <div class="uncertain-row">
+      <input type="checkbox" id="uncertainCheck" onchange="toggleUncertain(this.checked)">
+      <label for="uncertainCheck">Не уверен в ответе — отметить как «спорный»</label>
+    </div>
     <div class="nav">
       <button class="btn-ghost" id="prevBtn" onclick="prevQuestion()">← НАЗАД</button>
       <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">ДАЛЕЕ →</button>
     </div>
   </div>
 
-  <!-- ========== РЕЗУЛЬТАТ ========== -->
+  <!-- РЕЗУЛЬТАТ -->
   <div id="resultScreen" class="hidden">
     <div class="result-hero">
       <div class="label">Результат</div>
       <div class="score" id="scoreText">—</div>
       <p class="msg" id="scoreMsg"></p>
       <p class="stats" id="scoreStats"></p>
-      <div class="row">
-        <button class="btn-ghost" onclick="show('libraryScreen')">К ТЕСТАМ</button>
-        <button class="btn-primary" onclick="restart()">ЕЩЁ РАЗ</button>
-      </div>
     </div>
+    <div class="result-actions">
+      <button class="btn-ghost btn-small" onclick="copyResult()">📋 КОПИРОВАТЬ</button>
+      <button class="btn-ghost btn-small" onclick="exportResultCsv()">📊 CSV</button>
+      <button class="btn-ghost btn-small" onclick="printResult()">🖨 PDF</button>
+      <button class="btn-ghost btn-small" onclick="aiAnalyzeErrors()">🤖 AI АНАЛИЗ</button>
+      <button class="btn-ghost btn-small" onclick="backToLibrary()">К ТЕСТАМ</button>
+      <button class="btn-primary btn-small" onclick="restart()">ЕЩЁ РАЗ</button>
+    </div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="chart-box hidden" id="chartBox">
+      <h3>📈 Прогресс по попыткам</h3>
+      <div id="chartSvg"></div>
+    </div>
+    <div class="weak-section hidden" id="weakSection">
+      <h3>⚠ Слабые вопросы (чаще всего проваливаете)</h3>
+      <div id="weakList"></div>
+    </div>
+
     <h2>Разбор ответов</h2>
     <div id="reviewList"></div>
   </div>
 </div>
 
-<!-- ========== МОДАЛ AI ========== -->
+<!-- МОДАЛ AI -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2 id="aiModalTitle">🤖 Создать тест с AI</h2>
-    <p class="modal-sub" id="aiModalSub">AI сгенерирует вопросы с вариантами ответов по вашей теме.</p>
-
-    <div class="modal-section-label">Параметры генерации</div>
-
+    <p class="modal-sub" id="aiModalSub"></p>
     <div class="field">
       <label>Тема *</label>
-      <input type="text" id="aiTopic" placeholder="Например: История России, Python, CSS-флексбоксы">
+      <input type="text" id="aiTopic" placeholder="Например: История России, Python, CSS">
     </div>
-
-    <div class="row" style="gap:10px; align-items:flex-start">
-      <div class="field" style="flex:1; min-width:110px; margin:0">
+    <div class="row" style="gap:10px;align-items:flex-start">
+      <div class="field" style="flex:1;min-width:110px;margin:0">
         <label>Вопросов</label>
         <input type="number" id="aiCount" value="5" min="1" max="20">
       </div>
-      <div class="field" style="flex:2; min-width:140px; margin:0">
+      <div class="field" style="flex:2;min-width:140px;margin:0">
         <label>Сложность</label>
         <select id="aiDiff">
           <option value="easy">Лёгкая</option>
@@ -827,17 +556,55 @@
         </select>
       </div>
     </div>
-
-    <div class="ai-note">
-      ⚡ POLLINATIONS AI — БЕСПЛАТНО, БЕЗ КЛЮЧА.<br>
-      ОЖИДАНИЕ: 10–40 СЕКУНД. ПОВТОРНЫЕ ЗАПРОСЫ МОГУТ БЛОКИРОВАТЬСЯ (429).
+    <div class="ai-note">⚡ POLLINATIONS AI — БЕСПЛАТНО. ОЖИДАНИЕ: 10–40 СЕКУНД.</div>
+    <div id="aiSkeleton" class="skeleton hidden">
+      <div class="skeleton-bar"></div><div class="skeleton-bar"></div><div class="skeleton-bar"></div>
     </div>
-
     <div class="ai-status" id="aiStatus"></div>
-
-    <div class="row" style="gap:8px; justify-content:flex-end; margin-top:20px">
+    <div class="row" style="gap:8px;justify-content:flex-end;margin-top:20px">
       <button class="btn-ghost" onclick="closeAiModal()">ОТМЕНА</button>
       <button class="btn-primary" id="aiGenBtn" onclick="generateWithAi()">✨ СГЕНЕРИРОВАТЬ</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛ НАСТРОЕК -->
+<div id="settingsModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>⚙ Настройки</h2>
+    <p class="modal-sub">Внешний вид и AI-прокси.</p>
+    <div class="set-group">
+      <h3>Тема</h3>
+      <div class="set-row" id="setTheme">
+        <button class="set-btn" data-v="light">☀ Светлая</button>
+        <button class="set-btn" data-v="dark">🌙 Тёмная</button>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>Размер шрифта</h3>
+      <div class="set-row" id="setFont">
+        <button class="set-btn" data-v="normal">Обычный</button>
+        <button class="set-btn" data-v="large">Крупный</button>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>Плотность</h3>
+      <div class="set-row" id="setDensity">
+        <button class="set-btn" data-v="compact">Компактно</button>
+        <button class="set-btn" data-v="normal">Обычно</button>
+        <button class="set-btn" data-v="spacious">Просторно</button>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>AI Прокси (опционально)</h3>
+      <p style="font-size:12px;color:var(--gray-500);margin-bottom:8px;line-height:1.5;">
+        Если указан — используется вместо прямого Pollinations. Формат: URL вашего Cloudflare Worker с поддержкой OpenAI-совместимого POST.
+      </p>
+      <input type="url" id="setProxy" placeholder="https://your-worker.workers.dev/chat" style="width:100%;padding:9px 12px;border:var(--line);background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;margin-bottom:6px;">
+      <button class="btn-ghost btn-small" onclick="saveProxy()">СОХРАНИТЬ URL</button>
+    </div>
+    <div class="row" style="justify-content:flex-end;gap:8px;margin-top:20px">
+      <button class="btn-primary" onclick="closeSettings()">ГОТОВО</button>
     </div>
   </div>
 </div>
@@ -846,68 +613,125 @@
 
 <script>
 /* ==========================================================
-   ХРАНИЛИЩЕ
+   БАЗА
    ========================================================== */
-const TESTS_KEY = "quiz_tests_v2";
-const STATE_KEY = "quiz_state_v2";
+const TESTS_KEY = "quiz_tests_v3";
+const STATE_KEY = "quiz_state_v3";
+const SETTINGS_KEY = "quiz_settings_v3";
+const DRAFT_KEY = "quiz_editor_draft_v3";
+const ATTEMPTS_KEY = "quiz_attempts_v3";
+const PROXY_KEY = "quiz_proxy_url";
 
 const $ = id => document.getElementById(id);
 const deepCopy = x => JSON.parse(JSON.stringify(x));
+const pad = n => String(n).padStart(2, "0");
 
-function shuffle(arr){
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g,
-    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function formatTime(sec){
-  sec = Math.max(0, Math.ceil(sec));
-  const m = Math.floor(sec / 60), s = sec % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function formatTime(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=sec%60;return `${m}:${s.toString().padStart(2,"0")}`;}
+function uid(){return "t"+Date.now()+Math.random().toString(36).slice(2,6);}
 function showToast(msg){
-  const t = $("toast");
-  t.textContent = msg; t.classList.add("show");
-  clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.classList.remove("show"), 2500);
+  const t=$("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove("show"),2500);
 }
-function uid(){ return "t" + Date.now() + Math.random().toString(36).slice(2, 6); }
-function pad(n){ return String(n).padStart(2, "0"); }
+function md(text){
+  if (!text) return "";
+  let s = escapeHtml(text);
+  s = s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s = s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  s = s.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+  s = s.replace(/\n/g,'<br>');
+  return s;
+}
+function renderMath(el){
+  if (typeof renderMathInElement !== "function" || !el) return;
+  try { renderMathInElement(el, {
+    delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},
+      {left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}],
+    throwOnError:false
+  }); } catch(e){}
+}
 
 /* ==========================================================
-   ДЕМО-ТЕСТ
+   НАСТРОЙКИ
    ========================================================== */
-function defaultTests(){
-  return [{
-    id: uid(),
-    title: "Основы веб-разработки",
-    description: "Проверьте знания HTML, CSS и JavaScript.",
-    timeLimit: 300,
-    questions: [
-      { question: "Что такое HTML?",
-        options: ["Язык программирования", "Язык разметки гипертекста",
-                  "База данных", "Операционная система"], correct: 1 },
-      { question: "Какая компания разработала JavaScript?",
-        options: ["Microsoft", "Google", "Netscape", "Apple"], correct: 2 },
-      { question: "Что из перечисленного НЕ является языком программирования?",
-        options: ["Python", "Java", "HTML", "C++"], correct: 2 },
-      { question: "Какой тег создаёт самый крупный заголовок?",
-        options: ["<h6>", "<h1>", "<title>", "<head>"], correct: 1 },
-      { question: "Что означает CSS?",
-        options: ["Computer Style Sheets", "Cascading Style Sheets",
-                  "Creative Style System", "Colorful Style Sheets"], correct: 1 }
-    ]
-  }];
+let settings = { theme:"light", fontSize:"normal", density:"normal" };
+let proxyUrl = "";
+
+function loadSettings(){
+  try { const raw=localStorage.getItem(SETTINGS_KEY); if(raw) settings={...settings,...JSON.parse(raw)}; } catch(e){}
+  try { proxyUrl = localStorage.getItem(PROXY_KEY) || ""; } catch(e){}
+  applySettings();
+}
+function saveSettings(){
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch(e){}
+  applySettings();
+}
+function applySettings(){
+  document.body.classList.toggle("dark", settings.theme==="dark");
+  document.body.classList.toggle("font-large", settings.fontSize==="large");
+  document.body.classList.toggle("density-compact", settings.density==="compact");
+  document.body.classList.toggle("density-spacious", settings.density==="spacious");
+}
+function openSettings(){
+  renderSettingsButtons();
+  $("setProxy").value = proxyUrl;
+  $("settingsModal").classList.remove("hidden");
+}
+function closeSettings(){ $("settingsModal").classList.add("hidden"); }
+function saveProxy(){
+  proxyUrl = $("setProxy").value.trim();
+  try { localStorage.setItem(PROXY_KEY, proxyUrl); } catch(e){}
+  showToast(proxyUrl ? "✓ ПРОКСИ СОХРАНЁН" : "ПРОКСИ ОЧИЩЕН");
+}
+function renderSettingsButtons(){
+  document.querySelectorAll("#setTheme .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.theme));
+  document.querySelectorAll("#setFont .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.fontSize));
+  document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.classList.toggle("active", b.dataset.v===settings.density));
+}
+document.querySelectorAll("#setTheme .set-btn").forEach(b=>b.onclick=()=>{settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll("#setFont .set-btn").forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.onclick=()=>{settings.density=b.dataset.v;saveSettings();renderSettingsButtons();});
+
+/* ==========================================================
+   МОДЕЛЬ ВОПРОСА
+   ========================================================== */
+function blankQuestion(){
+  return { type:"single", question:"",
+    options:[{text:"",correct:true},{text:"",correct:false}],
+    explanation:"", image:null };
+}
+function blankMatching(){
+  return { type:"matching", question:"",
+    pairs:[{left:"",right:""},{left:"",right:""}],
+    explanation:"", image:null };
+}
+function blankSort(){
+  return { type:"sort", question:"",
+    items:["","",""],
+    explanation:"", image:null };
+}
+function normalizeQ(q){
+  if (!q.type) q.type = "single";
+  if (q.type === "single" || q.type === "multi"){
+    if (Array.isArray(q.options) && q.options.length && typeof q.options[0] === "string"){
+      const idx = typeof q.correct === "number" ? q.correct : 0;
+      q.options = q.options.map((text,i)=>({text,correct:i===idx}));
+      delete q.correct;
+    }
+    if (!Array.isArray(q.options)) q.options = [];
+  } else if (q.type === "text"){
+    if (typeof q.answer !== "string") q.answer = "";
+  } else if (q.type === "matching"){
+    if (!Array.isArray(q.pairs)) q.pairs = [{left:"",right:""},{left:"",right:""}];
+  } else if (q.type === "sort"){
+    if (!Array.isArray(q.items)) q.items = ["","",""];
+  }
+  return q;
 }
 
 /* ==========================================================
-   ГЛОБАЛЬНОЕ СОСТОЯНИЕ
+   ТЕСТЫ
    ========================================================== */
 let tests = [];
 let TEST = null;
@@ -917,37 +741,80 @@ let timerId = null;
 let pendingSaved = null;
 let aiMode = "test";
 let aiResult = null;
+let searchQuery = "";
+let activeTag = "";
+let attempts = [];  // {testId, ts, percent, correctCount, total, answers}
 
-/* ==========================================================
-   ЗАГРУЗКА / СОХРАНЕНИЕ
-   ========================================================== */
+function defaultTests(){
+  return [{
+    id: uid(),
+    title: "Основы веб-разработки",
+    description: "Проверьте знания HTML, CSS и JavaScript.",
+    tags: ["html","css","js","основы"],
+    timeLimit: 300,
+    questions: [
+      { type:"single", question:"Что такое HTML?",
+        options:[{text:"Язык программирования",correct:false},
+          {text:"Язык разметки гипертекста",correct:true},
+          {text:"База данных",correct:false},
+          {text:"Операционная система",correct:false}],
+        explanation:"HTML — язык **разметки**, а не программирования." },
+      { type:"single", question:"Какая компания разработала JavaScript?",
+        options:[{text:"Microsoft",correct:false},{text:"Google",correct:false},
+          {text:"Netscape",correct:true},{text:"Apple",correct:false}],
+        explanation:"JavaScript создан в **Netscape** в 1995 году." },
+      { type:"multi", question:"Какие из перечисленных — языки программирования?",
+        options:[{text:"Python",correct:true},{text:"Java",correct:true},
+          {text:"HTML",correct:false},{text:"C++",correct:true}],
+        explanation:"HTML — разметка, остальные — программирования." },
+      { type:"single", question:"Что означает CSS?",
+        options:[{text:"Computer Style Sheets",correct:false},
+          {text:"Cascading Style Sheets",correct:true},
+          {text:"Creative Style System",correct:false},
+          {text:"Colorful Style Sheets",correct:false}],
+        explanation:"Cascading Style Sheets." }
+    ]
+  }];
+}
+
 async function loadTests(){
   try {
     const raw = localStorage.getItem(TESTS_KEY);
     if (raw){
       const arr = JSON.parse(raw);
-      if (Array.isArray(arr) && arr.length){ tests = arr; return; }
-    }
-  } catch(e){}
-
-  try {
-    const res = await fetch("default-tests.json", { cache: "no-store" });
-    if (res.ok){
-      const arr = await res.json();
       if (Array.isArray(arr) && arr.length){
-        tests = arr.map(t => ({ ...t, id: uid() }));
-        saveTests();
+        tests = arr.map(t=>{ if(!Array.isArray(t.tags))t.tags=[]; t.questions=t.questions.map(normalizeQ); return t; });
         return;
       }
     }
   } catch(e){}
-
+  try {
+    const res = await fetch("default-tests.json", {cache:"no-store"});
+    if (res.ok){
+      const arr = await res.json();
+      if (Array.isArray(arr) && arr.length){
+        tests = arr.map(t=>{ const c={...t,id:uid()}; c.questions=c.questions.map(normalizeQ); return c; });
+        saveTests(); return;
+      }
+    }
+  } catch(e){}
   tests = defaultTests();
   saveTests();
 }
 function saveTests(){
   try { localStorage.setItem(TESTS_KEY, JSON.stringify(tests)); }
-  catch(e){ showToast("⚠ НЕ УДАЛОСЬ СОХРАНИТЬ"); }
+  catch(e){ showToast("⚠ ХРАНИЛИЩЕ ПЕРЕПОЛНЕНО"); }
+}
+
+function loadAttempts(){
+  try {
+    const raw = localStorage.getItem(ATTEMPTS_KEY);
+    attempts = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(attempts)) attempts = [];
+  } catch(e){ attempts = []; }
+}
+function saveAttempts(){
+  try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts)); } catch(e){}
 }
 
 /* ==========================================================
@@ -955,147 +822,258 @@ function saveTests(){
    ========================================================== */
 function show(id){
   ["libraryScreen","startScreen","editorScreen","quizScreen","resultScreen"]
-    .forEach(s => $(s).classList.toggle("hidden", s !== id));
-  window.scrollTo({ top: 0 });
-  const names = {
-    libraryScreen: "LIBRARY",
-    startScreen: "TEST / START",
-    editorScreen: "TEST / EDIT",
-    quizScreen: "TEST / IN PROGRESS",
-    resultScreen: "TEST / RESULT"
-  };
-  $("headerMeta").textContent = "MV / v2.0 · " + (names[id] || "");
+    .forEach(s=>$(s).classList.toggle("hidden",s!==id));
+  window.scrollTo({top:0});
+  const names={libraryScreen:"LIBRARY",startScreen:"TEST / START",
+    editorScreen:"TEST / EDIT",quizScreen:"TEST / IN PROGRESS",resultScreen:"TEST / RESULT"};
+  $("headerMeta").textContent = "v3.0 · " + (names[id]||"");
 }
 
 /* ==========================================================
    БИБЛИОТЕКА
    ========================================================== */
+function filterTests(){
+  return tests.filter(t=>{
+    if (searchQuery){
+      const q=searchQuery.toLowerCase();
+      const inT=(t.title||"").toLowerCase().includes(q);
+      const inD=(t.description||"").toLowerCase().includes(q);
+      const inG=(t.tags||[]).some(tag=>tag.toLowerCase().includes(q));
+      if(!inT&&!inD&&!inG) return false;
+    }
+    if (activeTag && !(t.tags||[]).includes(activeTag)) return false;
+    return true;
+  });
+}
+function renderTagFilter(){
+  const all=new Set();
+  tests.forEach(t=>(t.tags||[]).forEach(tag=>all.add(tag)));
+  const row=$("tagFilterRow");
+  if (!all.size){row.innerHTML="";return;}
+  row.innerHTML=[...all].sort().map(tag=>`<span class="tag-chip ${tag===activeTag?"active":""}" onclick="toggleTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join("");
+}
+function toggleTag(tag){ activeTag=activeTag===tag?"":tag; renderLibrary(); }
 function renderLibrary(){
-  const box = $("testList");
-  if (!tests.length){
-    box.innerHTML = `<div class="empty-state">Тестов пока нет · создайте первый</div>`;
+  renderTagFilter();
+  const box=$("testList");
+  const filtered=filterTests();
+  if (!filtered.length){
+    box.innerHTML = !tests.length
+      ? `<div class="empty-state">Тестов пока нет
+          <span class="hint">Нажмите <kbd>N</kbd> — новый · <kbd>A</kbd> — AI · <kbd>?</kbd> — помощь</span>
+        </div>`
+      : `<div class="empty-state">Ничего не найдено
+          <span class="hint">Попробуйте другой запрос или сбросьте фильтр</span>
+        </div>`;
     return;
   }
-  box.innerHTML = tests.map((t, idx) => `
+  box.innerHTML=filtered.map((t,idx)=>`
     <div class="test-item">
-      <div class="ti-index">${pad(idx + 1)}</div>
+      <div class="ti-index">${pad(idx+1)}</div>
       <div class="ti-body">
-        <div class="ti-title">${escapeHtml(t.title || "Без названия")}</div>
-        <div class="ti-meta">
-          ${t.questions.length} вопр.${t.timeLimit ? ` · ${Math.round(t.timeLimit/60)} мин` : " · без лимита"}
-        </div>
+        <div class="ti-title">${escapeHtml(t.title||"Без названия")}</div>
+        <div class="ti-meta">${t.questions.length} вопр.${t.timeLimit?` · ${Math.round(t.timeLimit/60)} мин`:" · без лимита"}</div>
+        ${(t.tags&&t.tags.length)?`<div class="ti-tags">${t.tags.map(tag=>`<span class="tag-chip" onclick="event.stopPropagation();toggleTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join("")}</div>`:""}
       </div>
       <div class="ti-actions">
-        <button class="icon-btn" title="Пройти" onclick="openStart('${t.id}')" ${t.questions.length ? "" : "disabled"}>▶</button>
+        <button class="icon-btn" title="Пройти" onclick="openStart('${t.id}')" ${t.questions.length?"":"disabled"}>▶</button>
         <button class="icon-btn" title="Редактировать" onclick="openEditor('${t.id}')">✎</button>
+        <button class="icon-btn" title="Копия" onclick="copyTest('${t.id}')">⎘</button>
+        <button class="icon-btn" title="Поделиться" onclick="shareTest('${t.id}')">🔗</button>
+        <button class="icon-btn" title="Экспорт JSON" onclick="exportTest('${t.id}')">↓</button>
+        <button class="icon-btn" title="Печать" onclick="printTest('${t.id}')">🖨</button>
         <button class="icon-btn danger" title="Удалить" onclick="deleteTest('${t.id}')">✕</button>
       </div>
     </div>
   `).join("");
 }
-
+function onSearch(v){ searchQuery=v.trim(); renderLibrary(); }
 function deleteTest(id){
-  const t = tests.find(x => x.id === id);
-  if (!t) return;
-  if (!confirm(`Удалить тест «${t.title || "Без названия"}»?`)) return;
-  tests = tests.filter(x => x.id !== id);
-  saveTests();
-  renderLibrary();
-  showToast("ТЕСТ УДАЛЁН");
+  const t=tests.find(x=>x.id===id); if(!t) return;
+  if(!confirm(`Удалить тест «${t.title||"Без названия"}»?`)) return;
+  tests=tests.filter(x=>x.id!==id);
+  attempts=attempts.filter(a=>a.testId!==id); saveAttempts();
+  saveTests(); renderLibrary(); showToast("ТЕСТ УДАЛЁН");
+}
+function copyTest(id){
+  const t=tests.find(x=>x.id===id); if(!t) return;
+  const copy=deepCopy(t);
+  copy.id=uid(); copy.title=(copy.title||"Без названия")+" (копия)";
+  tests.push(copy); saveTests(); renderLibrary();
+  showToast("✓ ТЕСТ СКОПИРОВАН");
+}
+function exportTest(id){
+  const t=tests.find(x=>x.id===id); if(!t) return;
+  const data=JSON.stringify([t],null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=(t.title||"test").replace(/[^\wа-яё]+/gi,"-")+".json";
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast("ЭКСПОРТИРОВАНО");
+}
+function buildPrintHTML(test){
+  const questions=test.questions.map((q,i)=>{
+    const nq=normalizeQ(q);
+    let opts="";
+    if (nq.type==="text") opts=`<div class="print-line"></div>`;
+    else if (nq.type==="matching"){
+      opts=`<div style="margin-left:24px;margin-top:6px;font-size:13px;">Столбец А: ${nq.pairs.map((p,j)=>`${j+1}) ${escapeHtml(p.left)}`).join("; ")}<br>Столбец Б (перемешано): ${shuffle(nq.pairs.map(p=>p.right)).map((r,j)=>`${String.fromCharCode(65+j)}) ${escapeHtml(r)}`).join("; ")}</div>`;
+    } else if (nq.type==="sort"){
+      opts=`<div style="margin-left:24px;margin-top:6px;font-size:13px;">${shuffle(nq.items).map(it=>`☐ ${escapeHtml(it)}`).join("<br>")}</div>`;
+    } else {
+      opts=nq.options.map((o,j)=>`<div class="print-opt"><span class="print-mark">${String.fromCharCode(65+j)}.</span> ${escapeHtml(o.text)}</div>`).join("");
+    }
+    return `<div class="print-q">
+      <div class="print-qh"><b>${i+1}.</b> ${escapeHtml(nq.question)}</div>
+      ${nq.image?`<img src="${nq.image}" class="print-img">`:""}
+      ${opts}
+    </div>`;
+  }).join("");
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(test.title||"Тест")}</title>
+  <style>body{font-family:Georgia,serif;padding:24px;color:#000;background:#fff;max-width:800px;margin:0 auto;}
+  h1{font-size:22px;margin-bottom:6px;}.desc{color:#555;font-style:italic;margin-bottom:20px;font-size:14px;}
+  .print-q{margin-bottom:22px;page-break-inside:avoid;}.print-qh{font-size:15px;line-height:1.4;margin-bottom:6px;}
+  .print-opt{margin-left:24px;margin-top:4px;font-size:14px;}.print-mark{font-weight:bold;display:inline-block;width:20px;}
+  .print-line{border-bottom:1px solid #000;height:24px;margin:10px 0 0 24px;width:60%;}
+  .print-img{max-width:300px;max-height:200px;display:block;margin:10px 0;border:1px solid #ccc;}
+  @media print{body{padding:0;}}</style></head><body>
+  <h1>${escapeHtml(test.title||"Тест")}</h1>
+  ${test.description?`<div class="desc">${escapeHtml(test.description)}</div>`:""}
+  ${questions}</body></html>`;
+}
+function printTest(id){
+  const t=tests.find(x=>x.id===id); if(!t) return;
+  const w=window.open("","_blank");
+  w.document.open(); w.document.write(buildPrintHTML(t)); w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+function shareTest(id){
+  const t=tests.find(x=>x.id===id); if(!t) return;
+  try {
+    const data = JSON.stringify(t);
+    const b64 = btoa(unescape(encodeURIComponent(data)));
+    const url = location.origin + location.pathname + "#test=" + b64;
+    if (url.length > 8000){
+      if (!confirm("Тест большой, ссылка может не работать в некоторых браузерах. Продолжить?")) return;
+    }
+    navigator.clipboard.writeText(url).then(()=>showToast("🔗 ССЫЛКА СКОПИРОВАНА")).catch(()=>{
+      prompt("Скопируйте ссылку:", url);
+    });
+  } catch(e){ showToast("ОШИБКА"); }
 }
 
 /* ==========================================================
-   СТАРТ
+   URL-ХЭШ: ИМПОРТ
+   ========================================================== */
+function checkHashImport(){
+  const hash = location.hash;
+  if (!hash.startsWith("#test=")) return;
+  try {
+    const b64 = hash.slice(6);
+    const json = decodeURIComponent(escape(atob(b64)));
+    const data = JSON.parse(json);
+    const t = {...data, id: uid()};
+    if (!t.questions || !Array.isArray(t.questions)) throw new Error("нет вопросов");
+    t.questions = t.questions.map(normalizeQ);
+    if (confirm(`Импортировать тест «${t.title||"Без названия"}»?`)){
+      tests.push(t); saveTests(); renderLibrary();
+      showToast("✓ ТЕСТ ИМПОРТИРОВАН");
+    }
+  } catch(e){
+    showToast("ОШИБКА: ссылка повреждена");
+  }
+  history.replaceState(null, "", location.pathname + location.search);
+}
+
+/* ==========================================================
+   СТАРТ / ПРОХОЖДЕНИЕ
    ========================================================== */
 function openStart(id){
-  TEST = tests.find(t => t.id === id);
-  if (!TEST) return;
-  $("startTitle").textContent = TEST.title || "Тест";
-  $("startDesc").textContent = TEST.description || "";
-  $("startMeta").textContent =
-    `ВОПРОСОВ: ${TEST.questions.length}` +
-    (TEST.timeLimit ? ` · ВРЕМЯ: ${Math.round(TEST.timeLimit/60)} МИН` : " · БЕЗ ЛИМИТА");
-  $("optTime").value = TEST.timeLimit ? Math.round(TEST.timeLimit/60) : 0;
-
-  pendingSaved = loadSaved();
-  if (pendingSaved && pendingSaved.testId !== TEST.id) pendingSaved = null;
-
-  const banner = $("resumeBanner");
+  TEST=tests.find(t=>t.id===id); if(!TEST) return;
+  $("startTitle").textContent=TEST.title||"Тест";
+  $("startDesc").textContent=TEST.description||"";
+  $("startTags").innerHTML=(TEST.tags||[]).map(tag=>`<span class="tag-chip">${escapeHtml(tag)}</span>`).join("");
+  $("startMeta").textContent=`ВОПРОСОВ: ${TEST.questions.length}`+(TEST.timeLimit?` · ВРЕМЯ: ${Math.round(TEST.timeLimit/60)} МИН`:" · БЕЗ ЛИМИТА");
+  $("optTime").value=TEST.timeLimit?Math.round(TEST.timeLimit/60):0;
+  $("optSampleN").value=Math.min(5, TEST.questions.length);
+  $("optSample").checked=false;
+  $("sampleRow").classList.add("hidden");
+  pendingSaved=loadSaved();
+  if (pendingSaved && pendingSaved.testId!==TEST.id) pendingSaved=null;
+  const banner=$("resumeBanner");
   if (pendingSaved){
     banner.classList.remove("hidden");
-    $("resumeInfo").textContent =
-      `Незавершено · вопрос ${pendingSaved.current + 1} из ${pendingSaved.questions.length}` +
-      (pendingSaved.totalTime > 0 ? ` · осталось ${formatTime(pendingSaved.timeLeft)}` : "");
-  } else {
-    banner.classList.add("hidden");
-  }
+    $("resumeInfo").textContent=`Незавершено · вопрос ${pendingSaved.current+1} из ${pendingSaved.questions.length}`+(pendingSaved.totalTime>0?` · осталось ${formatTime(pendingSaved.timeLeft)}`:"");
+  } else banner.classList.add("hidden");
   show("startScreen");
 }
-
-function prepareQuestions(questions, shufQ, shufA){
-  const qs = shufQ ? shuffle(questions) : questions.slice();
-  return qs.map(q => {
-    const opts = q.options.map((text, i) => ({ text, correct: i === q.correct }));
-    const final = shufA ? shuffle(opts) : opts;
-    return {
-      question: q.question,
-      options: final.map(o => o.text),
-      correct: final.findIndex(o => o.correct)
-    };
+function toggleSample(){
+  $("sampleRow").classList.toggle("hidden", !$("optSample").checked);
+}
+function backToLibrary(){
+  if (state && state.answers && state.answers.some(a=>a!==null && !(Array.isArray(a)&&a.length===0))){
+    if (!confirm("Прервать попытку? Прогресс сохранится.")) return;
+  }
+  state=null; TEST=null;
+  renderLibrary(); show("libraryScreen");
+}
+function prepareQuestions(questions, shufQ, shufA, sampleN){
+  let qs=questions.slice();
+  if (sampleN && sampleN < qs.length) qs=shuffle(qs).slice(0, sampleN);
+  else if (shufQ) qs=shuffle(qs);
+  return qs.map(q=>{
+    const nq=deepCopy(normalizeQ(q));
+    if (nq.type==="single"||nq.type==="multi"){
+      if (shufA){
+        nq.options=shuffle(nq.options.map((o,i)=>({...o,_orig:i})));
+      }
+    } else if (nq.type==="matching"){
+      // перемешиваем правые элементы для показа
+      nq._rightShuffled = shuffle(nq.pairs.map((p,i)=>({...p,_orig:i})));
+    } else if (nq.type==="sort"){
+      nq._userOrder = shuffle(nq.items.map((it,i)=>({...it,_orig:i})));
+    }
+    return nq;
   });
 }
-
 function startTest(){
-  const shufQ = $("optShuffleQ").checked;
-  const shufA = $("optShuffleA").checked;
-  const mins = Math.max(0, parseInt($("optTime").value, 10) || 0);
-  const totalTime = mins * 60;
+  const shufQ=$("optShuffleQ").checked;
+  const shufA=$("optShuffleA").checked;
+  const sampleN=$("optSample").checked ? Math.max(1, parseInt($("optSampleN").value,10)||5) : 0;
+  const mins=Math.max(0, parseInt($("optTime").value,10)||0);
+  const totalTime=mins*60;
   localStorage.removeItem(STATE_KEY);
-
-  state = {
-    testId: TEST.id,
-    questions: prepareQuestions(TEST.questions, shufQ, shufA),
-    answers: new Array(TEST.questions.length).fill(null),
-    current: 0, totalTime, timeLeft: totalTime
+  const qs = prepareQuestions(TEST.questions, shufQ, shufA, sampleN);
+  state={
+    testId:TEST.id,
+    questions:qs,
+    answers:new Array(qs.length).fill(null),
+    uncertain:new Array(qs.length).fill(false),
+    current:0, totalTime, timeLeft:totalTime,
+    streak:0, maxStreak:0
   };
   saveState();
   show("quizScreen");
   renderQuestion();
   startTimer();
 }
-
-/* ==========================================================
-   СОХРАНЕНИЕ ПОПЫТКИ
-   ========================================================== */
-function saveState(){
-  if (!state) return;
-  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e){}
-}
+function saveState(){ if(!state) return; try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}catch(e){} }
 function loadSaved(){
-  try {
-    const raw = localStorage.getItem(STATE_KEY);
-    if (!raw) return null;
-    const d = JSON.parse(raw);
-    if (!d || !Array.isArray(d.questions) || !Array.isArray(d.answers)) return null;
-    if (typeof d.current !== "number") return null;
-    return d;
-  } catch(e){ return null; }
+  try{const raw=localStorage.getItem(STATE_KEY);if(!raw)return null;
+    const d=JSON.parse(raw);if(!d||!Array.isArray(d.questions)||!Array.isArray(d.answers))return null;
+    if(typeof d.current!=="number")return null;return d;}catch(e){return null;}
 }
-function discardSaved(){
-  localStorage.removeItem(STATE_KEY);
-  pendingSaved = null;
-  openStart(TEST.id);
-  showToast("СОХРАНЕНИЕ УДАЛЕНО");
-}
+function discardSaved(){localStorage.removeItem(STATE_KEY);pendingSaved=null;openStart(TEST.id);showToast("СОХРАНЕНИЕ УДАЛЕНО");}
 function resumeTest(){
-  const saved = pendingSaved || loadSaved();
-  if (!saved){ showToast("СОХРАНЕНИЕ НЕ НАЙДЕНО"); return; }
-  state = saved;
-  TEST = tests.find(t => t.id === state.testId) || TEST;
-  show("quizScreen");
-  renderQuestion();
-  if (state.totalTime === 0 || state.timeLeft > 0) startTimer();
-  else finish(true);
+  const saved=pendingSaved||loadSaved();if(!saved){showToast("НЕ НАЙДЕНО");return;}
+  state=saved;
+  if (!state.uncertain) state.uncertain=new Array(state.questions.length).fill(false);
+  if (typeof state.streak!=="number") state.streak=0;
+  if (typeof state.maxStreak!=="number") state.maxStreak=0;
+  TEST=tests.find(t=>t.id===state.testId)||TEST;
+  show("quizScreen"); renderQuestion();
+  if (state.totalTime===0||state.timeLeft>0) startTimer(); else finish(true);
 }
 
 /* ==========================================================
@@ -1104,264 +1082,745 @@ function resumeTest(){
 function startTimer(){
   if (timerId) clearInterval(timerId);
   updateTimer();
-  if (state.totalTime <= 0) return;
-  let lastTick = Date.now();
-  timerId = setInterval(() => {
-    const now = Date.now();
-    state.timeLeft = Math.max(0, state.timeLeft - (now - lastTick) / 1000);
-    lastTick = now;
-    if (state.timeLeft <= 0){
-      updateTimer();
-      clearInterval(timerId); timerId = null;
-      showToast("⏰ ВРЕМЯ ВЫШЛО");
-      finish(true);
-      return;
-    }
-    updateTimer();
-    saveState();
-  }, 1000);
+  if (state.totalTime<=0) return;
+  let last=Date.now();
+  timerId=setInterval(()=>{
+    const now=Date.now();
+    state.timeLeft=Math.max(0,state.timeLeft-(now-last)/1000);
+    last=now;
+    if (state.timeLeft<=0){updateTimer();clearInterval(timerId);timerId=null;showToast("⏰ ВРЕМЯ ВЫШЛО");finish(true);return;}
+    updateTimer(); saveState();
+  },1000);
 }
 function updateTimer(){
-  const el = $("timer");
-  if (!state || state.totalTime <= 0){ el.textContent = ""; el.classList.remove("warning"); return; }
-  el.textContent = formatTime(state.timeLeft);
-  el.classList.toggle("warning", state.timeLeft <= 30);
+  const el=$("timer");
+  if (!state||state.totalTime<=0){el.textContent="";el.classList.remove("warning");return;}
+  el.textContent=formatTime(state.timeLeft);
+  el.classList.toggle("warning",state.timeLeft<=30);
 }
 
 /* ==========================================================
    ПРОХОЖДЕНИЕ
    ========================================================== */
-function renderQuestion(){
-  const q = state.questions[state.current];
-  const total = state.questions.length;
-
-  $("questionText").textContent = q.question;
-  $("counterBig").textContent = pad(state.current + 1);
-  $("counterSmall").textContent = "/ " + pad(total);
-
-  // сегментированный прогресс
-  const segs = [];
-  for (let i = 0; i < total; i++){
-    let cls = "seg";
-    if (state.answers[i] !== null) cls += " done";
-    if (i === state.current) cls += " current";
+function hasAnswer(ans,q){
+  const nq=normalizeQ(q);
+  if (nq.type==="text") return typeof ans==="string" && ans.trim()!=="";
+  if (nq.type==="multi") return Array.isArray(ans) && ans.length>0;
+  if (nq.type==="matching") return Array.isArray(ans) && ans.length===nq.pairs.length && ans.every(x=>x!==null && x!==undefined);
+  if (nq.type==="sort") return Array.isArray(ans) && ans.length===nq.items.length;
+  return ans!==null && ans!==undefined;
+}
+function updateNav(){
+  $("prevBtn").disabled=state.current===0;
+  const total=state.questions.length;
+  $("nextBtn").textContent=state.current===total-1?"ЗАВЕРШИТЬ ✓":"ДАЛЕЕ →";
+  $("nextBtn").disabled=!hasAnswer(state.answers[state.current], state.questions[state.current]);
+}
+function updateProgressSegments(){
+  const total=state.questions.length;
+  const segs=[];
+  for (let i=0;i<total;i++){
+    let cls="seg";
+    if (hasAnswer(state.answers[i], state.questions[i])) cls+=" done";
+    if (state.uncertain[i]) cls+=" uncertain";
+    if (i===state.current) cls+=" current";
     segs.push(`<div class="${cls}"></div>`);
   }
-  $("progressSegments").innerHTML = segs.join("");
+  $("progressSegments").innerHTML=segs.join("");
+}
+function renderQuestion(){
+  const raw=state.questions[state.current];
+  const q=normalizeQ(raw);
+  const ans=state.answers[state.current];
+  const total=state.questions.length;
 
-  const box = $("options");
-  box.innerHTML = "";
-  q.options.forEach((text, i) => {
-    const el = document.createElement("div");
-    el.className = "option" + (state.answers[state.current] === i ? " selected" : "");
-    el.innerHTML = `
-      <span class="option-marker">${state.answers[state.current] === i ? "■" : "□"}</span>
-      <span class="option-text">${escapeHtml(text)}</span>
-      ${i < 9 ? `<span class="option-key">${i + 1}</span>` : ""}
-    `;
-    el.onclick = () => selectOption(i);
-    box.appendChild(el);
-  });
+  $("questionText").innerHTML=md(q.question);
+  renderMath($("questionText"));
+  $("counterBig").textContent=pad(state.current+1);
+  $("counterSmall").textContent="/ "+pad(total);
+  updateProgressSegments();
 
-  $("prevBtn").disabled = state.current === 0;
-  $("nextBtn").textContent = state.current === total - 1 ? "ЗАВЕРШИТЬ ✓" : "ДАЛЕЕ →";
-  $("nextBtn").disabled = state.answers[state.current] === null;
+  const imgWrap=$("questionImage");
+  if (q.image){ imgWrap.innerHTML=`<img src="${q.image}" alt="">`; imgWrap.style.display="block"; }
+  else { imgWrap.style.display="none"; imgWrap.innerHTML=""; }
+
+  const box=$("options"); box.innerHTML="";
+
+  if (q.type==="text"){
+    const inp=document.createElement("input");
+    inp.type="text"; inp.className="text-answer-input"; inp.placeholder="Ваш ответ…";
+    inp.value=typeof ans==="string"?ans:"";
+    inp.oninput=()=>{state.answers[state.current]=inp.value;saveState();updateNav();updateProgressSegments();};
+    box.appendChild(inp);
+    setTimeout(()=>inp.focus(),50);
+  } else if (q.type==="multi"){
+    const arr=Array.isArray(ans)?ans:[];
+    q.options.forEach((opt,i)=>{
+      const el=document.createElement("div");
+      el.className="option"+(arr.includes(i)?" selected":"");
+      el.innerHTML=`<span class="option-marker">${arr.includes(i)?"■":"□"}</span>
+        <span class="option-text">${md(opt.text)}</span>${i<9?`<span class="option-key">${i+1}</span>`:""}`;
+      el.onclick=()=>{
+        let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];
+        const idx=a.indexOf(i);
+        state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];
+        saveState(); renderQuestion();
+      };
+      renderMath(el.querySelector(".option-text"));
+      box.appendChild(el);
+    });
+  } else if (q.type==="matching"){
+    const rights = raw._rightShuffled || q.pairs.map((p,i)=>({...p,_orig:i}));
+    const userAns = Array.isArray(ans) ? ans : new Array(q.pairs.length).fill(null);
+    const grid=document.createElement("div"); grid.className="match-grid";
+    q.pairs.forEach((pair,i)=>{
+      const left=document.createElement("div"); left.className="match-item left";
+      left.textContent=pair.left;
+      grid.appendChild(left);
+      const right=document.createElement("div"); right.className="match-item";
+      const sel=document.createElement("select");
+      sel.innerHTML=`<option value="">— выберите —</option>` + rights.map((r,j)=>`<option value="${j}" ${userAns[i]===j?"selected":""}>${escapeHtml(r.right)}</option>`).join("");
+      sel.onchange=()=>{
+        const ua=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:new Array(q.pairs.length).fill(null);
+        ua[i]=sel.value===""?null:parseInt(sel.value,10);
+        state.answers[state.current]=ua;
+        saveState(); updateNav(); updateProgressSegments();
+      };
+      right.appendChild(sel);
+      grid.appendChild(right);
+    });
+    box.appendChild(grid);
+  } else if (q.type==="sort"){
+    const items = raw._userOrder || q.items.map((it,i)=>({...it,_orig:i}));
+    const list=document.createElement("div"); list.className="sort-list";
+    items.forEach((item,idx)=>{
+      const row=document.createElement("div"); row.className="sort-item";
+      row.innerHTML=`<span class="handle">${idx+1}</span>
+        <span class="sort-text">${escapeHtml(item.text||item)}</span>
+        <span class="sort-btns">
+          <button class="icon-btn" onclick="moveSort(${idx},-1)" ${idx===0?"disabled":""}>↑</button>
+          <button class="icon-btn" onclick="moveSort(${idx},1)" ${idx===items.length-1?"disabled":""}>↓</button>
+        </span>`;
+      list.appendChild(row);
+    });
+    box.appendChild(list);
+    state.answers[state.current] = items.map(it=>it._orig);
+  } else {
+    q.options.forEach((opt,i)=>{
+      const el=document.createElement("div");
+      el.className="option"+(ans===i?" selected":"");
+      el.innerHTML=`<span class="option-marker">${ans===i?"■":"□"}</span>
+        <span class="option-text">${md(opt.text)}</span>${i<9?`<span class="option-key">${i+1}</span>`:""}`;
+      el.onclick=()=>{state.answers[state.current]=i;saveState();renderQuestion();};
+      renderMath(el.querySelector(".option-text"));
+      box.appendChild(el);
+    });
+  }
+
+  $("uncertainCheck").checked = !!state.uncertain[state.current];
+  $("streakBadge").textContent = `🔥 ${state.streak}`;
+  $("streakBadge").classList.toggle("hot", state.streak >= 3);
+  updateNav();
 }
-function selectOption(i){
-  state.answers[state.current] = i;
-  saveState();
-  renderQuestion();
+function moveSort(idx, dir){
+  const raw=state.questions[state.current];
+  const j=idx+dir;
+  if (j<0 || j>=raw._userOrder.length) return;
+  [raw._userOrder[idx], raw._userOrder[j]] = [raw._userOrder[j], raw._userOrder[idx]];
+  state.answers[state.current] = raw._userOrder.map(it=>it._orig);
+  saveState(); renderQuestion();
 }
-function prevQuestion(){
-  if (state.current > 0){ state.current--; saveState(); renderQuestion(); }
+function toggleUncertain(checked){
+  state.uncertain[state.current]=checked;
+  saveState(); updateProgressSegments();
 }
+function prevQuestion(){if(state.current>0){state.current--;saveState();renderQuestion();}}
 function nextQuestion(){
-  if (state.answers[state.current] === null) return;
-  if (state.current < state.questions.length - 1){
-    state.current++; saveState(); renderQuestion();
-  } else finish(false);
+  if (!hasAnswer(state.answers[state.current], state.questions[state.current])) return;
+  // Streak update
+  if (isAnswerCorrect(state.questions[state.current], state.answers[state.current])){
+    state.streak++;
+    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+  } else {
+    state.streak = 0;
+  }
+  if (state.current<state.questions.length-1){state.current++;saveState();renderQuestion();}
+  else finish(false);
+}
+
+/* ==========================================================
+   ОЦЕНКА
+   ========================================================== */
+function isAnswerCorrect(question, answer){
+  const q=normalizeQ(question);
+  if (answer===null||answer===undefined) return false;
+  if (q.type==="text"){
+    const u=String(answer).trim().toLowerCase();
+    const c=String(q.answer||"").trim().toLowerCase();
+    return c!=="" && u===c;
+  }
+  if (q.type==="multi"){
+    const cs=new Set();
+    q.options.forEach((o,i)=>{if(o.correct)cs.add(i);});
+    const chosen=Array.isArray(answer)?answer:[];
+    if (cs.size!==chosen.length) return false;
+    return chosen.every(i=>cs.has(i));
+  }
+  if (q.type==="matching"){
+    if (!Array.isArray(answer)) return false;
+    const raw = question._rightShuffled || q.pairs.map((p,i)=>({...p,_orig:i}));
+    return q.pairs.every((pair,i)=>{
+      const chosenIdx = answer[i];
+      if (chosenIdx === null || chosenIdx === undefined) return false;
+      return raw[chosenIdx]._orig === i;
+    });
+  }
+  if (q.type==="sort"){
+    if (!Array.isArray(answer)) return false;
+    return q.items.every((_,i)=>answer[i]===i);
+  }
+  const idx=q.options.findIndex(o=>o.correct);
+  return answer===idx;
 }
 
 function finish(byTimeout){
-  if (timerId){ clearInterval(timerId); timerId = null; }
+  if (timerId){clearInterval(timerId);timerId=null;}
   localStorage.removeItem(STATE_KEY);
-  pendingSaved = null;
+  pendingSaved=null;
+  const total=state.questions.length;
+  const correctCount=state.questions.reduce((acc,q,i)=>acc+(isAnswerCorrect(q,state.answers[i])?1:0),0);
+  const answeredCount=state.answers.filter((a,i)=>hasAnswer(a,state.questions[i])).length;
+  const percent=Math.round((correctCount/total)*100);
+  const uncertainCount=state.uncertain.filter(Boolean).length;
 
-  const total = state.questions.length;
-  const correctCount = state.answers.filter((a, i) => a === state.questions[i].correct).length;
-  const answeredCount = state.answers.filter(a => a !== null).length;
-  const percent = Math.round((correctCount / total) * 100);
+  // Сохранение попытки
+  const attempt={testId:state.testId, ts:Date.now(), percent, correctCount, total,
+    maxStreak: state.maxStreak,
+    perQuestion: state.questions.map((q,i)=>({
+      question: q.question,
+      correct: isAnswerCorrect(q, state.answers[i]),
+      uncertain: state.uncertain[i]
+    }))
+  };
+  attempts.push(attempt); saveAttempts();
 
+  // Показ
   show("resultScreen");
-  $("scoreText").textContent = `${percent}%`;
-  $("scoreMsg").textContent =
-    (byTimeout ? "⏰ ВРЕМЯ ИСТЕКЛО. " : "") +
-    `Правильных ответов: ${correctCount} из ${total}.`;
-  $("scoreStats").textContent =
-    `Отвечено: ${answeredCount}/${total}` +
-    (state.totalTime > 0 ? ` · Затрачено: ${formatTime(state.totalTime - state.timeLeft)}` : "");
+  $("scoreText").textContent=`${percent}%`;
+  $("scoreMsg").textContent=(byTimeout?"⏰ ВРЕМЯ ИСТЕКЛО. ":"")+`Правильных: ${correctCount} из ${total}.`+
+    (uncertainCount?` Спорных: ${uncertainCount}.`:"");
+  $("scoreStats").textContent=`Отвечено: ${answeredCount}/${total}`+
+    (state.totalTime>0?` · Затрачено: ${formatTime(state.totalTime-state.timeLeft)}`:"")+
+    (state.maxStreak>0?` · Серия: ${state.maxStreak}`:"");
 
-  const html = [];
-  state.questions.forEach((q, i) => {
-    const ua = state.answers[i];
-    html.push(`<div class="review-item"><div class="review-q"><span class="num">${pad(i+1)}</span>${escapeHtml(q.question)}</div>`);
-    q.options.forEach((opt, j) => {
-      let cls = "review-opt", mark = "○";
-      if (j === q.correct){ cls += " correct"; mark = "✓"; }
-      if (j === ua && ua !== q.correct){ cls += " wrong"; mark = "✗"; }
-      if (j === ua) cls += " chosen";
-      html.push(`<div class="${cls}"><span class="mark">${mark}</span><span>${escapeHtml(opt)}</span></div>`);
+  renderStats();
+  renderChart();
+  renderWeakTopics();
+  renderReview();
+
+  document.querySelectorAll(".result-actions button").forEach(b=>b.style.display="");
+}
+
+function renderStats(){
+  const testAttempts = attempts.filter(a=>a.testId===state.testId).sort((a,b)=>a.ts-b.ts);
+  const n = testAttempts.length;
+  const avg = n ? Math.round(testAttempts.reduce((s,a)=>s+a.percent,0)/n) : 0;
+  const best = n ? Math.max(...testAttempts.map(a=>a.percent)) : 0;
+  const last = testAttempts[n-1] ? testAttempts[n-1].percent : 0;
+
+  $("statsGrid").innerHTML = `
+    <div class="stat-card"><div class="stat-label">Попыток</div><div class="stat-value">${n}</div></div>
+    <div class="stat-card"><div class="stat-label">Средний</div><div class="stat-value">${avg}%</div></div>
+    <div class="stat-card"><div class="stat-label">Лучший</div><div class="stat-value">${best}%</div></div>
+    <div class="stat-card"><div class="stat-label">Последний</div><div class="stat-value">${last}%</div></div>
+  `;
+}
+
+function renderChart(){
+  const testAttempts = attempts.filter(a=>a.testId===state.testId).sort((a,b)=>a.ts-b.ts);
+  const box = $("chartBox");
+  if (testAttempts.length < 2){ box.classList.add("hidden"); return; }
+  box.classList.remove("hidden");
+
+  const recent = testAttempts.slice(-10);
+  const W=600, H=180, PAD=30;
+  const stepX = recent.length>1 ? (W-PAD*2)/(recent.length-1) : 0;
+  const y = v => PAD + (H-PAD*2) * (1 - v/100);
+
+  const points = recent.map((a,i)=>`${PAD + i*stepX},${y(a.percent)}`).join(" ");
+  const circles = recent.map((a,i)=>`<circle cx="${PAD+i*stepX}" cy="${y(a.percent)}" r="4" fill="currentColor"/>`).join("");
+  const labels = recent.map((a,i)=>`<text x="${PAD+i*stepX}" y="${H-5}" font-size="10" font-family="monospace" text-anchor="middle" fill="currentColor">${i+1}</text>`).join("");
+  const grid = [0,25,50,75,100].map(v=>`<line x1="${PAD}" y1="${y(v)}" x2="${W-PAD}" y2="${y(v)}" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>`).join("");
+
+  $("chartSvg").innerHTML=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+    ${grid}
+    <polyline points="${points}" fill="none" stroke="currentColor" stroke-width="2"/>
+    ${circles}${labels}
+  </svg>`;
+}
+
+function renderWeakTopics(){
+  const testAttempts = attempts.filter(a=>a.testId===state.testId);
+  const section = $("weakSection");
+  if (testAttempts.length < 2){ section.classList.add("hidden"); return; }
+
+  // Считаем провалы по вопросам
+  const failureMap = {};
+  testAttempts.forEach(a=>{
+    a.perQuestion.forEach(pq=>{
+      if (!pq.correct){
+        failureMap[pq.question] = (failureMap[pq.question] || 0) + 1;
+      }
     });
-    if (ua === null) html.push(`<div class="review-note">Ответ не дан</div>`);
+  });
+  const weak = Object.entries(failureMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if (!weak.length){ section.classList.add("hidden"); return; }
+
+  section.classList.remove("hidden");
+  $("weakList").innerHTML = weak.map(([q,count])=>`
+    <div class="weak-item">
+      <div class="wi-text">${escapeHtml(q.slice(0,100))}${q.length>100?"…":""}</div>
+      <div class="wi-count">${count}×</div>
+    </div>
+  `).join("");
+}
+
+function renderReview(){
+  const html=[];
+  state.questions.forEach((q,i)=>{
+    const nq=normalizeQ(q);
+    const ua=state.answers[i];
+    const ok=isAnswerCorrect(q, ua);
+    const uncertainBadge = state.uncertain[i] ? `<span class="badge uncertain">спорный</span>` : "";
+    html.push(`<div class="review-item"><div class="review-q"><span class="num">${pad(i+1)}</span>${md(nq.question)}${uncertainBadge}</div>`);
+    if (nq.image) html.push(`<div style="margin-bottom:10px"><img src="${nq.image}" class="q-image"></div>`);
+
+    if (nq.type==="text"){
+      html.push(`<div class="review-opt ${ok?"correct":"wrong"}"><span class="mark">${ok?"✓":"✗"}</span><span>Ваш: ${escapeHtml(String(ua||"<пусто>"))}</span></div>`);
+      if (!ok) html.push(`<div class="review-opt correct"><span class="mark">✓</span><span>Правильно: ${escapeHtml(nq.answer||"")}</span></div>`);
+    } else if (nq.type==="matching"){
+      const raw = state.questions[i]._rightShuffled || nq.pairs.map((p,i2)=>({...p,_orig:i2}));
+      nq.pairs.forEach((pair,j)=>{
+        const chosenIdx = Array.isArray(ua)?ua[j]:null;
+        const chosenText = (chosenIdx!==null && chosenIdx!==undefined && raw[chosenIdx]) ? raw[chosenIdx].right : "—";
+        const okItem = chosenIdx!==null && chosenIdx!==undefined && raw[chosenIdx] && raw[chosenIdx]._orig === j;
+        html.push(`<div class="review-opt ${okItem?"correct":"wrong"}">
+          <span class="mark">${okItem?"✓":"✗"}</span>
+          <span>${escapeHtml(pair.left)} → <b>${escapeHtml(chosenText)}</b>${!okItem?` (правильно: ${escapeHtml(pair.right)})`:""}</span>
+        </div>`);
+      });
+    } else if (nq.type==="sort"){
+      const userOrder = Array.isArray(ua) ? ua.map(idx=>nq.items[idx]) : [];
+      html.push(`<div class="review-opt ${ok?"correct":"wrong"}"><span class="mark">${ok?"✓":"✗"}</span>
+        <span>Ваш порядок: ${userOrder.map(x=>escapeHtml(x)).join(" → ")}</span></div>`);
+      if (!ok) html.push(`<div class="review-opt correct"><span class="mark">✓</span>
+        <span>Правильно: ${nq.items.map(x=>escapeHtml(x)).join(" → ")}</span></div>`);
+    } else {
+      nq.options.forEach((opt,j)=>{
+        let cls="review-opt", mark="○";
+        const isCorrect=opt.correct;
+        const isChosen=nq.type==="multi"?(Array.isArray(ua)&&ua.includes(j)):ua===j;
+        if (isCorrect){cls+=" correct";mark="✓";}
+        if (isChosen&&!isCorrect){cls+=" wrong";mark="✗";}
+        if (isChosen) cls+=" chosen";
+        html.push(`<div class="${cls}"><span class="mark">${mark}</span><span>${md(opt.text)}</span></div>`);
+      });
+    }
+    if (nq.explanation) html.push(`<div class="explanation">${md(nq.explanation)}</div>`);
     html.push(`</div>`);
   });
-  $("reviewList").innerHTML = html.join("");
+  $("reviewList").innerHTML=html.join("");
+  renderMath($("reviewList"));
 }
-function restart(){
-  if (TEST) openStart(TEST.id);
-  else show("libraryScreen");
+
+function restart(){ if (TEST) openStart(TEST.id); else show("libraryScreen"); }
+
+/* ==========================================================
+   РЕЗУЛЬТАТ: КОПИЯ / CSV / PDF
+   ========================================================== */
+function copyResult(){
+  const total = state.questions.length;
+  const correct = state.questions.reduce((acc,q,i)=>acc+(isAnswerCorrect(q,state.answers[i])?1:0),0);
+  const percent = Math.round((correct/total)*100);
+  const testTitle = TEST ? TEST.title : "Тест";
+  const text = `${correct} из ${total} (${percent}%) — ${testTitle}`;
+  navigator.clipboard.writeText(text).then(()=>showToast("✓ СКОПИРОВАНО")).catch(()=>prompt("Копировать:", text));
+}
+
+function exportResultCsv(){
+  const rows = [["Вопрос","Ваш ответ","Правильно","OK","Спорный"]];
+  state.questions.forEach((q,i)=>{
+    const nq=normalizeQ(q);
+    const ua=state.answers[i];
+    const ok=isAnswerCorrect(q, ua);
+    let userText = "", correctText = "";
+    if (nq.type==="text"){
+      userText = String(ua||"");
+      correctText = nq.answer||"";
+    } else if (nq.type==="matching"){
+      userText = JSON.stringify(ua);
+      correctText = nq.pairs.map(p=>p.right).join(" | ");
+    } else if (nq.type==="sort"){
+      userText = (ua||[]).map(idx=>nq.items[idx]).join(" | ");
+      correctText = nq.items.join(" | ");
+    } else {
+      userText = (Array.isArray(ua)?ua.map(idx=>nq.options[idx]?.text):[nq.options[ua]?.text]).filter(Boolean).join(" | ");
+      correctText = nq.options.filter(o=>o.correct).map(o=>o.text).join(" | ");
+    }
+    rows.push([nq.question, userText, correctText, ok?"✓":"✗", state.uncertain[i]?"да":""]);
+  });
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `result-${(TEST?.title||"test").slice(0,30)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast("📊 CSV СКАЧАН");
+}
+
+function printResult(){
+  const total = state.questions.length;
+  const correct = state.questions.reduce((acc,q,i)=>acc+(isAnswerCorrect(q,state.answers[i])?1:0),0);
+  const percent = Math.round((correct/total)*100);
+  const title = TEST ? TEST.title : "Тест";
+
+  const html = state.questions.map((q,i)=>{
+    const nq=normalizeQ(q);
+    const ua=state.answers[i];
+    const ok=isAnswerCorrect(q, ua);
+    let body = "";
+    if (nq.type==="text"){
+      body = `<div>Ваш ответ: <b>${escapeHtml(String(ua||"—"))}</b></div>`;
+      if (!ok) body += `<div>Правильно: <b>${escapeHtml(nq.answer||"")}</b></div>`;
+    } else if (nq.type==="matching"){
+      body = nq.pairs.map((p,j)=>{
+        const chosenIdx = Array.isArray(ua)?ua[j]:null;
+        const raw = state.questions[i]._rightShuffled || nq.pairs.map((p2,i2)=>({...p2,_orig:i2}));
+        const chosenText = (chosenIdx!==null && chosenIdx!==undefined && raw[chosenIdx]) ? raw[chosenIdx].right : "—";
+        const okItem = chosenIdx!==null && chosenIdx!==undefined && raw[chosenIdx] && raw[chosenIdx]._orig === j;
+        return `<div>${escapeHtml(p.left)} → <b>${escapeHtml(chosenText)}</b> ${okItem?"✓":"(✗ → "+escapeHtml(p.right)+")"}</div>`;
+      }).join("");
+    } else if (nq.type==="sort"){
+      body = `<div>Ваш порядок: <b>${(ua||[]).map(idx=>escapeHtml(nq.items[idx])).join(" → ")}</b></div>`;
+      if (!ok) body += `<div>Правильно: <b>${nq.items.map(x=>escapeHtml(x)).join(" → ")}</b></div>`;
+    } else {
+      body = nq.options.map((o,j)=>{
+        const isCorrect = o.correct;
+        const isChosen = nq.type==="multi"?(Array.isArray(ua)&&ua.includes(j)):ua===j;
+        const mark = isCorrect ? "✓" : (isChosen ? "✗" : "○");
+        const cls = isCorrect ? "correct" : (isChosen ? "wrong" : "");
+        return `<div class="opt ${cls}">${mark} ${escapeHtml(o.text)}</div>`;
+      }).join("");
+    }
+    const exp = nq.explanation ? `<div class="exp">💡 ${escapeHtml(nq.explanation)}</div>` : "";
+    return `<div class="q"><div class="qh">${i+1}. ${escapeHtml(nq.question)} ${ok?"✓":"✗"}</div>${body}${exp}</div>`;
+  }).join("");
+
+  const w = window.open("","_blank");
+  w.document.open();
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Результат — ${escapeHtml(title)}</title>
+    <style>body{font-family:Georgia,serif;padding:24px;color:#000;background:#fff;max-width:800px;margin:0 auto;}
+    h1{font-size:24px;margin-bottom:6px;}.meta{color:#555;margin-bottom:20px;font-size:14px;}
+    .q{margin-bottom:16px;page-break-inside:avoid;padding-bottom:12px;border-bottom:1px solid #eee;}
+    .qh{font-weight:bold;font-size:15px;margin-bottom:6px;}.opt{padding:3px 0 3px 20px;font-size:13px;}
+    .opt.correct{background:#eef;font-weight:bold;}.opt.wrong{color:#666;text-decoration:line-through;}
+    .exp{font-size:12px;color:#555;margin-top:6px;padding-left:10px;border-left:2px solid #999;}
+    @media print{body{padding:0;}}</style></head><body>
+    <h1>Результат — ${escapeHtml(title)}</h1>
+    <div class="meta">${correct} из ${total} (${percent}%)</div>
+    ${html}</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
 }
 
 /* ==========================================================
    РЕДАКТОР
    ========================================================== */
-function blankQuestion(){
-  return { question: "", options: ["", "", "", ""], correct: 0 };
-}
-
 function openEditor(idOrTest){
-  let existing = null;
-  if (typeof idOrTest === "string"){
-    existing = tests.find(t => t.id === idOrTest);
-  } else if (idOrTest && typeof idOrTest === "object"){
-    existing = idOrTest;
+  let existing=null;
+  if (typeof idOrTest==="string") existing=tests.find(t=>t.id===idOrTest);
+  else if (idOrTest && typeof idOrTest==="object") existing=idOrTest;
+
+  // Проверка черновика
+  if (!existing){
+    try {
+      const draftRaw = localStorage.getItem(DRAFT_KEY);
+      if (draftRaw){
+        const draft = JSON.parse(draftRaw);
+        if (draft && draft.title && confirm(`Восстановить черновик «${draft.title}»?`)){
+          existing = draft;
+        } else if (draft && draft.questions && draft.questions.some(q=>q.question && q.question.trim())){
+          if (confirm("Найден несохранённый черновик. Восстановить?")){
+            existing = draft;
+          } else {
+            localStorage.removeItem(DRAFT_KEY);
+          }
+        }
+      }
+    } catch(e){}
   }
+
   editing = existing ? deepCopy(existing) : {
-    id: uid(), title: "", description: "", timeLimit: 0,
-    questions: [blankQuestion()]
+    id: uid(), title:"", description:"", tags:[], timeLimit:0, questions:[blankQuestion()]
   };
-  $("editorTitle").textContent = existing && existing.id && tests.find(t => t.id === existing.id)
+  editing.questions = editing.questions.map(normalizeQ);
+  $("editorTitle").textContent = existing && existing.id && tests.find(t=>t.id===existing.id)
     ? "Редактирование теста" : "Новый тест";
   $("edTitle").value = editing.title;
-  $("edDesc").value = editing.description || "";
-  $("edTime").value = editing.timeLimit ? Math.round(editing.timeLimit / 60) : 0;
+  $("edDesc").value = editing.description||"";
+  $("edTags").value = (editing.tags||[]).join(", ");
+  $("edTime").value = editing.timeLimit?Math.round(editing.timeLimit/60):0;
   renderEditor();
   show("editorScreen");
 }
 
 function closeEditor(){
-  editing = null;
+  if (editing && (editing.title || editing.questions.some(q=>q.question.trim()))){
+    if (!confirm("Выйти без сохранения? Черновик сохранится для следующего раза.")){
+      return;
+    }
+    saveDraft();
+  }
+  editing=null;
   renderLibrary();
   show("libraryScreen");
 }
 
-function renderEditor(){
-  $("qCount").textContent = `(${editing.questions.length})`;
-  $("edQuestions").innerHTML = editing.questions.map((q, i) => `
-    <div class="q-card" data-qi="${i}">
-      <div class="q-card-header">
-        <div class="q-num">${pad(i + 1)}</div>
-        <div class="title">Вопрос</div>
-        <div class="spacer"></div>
-        <button class="icon-btn" title="Выше" onclick="moveQuestion(${i},-1)" ${i === 0 ? "disabled" : ""}>↑</button>
-        <button class="icon-btn" title="Ниже" onclick="moveQuestion(${i},1)" ${i === editing.questions.length - 1 ? "disabled" : ""}>↓</button>
-        <button class="icon-btn danger" title="Удалить вопрос" onclick="deleteQuestion(${i})">✕</button>
-      </div>
-      <div class="field" style="margin-bottom:10px">
-        <input type="text" class="q-text" data-i="${i}"
-               placeholder="Текст вопроса" value="${escapeHtml(q.question)}">
-      </div>
-      ${q.options.map((opt, j) => `
-        <div class="opt-row">
-          <input type="radio" name="correct_${i}" class="opt-radio"
-                 data-i="${i}" data-j="${j}" ${q.correct === j ? "checked" : ""}
-                 title="Правильный ответ">
-          <input type="text" class="opt-text" data-i="${i}" data-j="${j}"
-                 placeholder="Вариант ${j + 1}" value="${escapeHtml(opt)}">
-          <button class="icon-btn danger" title="Удалить вариант"
-                  onclick="deleteOption(${i},${j})"
-                  ${q.options.length <= 2 ? "disabled" : ""}>✕</button>
-        </div>
-      `).join("")}
-      <button class="add-opt-btn" onclick="addOption(${i})">＋ ДОБАВИТЬ ВАРИАНТ</button>
-      <div class="correct-hint">Кружок слева — правильный ответ</div>
-    </div>
-  `).join("");
-}
-
-function addQuestion(){ editing.questions.push(blankQuestion()); renderEditor(); }
-function deleteQuestion(i){
-  if (editing.questions.length <= 1){ showToast("НУЖЕН ХОТЯ БЫ ОДИН ВОПРОС"); return; }
-  if (!confirm(`Удалить вопрос ${i + 1}?`)) return;
-  editing.questions.splice(i, 1);
-  renderEditor();
-}
-function moveQuestion(i, dir){
-  const j = i + dir;
-  if (j < 0 || j >= editing.questions.length) return;
-  const [q] = editing.questions.splice(i, 1);
-  editing.questions.splice(j, 0, q);
-  renderEditor();
-}
-function addOption(i){ editing.questions[i].options.push(""); renderEditor(); }
-function deleteOption(i, j){
-  const q = editing.questions[i];
-  if (q.options.length <= 2){ showToast("МИНИМУМ 2 ВАРИАНТА"); return; }
-  q.options.splice(j, 1);
-  if (q.correct === j) q.correct = 0;
-  else if (q.correct > j) q.correct--;
-  renderEditor();
-}
-
-$("edQuestions").addEventListener("input", e => {
-  const el = e.target;
+let draftSaveTimer = null;
+function saveDraft(){
   if (!editing) return;
-  if (el.classList.contains("q-text")){
-    editing.questions[+el.dataset.i].question = el.value;
-  } else if (el.classList.contains("opt-text")){
-    editing.questions[+el.dataset.i].options[+el.dataset.j] = el.value;
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(editing)); } catch(e){}
+}
+function scheduleDraftSave(){
+  clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(saveDraft, 1500);
+}
+
+function renderEditor(){
+  $("qCount").textContent=`(${editing.questions.length})`;
+  $("edQuestions").innerHTML=editing.questions.map((q,i)=>{
+    const nq=normalizeQ(q);
+    let inner="";
+    if (nq.type==="text"){
+      inner=`<div class="field"><label>Правильный ответ</label>
+        <input type="text" class="q-answer" data-i="${i}" value="${escapeHtml(nq.answer||"")}" placeholder="Правильный текст"></div>`;
+    } else if (nq.type==="matching"){
+      inner = nq.pairs.map((pair,j)=>`
+        <div class="opt-row">
+          <input type="text" class="pair-left" data-i="${i}" data-j="${j}" placeholder="Левая часть" value="${escapeHtml(pair.left)}">
+          <span style="font-family:var(--mono);font-size:12px;">→</span>
+          <input type="text" class="pair-right" data-i="${i}" data-j="${j}" placeholder="Правая часть" value="${escapeHtml(pair.right)}">
+          <button class="icon-btn danger" onclick="deletePair(${i},${j})" ${nq.pairs.length<=2?"disabled":""}>✕</button>
+        </div>
+      `).join("") + `<button class="add-opt-btn" onclick="addPair(${i})">＋ ДОБАВИТЬ ПАРУ</button>`;
+    } else if (nq.type==="sort"){
+      inner = nq.items.map((item,j)=>`
+        <div class="opt-row">
+          <span style="font-family:var(--mono);font-size:12px;width:24px;text-align:center;">${j+1}.</span>
+          <input type="text" class="sort-input" data-i="${i}" data-j="${j}" placeholder="Элемент ${j+1}" value="${escapeHtml(item)}">
+          <button class="icon-btn danger" onclick="deleteSortItem(${i},${j})" ${nq.items.length<=2?"disabled":""}>✕</button>
+        </div>
+      `).join("") + `<button class="add-opt-btn" onclick="addSortItem(${i})">＋ ДОБАВИТЬ ЭЛЕМЕНТ</button>
+        <div class="correct-hint">Элементы в правильном порядке (в прохождении перемешаются)</div>`;
+    } else {
+      const inputType = nq.type==="multi"?"checkbox":"radio";
+      inner = nq.options.map((opt,j)=>`
+        <div class="opt-row">
+          <input type="${inputType}" class="opt-correct" data-i="${i}" data-j="${j}"
+            ${nq.type==="single"?`name="correct_${i}"`:""} ${opt.correct?"checked":""}>
+          <input type="text" class="opt-text" data-i="${i}" data-j="${j}" placeholder="Вариант ${j+1}" value="${escapeHtml(opt.text)}">
+          <button class="icon-btn danger" onclick="deleteOption(${i},${j})" ${nq.options.length<=2?"disabled":""}>✕</button>
+        </div>
+      `).join("") + `<button class="add-opt-btn" onclick="addOption(${i})">＋ ДОБАВИТЬ ВАРИАНТ</button>`;
+    }
+    return `
+      <div class="q-card">
+        <div class="q-card-header">
+          <div class="q-num">${pad(i+1)}</div>
+          <select class="q-type-select" onchange="changeQType(${i},this.value)">
+            <option value="single" ${nq.type==="single"?"selected":""}>Один ответ</option>
+            <option value="multi" ${nq.type==="multi"?"selected":""}>Несколько</option>
+            <option value="text" ${nq.type==="text"?"selected":""}>Текст</option>
+            <option value="matching" ${nq.type==="matching"?"selected":""}>Соответствие</option>
+            <option value="sort" ${nq.type==="sort"?"selected":""}>Сортировка</option>
+          </select>
+          <div class="spacer"></div>
+          <button class="icon-btn" title="Выше" onclick="moveQuestion(${i},-1)" ${i===0?"disabled":""}>↑</button>
+          <button class="icon-btn" title="Ниже" onclick="moveQuestion(${i},1)" ${i===editing.questions.length-1?"disabled":""}>↓</button>
+          <button class="icon-btn danger" title="Удалить" onclick="deleteQuestion(${i})">✕</button>
+        </div>
+        <div class="field" style="margin-bottom:10px">
+          <input type="text" class="q-text" data-i="${i}" placeholder="Текст вопроса (markdown, $формулы$)" value="${escapeHtml(nq.question)}">
+        </div>
+        <div class="q-image-row">
+          ${nq.image?`<img src="${nq.image}" class="q-image"><button class="icon-btn danger" onclick="removeImage(${i})">✕</button>`:""}
+          <label class="upload-btn">🖼 ${nq.image?"Заменить":"Картинка"}<input type="file" accept="image/*" onchange="uploadImage(${i},this)"></label>
+        </div>
+        ${inner}
+        <div class="field" style="margin-top:10px;margin-bottom:0">
+          <label>Объяснение (опционально)</label>
+          <textarea class="q-explanation" data-i="${i}" rows="2" placeholder="Почему этот ответ правильный">${escapeHtml(nq.explanation||"")}</textarea>
+        </div>
+        <div class="q-ai-row">
+          <button class="btn-ghost" onclick="aiImprove(${i},'rephrase')">🤖 Переформулировать</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'harder')">🔺 Усложнить</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'easier')">🔻 Упростить</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'explain')">💡 Объяснение</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+  scheduleDraftSave();
+}
+
+function changeQType(i, newType){
+  const q=editing.questions[i];
+  const old=q.type||"single";
+  if (old===newType) return;
+  normalizeQ(q);
+  if (newType==="text"){
+    if (Array.isArray(q.options)){
+      const c=q.options.find(o=>o.correct);
+      q.answer=c?c.text:"";
+      delete q.options;
+    }
+  } else if (newType==="matching"){
+    if (!Array.isArray(q.pairs)) q.pairs=[{left:"",right:""},{left:"",right:""}];
+    delete q.options; delete q.answer; delete q.items;
+  } else if (newType==="sort"){
+    if (!Array.isArray(q.items)) q.items=["","",""];
+    delete q.options; delete q.answer; delete q.pairs;
+  } else {
+    if (old==="text"){
+      q.options=[{text:q.answer||"",correct:true},{text:"",correct:false}];
+      delete q.answer;
+    } else if (old==="matching"||old==="sort"){
+      q.options=[{text:"",correct:true},{text:"",correct:false}];
+    }
+    if (newType==="single"&&Array.isArray(q.options)){
+      let found=false;
+      q.options=q.options.map(o=>{
+        if (o.correct&&!found){found=true;return{...o,correct:true};}
+        return{...o,correct:false};
+      });
+      if (!found&&q.options.length) q.options[0].correct=true;
+    }
   }
+  q.type=newType;
+  renderEditor();
+}
+
+function addQuestion(){editing.questions.push(blankQuestion());renderEditor();}
+function deleteQuestion(i){
+  if (editing.questions.length<=1){showToast("МИНИМУМ ОДИН");return;}
+  if (!confirm(`Удалить вопрос ${i+1}?`)) return;
+  editing.questions.splice(i,1);renderEditor();
+}
+function moveQuestion(i,dir){
+  const j=i+dir;if(j<0||j>=editing.questions.length)return;
+  const[q]=editing.questions.splice(i,1);editing.questions.splice(j,0,q);renderEditor();
+}
+function addOption(i){editing.questions[i].options.push({text:"",correct:false});renderEditor();}
+function deleteOption(i,j){
+  const q=editing.questions[i];
+  if (q.options.length<=2){showToast("МИНИМУМ 2");return;}
+  q.options.splice(j,1);
+  if (q.type==="single"&&!q.options.some(o=>o.correct)) q.options[0].correct=true;
+  renderEditor();
+}
+function addPair(i){editing.questions[i].pairs.push({left:"",right:""});renderEditor();}
+function deletePair(i,j){
+  const q=editing.questions[i];
+  if (q.pairs.length<=2){showToast("МИНИМУМ 2");return;}
+  q.pairs.splice(j,1);renderEditor();
+}
+function addSortItem(i){editing.questions[i].items.push("");renderEditor();}
+function deleteSortItem(i,j){
+  const q=editing.questions[i];
+  if (q.items.length<=2){showToast("МИНИМУМ 2");return;}
+  q.items.splice(j,1);renderEditor();
+}
+function removeImage(i){editing.questions[i].image=null;renderEditor();}
+function uploadImage(i,input){
+  const file=input.files[0];if(!file)return;
+  if (file.size>300*1024){showToast("ФАЙЛ >300КБ");return;}
+  const reader=new FileReader();
+  reader.onload=e=>{editing.questions[i].image=e.target.result;renderEditor();};
+  reader.readAsDataURL(file);
+}
+
+$("edQuestions").addEventListener("input",e=>{
+  const el=e.target;
+  if (!editing||el.dataset.i===undefined) return;
+  const i=+el.dataset.i,q=editing.questions[i];
+  if (el.classList.contains("q-text")) q.question=el.value;
+  else if (el.classList.contains("opt-text")) q.options[+el.dataset.j].text=el.value;
+  else if (el.classList.contains("q-explanation")) q.explanation=el.value;
+  else if (el.classList.contains("q-answer")) q.answer=el.value;
+  else if (el.classList.contains("pair-left")) q.pairs[+el.dataset.j].left=el.value;
+  else if (el.classList.contains("pair-right")) q.pairs[+el.dataset.j].right=el.value;
+  else if (el.classList.contains("sort-input")) q.items[+el.dataset.j]=el.value;
+  scheduleDraftSave();
 });
-$("edQuestions").addEventListener("change", e => {
-  const el = e.target;
-  if (el.classList.contains("opt-radio") && editing){
-    editing.questions[+el.dataset.i].correct = +el.dataset.j;
-  }
+$("edQuestions").addEventListener("change",e=>{
+  const el=e.target;
+  if (!editing||!el.classList.contains("opt-correct")) return;
+  const i=+el.dataset.i,j=+el.dataset.j;
+  const q=editing.questions[i];
+  if (q.type==="multi") q.options[j].correct=el.checked;
+  else q.options.forEach((o,k)=>{o.correct=(k===j);});
+  scheduleDraftSave();
+});
+["edTitle","edDesc","edTags","edTime"].forEach(id=>{
+  const el=$(id);
+  if (el) el.addEventListener("input",()=>{
+    if (!editing) return;
+    if (id==="edTitle") editing.title=el.value;
+    else if (id==="edDesc") editing.description=el.value;
+    else if (id==="edTags") editing.tags=el.value.split(",").map(s=>s.trim()).filter(Boolean);
+    else if (id==="edTime") editing.timeLimit=Math.max(0,parseInt(el.value,10)||0)*60;
+    scheduleDraftSave();
+  });
 });
 
 function saveTest(){
-  if (!editing){ showToast("РЕДАКТОР ЗАКРЫТ"); return; }
-  editing.title = $("edTitle").value.trim();
-  editing.description = $("edDesc").value.trim();
-  editing.timeLimit = Math.max(0, parseInt($("edTime").value, 10) || 0) * 60;
+  if (!editing) return;
+  editing.title=$("edTitle").value.trim();
+  editing.description=$("edDesc").value.trim();
+  editing.tags=$("edTags").value.split(",").map(s=>s.trim()).filter(Boolean);
+  editing.timeLimit=Math.max(0,parseInt($("edTime").value,10)||0)*60;
 
-  if (!editing.title){ showToast("ВВЕДИТЕ НАЗВАНИЕ"); $("edTitle").focus(); return; }
-  if (!editing.questions.length){ showToast("ДОБАВЬТЕ ВОПРОС"); return; }
-  for (let i = 0; i < editing.questions.length; i++){
-    const q = editing.questions[i];
-    if (!q.question.trim()){ showToast(`ВОПРОС ${i + 1}: ВВЕДИТЕ ТЕКСТ`); return; }
-    if (q.options.length < 2){ showToast(`ВОПРОС ${i + 1}: МИНИМУМ 2 ВАРИАНТА`); return; }
-    if (q.options.some(o => !o.trim())){ showToast(`ВОПРОС ${i + 1}: ЗАПОЛНИТЕ ВАРИАНТЫ`); return; }
-    if (q.correct < 0 || q.correct >= q.options.length){
-      showToast(`ВОПРОС ${i + 1}: ВЫБЕРИТЕ ОТВЕТ`); return;
+  if (!editing.title){showToast("ВВЕДИТЕ НАЗВАНИЕ");$("edTitle").focus();return;}
+  if (!editing.questions.length){showToast("ДОБАВЬТЕ ВОПРОС");return;}
+  for (let i=0;i<editing.questions.length;i++){
+    const q=editing.questions[i];
+    if (!q.question.trim()){showToast(`ВОПРОС ${i+1}: ВВЕДИТЕ ТЕКСТ`);return;}
+    if (q.type==="text"){
+      if (!q.answer||!q.answer.trim()){showToast(`ВОПРОС ${i+1}: ВВЕДИТЕ ОТВЕТ`);return;}
+    } else if (q.type==="matching"){
+      if (!q.pairs||q.pairs.length<2){showToast(`ВОПРОС ${i+1}: МИНИМУМ 2 ПАРЫ`);return;}
+      if (q.pairs.some(p=>!p.left.trim()||!p.right.trim())){showToast(`ВОПРОС ${i+1}: ЗАПОЛНИТЕ ПАРЫ`);return;}
+    } else if (q.type==="sort"){
+      if (!q.items||q.items.length<2){showToast(`ВОПРОС ${i+1}: МИНИМУМ 2 ЭЛЕМЕНТА`);return;}
+      if (q.items.some(it=>!it.trim())){showToast(`ВОПРОС ${i+1}: ЗАПОЛНИТЕ ЭЛЕМЕНТЫ`);return;}
+    } else {
+      if (!Array.isArray(q.options)||q.options.length<2){showToast(`ВОПРОС ${i+1}: МИНИМУМ 2 ВАРИАНТА`);return;}
+      if (q.options.some(o=>!o.text.trim())){showToast(`ВОПРОС ${i+1}: ЗАПОЛНИТЕ ВАРИАНТЫ`);return;}
+      if (!q.options.some(o=>o.correct)){showToast(`ВОПРОС ${i+1}: ОТМЕТЬТЕ ПРАВИЛЬНЫЙ`);return;}
     }
   }
-
-  const idx = tests.findIndex(t => t.id === editing.id);
-  const clean = {
-    id: editing.id,
-    title: editing.title,
-    description: editing.description,
-    timeLimit: editing.timeLimit,
-    questions: editing.questions.map(q => ({
-      question: q.question.trim(),
-      options: q.options.map(o => o.trim()),
-      correct: q.correct
-    }))
-  };
-  if (idx >= 0) tests[idx] = clean; else tests.push(clean);
+  const idx=tests.findIndex(t=>t.id===editing.id);
+  const clean=deepCopy(editing);
+  // Убираем временные поля
+  clean.questions = clean.questions.map(q=>{
+    const c = {...q};
+    delete c._userOrder; delete c._rightShuffled;
+    return c;
+  });
+  if (idx>=0) tests[idx]=clean; else tests.push(clean);
   saveTests();
-  editing = null;
+  localStorage.removeItem(DRAFT_KEY);
+  editing=null;
   renderLibrary();
   show("libraryScreen");
   showToast("✓ ТЕСТ СОХРАНЁН");
@@ -1371,311 +1830,420 @@ function saveTest(){
    ИМПОРТ / ЭКСПОРТ
    ========================================================== */
 function exportAll(){
-  const data = JSON.stringify(tests, null, 2);
-  const blob = new Blob([data], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "tests-" + new Date().toISOString().slice(0, 10) + ".json";
-  a.click();
-  URL.revokeObjectURL(a.href);
-  showToast("ФАЙЛ ЭКСПОРТИРОВАН");
+  const data=JSON.stringify(tests,null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="tests-"+new Date().toISOString().slice(0,10)+".json";
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast("ЭКСПОРТИРОВАНО");
 }
 
 function importJSON(event){
-  const file = event.target.files[0];
-  event.target.value = "";
+  const file=event.target.files[0];event.target.value="";
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
+  const reader=new FileReader();
+  reader.onload=e=>{
     try {
-      const data = JSON.parse(e.target.result);
-      const incoming = Array.isArray(data) ? data : [data];
-      let added = 0;
+      const data=JSON.parse(e.target.result);
+      const incoming=Array.isArray(data)?data:[data];
+      let added=0;
       for (const raw of incoming){
         if (!isValidTest(raw)) continue;
         tests.push({
-          id: uid(),
-          title: String(raw.title || "Импортированный тест"),
-          description: String(raw.description || ""),
-          timeLimit: Math.max(0, Number(raw.timeLimit) || 0),
-          questions: raw.questions.map(q => ({
-            question: String(q.question),
-            options: q.options.map(String),
-            correct: Math.min(q.options.length - 1, Math.max(0, Number(q.correct) || 0))
-          }))
+          id:uid(),
+          title:String(raw.title||"Импортированный тест"),
+          description:String(raw.description||""),
+          tags:Array.isArray(raw.tags)?raw.tags.map(String):[],
+          timeLimit:Math.max(0,Number(raw.timeLimit)||0),
+          questions:raw.questions.map(normalizeQ)
         });
         added++;
       }
-      if (!added){ alert("В файле нет корректных тестов."); return; }
-      saveTests();
-      renderLibrary();
-      showToast(`ИМПОРТИРОВАНО: ${added}`);
-    } catch(err){
-      alert("Ошибка чтения JSON: " + err.message);
-    }
+      if (!added){alert("Нет корректных тестов");return;}
+      saveTests();renderLibrary();
+      showToast(`ИМПОРТ: ${added}`);
+    } catch(err){alert("Ошибка: "+err.message);}
+  };
+  reader.readAsText(file);
+}
+function isValidTest(t){
+  return t&&typeof t==="object"&&typeof t.title==="string"&&Array.isArray(t.questions)&&t.questions.length>0;
+}
+
+/* CSV импорт */
+function importCsvDialog(){
+  $("csvInput").click();
+}
+function importCsv(event){
+  const file=event.target.files[0];event.target.value="";
+  if (!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try {
+      const text=e.target.result;
+      const lines=text.split(/\r?\n/).filter(l=>l.trim());
+      if (!lines.length){alert("Пустой файл");return;}
+      // Формат: Вопрос;Ответ1;Ответ2;Ответ3;Ответ4;Правильный(1..4);[Объяснение]
+      const questions=[];
+      for (const line of lines){
+        const parts=line.split(";").map(s=>s.trim().replace(/^"|"$/g,""));
+        if (parts.length<3) continue;
+        const qtext=parts[0];
+        if (!qtext) continue;
+        // Последние 2 — правильный и опционально объяснение
+        // Мягкий вариант: если 3 колонки — вопрос, 1 вариант, правильно/нет
+        let opts=[], correctIdx=0, explanation="";
+        if (parts.length>=6){
+          opts = parts.slice(1,5).map(t=>({text:t,correct:false}));
+          const ci = parseInt(parts[5],10);
+          correctIdx = (!isNaN(ci) && ci>=1 && ci<=opts.length) ? ci-1 : 0;
+          if (parts[6]) explanation = parts[6];
+        } else {
+          opts = parts.slice(1,-1).map(t=>({text:t,correct:false}));
+          correctIdx = 0;
+        }
+        if (opts.length>=2){
+          opts[correctIdx].correct=true;
+          questions.push({type:"single",question:qtext,options:opts,explanation,image:null});
+        }
+      }
+      if (!questions.length){alert("Не удалось разобрать CSV. Формат: Вопрос;A;B;C;D;Правильный(1-4);Объяснение");return;}
+      const test={id:uid(),title:file.name.replace(/\.(csv|txt)$/i,""),description:"",
+        tags:[],timeLimit:0,questions};
+      tests.push(test);saveTests();renderLibrary();
+      showToast(`ИМПОРТ: ${questions.length} ВОПРОСОВ`);
+    } catch(err){alert("Ошибка CSV: "+err.message);}
   };
   reader.readAsText(file);
 }
 
-function isValidTest(t){
-  return t && typeof t === "object" &&
-    typeof t.title === "string" &&
-    Array.isArray(t.questions) && t.questions.length > 0 &&
-    t.questions.every(q =>
-      q && typeof q.question === "string" &&
-      Array.isArray(q.options) && q.options.length >= 2 &&
-      q.options.every(o => typeof o === "string") &&
-      typeof q.correct === "number" &&
-      q.correct >= 0 && q.correct < q.options.length
-    );
-}
-
 /* ==========================================================
-   🤖 POLLINATIONS AI
+   AI — общий вызов
    ========================================================== */
-function openAiModal(mode){
-  aiMode = mode;
-  aiResult = null;
-  $("aiTopic").value = "";
-  $("aiCount").value = 5;
-  $("aiDiff").value = "medium";
-  setStatus("", "");
-  $("aiGenBtn").textContent = "✨ СГЕНЕРИРОВАТЬ";
-  $("aiGenBtn").onclick = generateWithAi;
-  $("aiGenBtn").disabled = false;
-
-  if (mode === "questions" && editing){
-    $("aiModalTitle").textContent = "🤖 Сгенерировать вопросы";
-    $("aiModalSub").textContent = "AI допишет вопросы к текущему тесту. Потом можно отредактировать.";
-  } else {
-    $("aiModalTitle").textContent = "🤖 Создать тест с AI";
-    $("aiModalSub").textContent = "AI сгенерирует вопросы с вариантами ответов по вашей теме.";
-  }
-  $("aiModal").classList.remove("hidden");
-  setTimeout(() => $("aiTopic").focus(), 50);
-}
-
-function closeAiModal(){
-  $("aiModal").classList.add("hidden");
-  aiResult = null;
-}
-
-function setStatus(msg, kind){
-  const el = $("aiStatus");
-  el.className = "ai-status" + (kind ? " " + kind : "");
-  el.textContent = msg || "";
-}
-
-async function callPollinations(messages){
+async function callAI(messages){
+  const useProxy = proxyUrl && proxyUrl.trim();
+  const url = useProxy ? proxyUrl : "https://text.pollinations.ai/openai";
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 90000);
-
+  const timeoutId = setTimeout(()=>controller.abort(), 90000);
   try {
-    const res = await fetch("https://text.pollinations.ai/openai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "openai",
-        messages,
-        temperature: 0.8,
-        max_tokens: 4096
-      }),
-      signal: controller.signal
+    const res = await fetch(url, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"openai",messages,temperature:0.8,max_tokens:4096}),
+      signal:controller.signal
     });
     clearTimeout(timeoutId);
-
     if (!res.ok){
-      let body = "";
-      try { body = await res.text(); } catch(e){}
-      let msg;
-      if (res.status === 429) msg = "Слишком много запросов (429). Подождите 15–30 секунд.";
-      else if (res.status >= 500) msg = "Сервер Pollinations недоступен. Попробуйте позже.";
-      else msg = `Ошибка API ${res.status}: ${body.slice(0, 200)}`;
-      throw new Error(msg);
+      let body="";try{body=await res.text();}catch(e){}
+      if (res.status===429) throw new Error("Слишком много запросов. Подождите 15–30 секунд.");
+      if (res.status>=500) throw new Error("Сервер AI недоступен. Попробуйте позже.");
+      throw new Error(`Ошибка API ${res.status}: ${body.slice(0,200)}`);
     }
-
-    const data = await res.json();
-    if (!data.choices || !data.choices[0] || !data.choices[0].message){
-      throw new Error("Неожиданный ответ API");
-    }
+    const data=await res.json();
+    if (!data.choices||!data.choices[0]||!data.choices[0].message) throw new Error("Неожиданный ответ");
     return data.choices[0].message.content;
-
-  } catch (err){
+  } catch(err){
     clearTimeout(timeoutId);
-    if (err.name === "AbortError"){
-      throw new Error("Превышено время ожидания (90 сек). Попробуйте позже или меньше вопросов.");
-    }
-    if (err.message && err.message.includes("fetch")){
-      throw new Error("Сеть недоступна или запрос заблокирован.");
-    }
+    if (err.name==="AbortError") throw new Error("Превышено время (90 сек).");
+    if (err.message&&err.message.includes("fetch")) throw new Error("Сеть/прокси недоступен.");
     throw err;
   }
 }
 
 function parseJsonLoose(text){
   if (!text) throw new Error("пустой ответ");
-  try { return JSON.parse(text); } catch(e){}
-  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence){
-    try { return JSON.parse(fence[1]); } catch(e){}
-  }
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start >= 0 && end > start){
-    try { return JSON.parse(text.slice(start, end + 1)); } catch(e){}
-  }
-  throw new Error("не удалось найти JSON в ответе AI");
+  try {return JSON.parse(text);}catch(e){}
+  const fence=text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence){try{return JSON.parse(fence[1]);}catch(e){}}
+  const s=text.indexOf("{"),e=text.lastIndexOf("}");
+  if (s>=0&&e>s){try{return JSON.parse(text.slice(s,e+1));}catch(e){}}
+  throw new Error("не удалось найти JSON");
 }
 
-function normalizeQuestions(raw){
+/* AI: Модалка создания/генерации */
+function openAiModal(mode){
+  aiMode=mode;aiResult=null;
+  $("aiTopic").value="";$("aiCount").value=5;$("aiDiff").value="medium";
+  setStatus("","");$("aiSkeleton").classList.add("hidden");
+  $("aiGenBtn").textContent="✨ СГЕНЕРИРОВАТЬ";
+  $("aiGenBtn").onclick=generateWithAi;
+  $("aiGenBtn").disabled=false;
+  if (mode==="questions"&&editing){
+    $("aiModalTitle").textContent="🤖 Сгенерировать вопросы";
+    $("aiModalSub").textContent="AI допишет вопросы к текущему тесту.";
+  } else {
+    $("aiModalTitle").textContent="🤖 Создать тест с AI";
+    $("aiModalSub").textContent="AI сгенерирует вопросы по вашей теме.";
+  }
+  $("aiModal").classList.remove("hidden");
+  setTimeout(()=>$("aiTopic").focus(),50);
+}
+function closeAiModal(){$("aiModal").classList.add("hidden");aiResult=null;}
+function setStatus(msg,kind){const el=$("aiStatus");el.className="ai-status"+(kind?" "+kind:"");el.textContent=msg||"";}
+
+function normalizeAiQuestions(raw){
   if (!Array.isArray(raw)) return [];
-  return raw.map(q => {
-    const opts = Array.isArray(q.options) ? q.options.map(o => String(o).trim()) : [];
-    while (opts.length < 2) opts.push("Вариант " + (opts.length + 1));
-    let correct = Number(q.correct);
-    if (!Number.isFinite(correct) || correct < 0 || correct >= opts.length) correct = 0;
-    return {
-      question: String(q.question || "").trim() || "Вопрос без текста",
-      options: opts,
-      correct
-    };
-  }).filter(q => q.question);
+  return raw.map(q=>{
+    const opts=Array.isArray(q.options)?q.options.map(o=>String(o).trim()):[];
+    while (opts.length<2) opts.push("Вариант "+(opts.length+1));
+    let c=Number(q.correct);
+    if (!Number.isFinite(c)||c<0||c>=opts.length) c=0;
+    return {type:"single",question:String(q.question||"").trim()||"Вопрос",
+      options:opts.map((text,i)=>({text,correct:i===c})),
+      explanation:"",image:null};
+  }).filter(q=>q.question);
 }
 
 async function generateWithAi(){
-  if (aiResult){ applyAiResult(); return; }
+  if (aiResult){applyAiResult();return;}
+  const topic=$("aiTopic").value.trim();
+  const count=Math.min(20,Math.max(1,parseInt($("aiCount").value,10)||5));
+  const diff=$("aiDiff").value;
+  if (!topic){setStatus("Введите тему","err");return;}
+  const diffLabel={easy:"лёгкий",medium:"средний",hard:"сложный",mixed:"смешанный"}[diff];
 
-  const topic = $("aiTopic").value.trim();
-  const count = Math.min(20, Math.max(1, parseInt($("aiCount").value, 10) || 5));
-  const diff = $("aiDiff").value;
+  const sys="Ты — методист. Отвечай ТОЛЬКО валидным JSON, без markdown-обёрток.";
+  const user=`Создай ${count} тестовых вопроса по теме "${topic}". Уровень: ${diffLabel}.
+Ответ ТОЛЬКО в JSON:
+{"title":"Название","description":"Одно предложение","timeLimit":${count*60},
+"questions":[{"question":"Текст?","options":["A","B","C","D"],"correct":0}]}
+Правила: ровно ${count} вопросов, 4 варианта, correct=0..3, правильный не всегда первый. На русском.`;
 
-  if (!topic){ setStatus("Введите тему", "err"); $("aiTopic").focus(); return; }
-
-  const diffLabel = { easy: "лёгкий", medium: "средний", hard: "сложный",
-                      mixed: "смешанный (часть вопросов легче, часть сложнее)" }[diff];
-
-  const sys = "Ты — опытный методист. Генерируешь тестовые вопросы строго в формате JSON. " +
-              "Никогда не добавляй markdown-обёртки, комментарии и пояснения — только валидный JSON.";
-  const user =
-`Создай ${count} тестовых вопроса по теме "${topic}". Уровень: ${diffLabel}.
-Ответ должен быть ТОЛЬКО в формате JSON:
-{
-  "title": "Короткое название теста",
-  "description": "Одно предложение описания",
-  "timeLimit": ${count * 60},
-  "questions": [
-    {
-      "question": "Текст вопроса?",
-      "options": ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4"],
-      "correct": 0
-    }
-  ]
-}
-Правила:
-- Ровно ${count} вопросов.
-- Ровно 4 варианта в каждом.
-- "correct" — индекс правильного варианта (0..3).
-- Вопросы разные и осмысленные, без повторов.
-- В "options" только текст варианта, без букв A/B/C/D и без нумерации.
-- Правильный ответ не всегда первый, распределяй равномерно.
-- Всё на русском языке.`;
-
-  const btn = $("aiGenBtn");
-  btn.disabled = true;
-  btn.textContent = "⏳ ГЕНЕРИРУЮ...";
-  setStatus("Запрос к Pollinations AI. Обычно 10–40 секунд…", "info");
+  const btn=$("aiGenBtn");
+  btn.disabled=true;btn.textContent="⏳ ГЕНЕРИРУЮ...";
+  setStatus("Запрос к AI. 10–40 секунд…","info");
+  $("aiSkeleton").classList.remove("hidden");
 
   try {
-    const content = await callPollinations([
-      { role: "system", content: sys },
-      { role: "user", content: user }
-    ]);
-
+    const content=await callAI([{role:"system",content:sys},{role:"user",content:user}]);
     let parsed;
-    try { parsed = parseJsonLoose(content); }
-    catch (e){ throw new Error("AI вернул не-JSON: " + content.slice(0, 100)); }
-    if (!parsed.questions || !Array.isArray(parsed.questions)){
-      throw new Error("AI вернул JSON без поля questions");
-    }
-    const questions = normalizeQuestions(parsed.questions);
-    if (!questions.length) throw new Error("AI не вернул вопросов");
-
-    aiResult = {
-      title: String(parsed.title || `Тест по теме: ${topic}`).trim(),
-      description: String(parsed.description || `Сгенерировано AI по теме «${topic}»`).trim(),
-      timeLimit: Math.max(0, Number(parsed.timeLimit) || questions.length * 60),
-      questions
+    try {parsed=parseJsonLoose(content);}catch(e){throw new Error("AI вернул не-JSON");}
+    if (!parsed.questions||!Array.isArray(parsed.questions)) throw new Error("Нет questions");
+    const qs=normalizeAiQuestions(parsed.questions);
+    if (!qs.length) throw new Error("AI не вернул вопросов");
+    aiResult={
+      title:String(parsed.title||`Тест: ${topic}`).trim(),
+      description:String(parsed.description||"").trim(),
+      tags:[topic.toLowerCase()],
+      timeLimit:Math.max(0,Number(parsed.timeLimit)||qs.length*60),
+      questions:qs
     };
-
-    setStatus(`✓ Готово: ${questions.length} вопросов. Нажмите «Применить».`, "ok");
-    btn.textContent = "✓ ПРИМЕНИТЬ";
-    btn.disabled = false;
-    btn.onclick = applyAiResult;
-
-  } catch (err){
-    setStatus("❌ " + err.message, "err");
-    btn.disabled = false;
-    btn.textContent = "✨ СГЕНЕРИРОВАТЬ";
-    btn.onclick = generateWithAi;
+    $("aiSkeleton").classList.add("hidden");
+    setStatus(`✓ Готово: ${qs.length} вопросов`,"ok");
+    btn.textContent="✓ ПРИМЕНИТЬ";btn.disabled=false;btn.onclick=applyAiResult;
+  } catch(err){
+    $("aiSkeleton").classList.add("hidden");
+    setStatus("❌ "+err.message,"err");
+    btn.disabled=false;btn.textContent="✨ СГЕНЕРИРОВАТЬ";btn.onclick=generateWithAi;
   }
 }
 
 function applyAiResult(){
-  if (!aiResult){ showToast("СНАЧАЛА СГЕНЕРИРУЙТЕ"); return; }
-
-  if (aiMode === "questions" && editing){
-    if (editing.questions.length === 1 && !editing.questions[0].question.trim()){
-      editing.questions = [];
-    }
+  if (!aiResult) return;
+  if (aiMode==="questions"&&editing){
+    if (editing.questions.length===1&&!editing.questions[0].question.trim()) editing.questions=[];
     editing.questions.push(...deepCopy(aiResult.questions));
-    renderEditor();
-    closeAiModal();
-    showToast(`✓ ДОБАВЛЕНО ${aiResult.questions.length} ВОПРОСОВ`);
+    renderEditor();closeAiModal();
+    showToast(`✓ +${aiResult.questions.length} ВОПРОСОВ`);
+    return;
+  }
+  const draft={id:uid(),...deepCopy(aiResult)};
+  closeAiModal();openEditor(draft);
+  showToast("✓ СГЕНЕРИРОВАН");
+}
+
+/* AI: Улучшить / объяснить вопрос */
+async function aiImprove(i, action){
+  const q = editing.questions[i];
+  if (!q || !q.question.trim()){showToast("ВОПРОС ПУСТ");return;}
+  normalizeQ(q);
+
+  const actions = {
+    rephrase: "Переформулируй вопрос яснее, сохранив смысл. Измени только текст вопроса.",
+    harder: "Сделай вопрос СЛОЖНЕЕ: добавь детали, усложни формулировку или варианты. Сохрани правильный ответ.",
+    easier: "Сделай вопрос ПРОЩЕ: упрости формулировку и варианты. Сохрани правильный ответ.",
+    explain: "Напиши краткое объяснение, почему правильный ответ верный. 1-2 предложения."
+  };
+
+  const context = q.type === "text"
+    ? `Вопрос: "${q.question}". Правильный ответ: "${q.answer}"`
+    : q.type === "matching"
+    ? `Вопрос: "${q.question}". Пары: ${q.pairs.map(p=>`${p.left}→${p.right}`).join("; ")}`
+    : q.type === "sort"
+    ? `Вопрос: "${q.question}". Правильный порядок: ${q.items.join(" → ")}`
+    : `Вопрос: "${q.question}". Варианты: ${q.options.map((o,j)=>`${j}) ${o.text}${o.correct?" ✓":""}`).join("; ")}`;
+
+  if (action === "explain"){
+    showToast("⏳ ГЕНЕРАЦИЯ ОБЪЯСНЕНИЯ…");
+    try {
+      const content = await callAI([
+        {role:"system",content:"Ты — методист. Отвечай кратко."},
+        {role:"user",content:`${actions.explain}\n\n${context}\n\nОтветь простым текстом (без JSON) на русском.`}
+      ]);
+      q.explanation = content.trim();
+      renderEditor();
+      showToast("✓ ОБЪЯСНЕНИЕ ДОБАВЛЕНО");
+    } catch(err){ showToast("❌ "+err.message); }
     return;
   }
 
-  const draft = {
-    id: uid(),
-    title: aiResult.title,
-    description: aiResult.description,
-    timeLimit: aiResult.timeLimit,
-    questions: deepCopy(aiResult.questions)
-  };
-  closeAiModal();
-  openEditor(draft);
-  showToast("✓ ТЕСТ СГЕНЕРИРОВАН — ПРОВЕРЬТЕ И СОХРАНИТЕ");
+  showToast("⏳ AI УЛУЧШАЕТ…");
+  try {
+    const content = await callAI([
+      {role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},
+      {role:"user",content:`${actions[action]}\n\n${context}\n\nОтветь JSON:
+{"question":"Новый текст","options":["A","B","C","D"],"correct":0}
+Для текстового вопроса: {"question":"...","answer":"..."}
+Для matching: {"question":"...","pairs":[{"left":"","right":""}]}
+Для sort: {"question":"...","items":["1","2","3"]}
+Только релевантные поля.`}
+    ]);
+    const parsed = parseJsonLoose(content);
+    if (parsed.question) q.question = String(parsed.question);
+    if (q.type === "text" && parsed.answer) q.answer = String(parsed.answer);
+    if (q.type === "matching" && Array.isArray(parsed.pairs)){
+      q.pairs = parsed.pairs.map(p=>({left:String(p.left||""),right:String(p.right||"")}));
+    }
+    if (q.type === "sort" && Array.isArray(parsed.items)){
+      q.items = parsed.items.map(String);
+    }
+    if ((q.type === "single" || q.type === "multi") && Array.isArray(parsed.options)){
+      const correctIdx = parseInt(parsed.correct,10) || 0;
+      q.options = parsed.options.map((text,j)=>({text:String(text),correct:j===correctIdx}));
+    }
+    renderEditor();
+    showToast("✓ ОБНОВЛЕНО");
+  } catch(err){ showToast("❌ "+err.message); }
 }
 
-/* Enter в модалке */
-$("aiTopic").addEventListener("keydown", e => {
-  if (e.key === "Enter"){ e.preventDefault(); $("aiCount").focus(); }
-});
-$("aiCount").addEventListener("keydown", e => {
-  if (e.key === "Enter"){ e.preventDefault(); $("aiGenBtn").click(); }
+/* AI: Перевод теста на английский */
+async function aiTranslateTest(){
+  if (!editing){showToast("ОТКРОЙТЕ РЕДАКТОР");return;}
+  if (!confirm("Перевести тест на английский через AI?")) return;
+  showToast("⏳ AI ПЕРЕВОДИТ…");
+  try {
+    const content = await callAI([
+      {role:"system",content:"Переводчик тестов. Отвечай ТОЛЬКО валидным JSON."},
+      {role:"user",content:`Переведи тест на английский. Сохрани структуру.
+Тест: ${JSON.stringify({title:editing.title,description:editing.description,questions:editing.questions})}
+Ответь JSON: {"title":"...","description":"...","questions":[...]}`}
+    ]);
+    const parsed = parseJsonLoose(content);
+    if (parsed.title) editing.title = parsed.title;
+    if (parsed.description) editing.description = parsed.description;
+    if (Array.isArray(parsed.questions)){
+      parsed.questions.forEach((pq,i)=>{
+        if (editing.questions[i]){
+          if (pq.question) editing.questions[i].question = pq.question;
+          if (Array.isArray(pq.options) && editing.questions[i].options){
+            pq.options.forEach((t,j)=>{
+              if (editing.questions[i].options[j]) editing.questions[i].options[j].text = String(t);
+            });
+          }
+        }
+      });
+    }
+    $("edTitle").value = editing.title;
+    $("edDesc").value = editing.description || "";
+    renderEditor();
+    showToast("✓ ПЕРЕВЕДЕНО");
+  } catch(err){ showToast("❌ "+err.message); }
+}
+
+/* AI: Анализ ошибок + генерация слабого теста */
+async function aiAnalyzeErrors(){
+  if (!state || !TEST){showToast("НЕТ РЕЗУЛЬТАТА");return;}
+  const wrongQuestions = state.questions.filter((q,i)=>!isAnswerCorrect(q, state.answers[i]));
+  if (!wrongQuestions.length){showToast("ОШИБОК НЕТ 🎉");return;}
+
+  const summary = wrongQuestions.slice(0,10).map(q=>normalizeQ(q).question).join("; ");
+  showToast("⏳ AI АНАЛИЗИРУЕТ…");
+
+  try {
+    const content = await callAI([
+      {role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},
+      {role:"user",content:`Пользователь ошибся в вопросах: ${summary}
+Сгенерируй 5 новых вопросов по этим же темам (чтобы закрепить слабые места).
+Ответ ТОЛЬКО JSON: {"title":"Закрепление","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}
+На русском, 5 вопросов, 4 варианта, correct=0..3.`}
+    ]);
+    const parsed = parseJsonLoose(content);
+    const qs = normalizeAiQuestions(parsed.questions || []);
+    if (!qs.length) throw new Error("нет вопросов");
+    const draft = {
+      id: uid(),
+      title: `Закрепление — ${TEST.title}`,
+      description: "Сгенерировано по ошибкам в предыдущем тесте",
+      tags: ["закрепление", ...(TEST.tags||[])],
+      timeLimit: 0,
+      questions: qs
+    };
+    openEditor(draft);
+    showToast("✓ ТЕСТ ПО ОШИБКАМ СОЗДАН");
+  } catch(err){
+    showToast("❌ "+err.message);
+  }
+}
+
+$("aiTopic").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiCount").focus();}});
+$("aiCount").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiGenBtn").click();}});
+
+/* ==========================================================
+   ХОТКЕИ
+   ========================================================== */
+document.addEventListener("keydown",e=>{
+  if (e.key==="Escape"){
+    if (!$("aiModal").classList.contains("hidden")){closeAiModal();return;}
+    if (!$("settingsModal").classList.contains("hidden")){closeSettings();return;}
+  }
+  // Slash = поиск
+  if (e.key==="/"&&!$("libraryScreen").classList.contains("hidden")){
+    const tag=(e.target.tagName||"").toLowerCase();
+    if (tag!=="input"&&tag!=="textarea"){
+      e.preventDefault();$("searchInput").focus();$("searchInput").select();return;
+    }
+  }
+  // Quiz hotkeys
+  if (!$("quizScreen").classList.contains("hidden")&&state){
+    if (e.key==="ArrowLeft"){e.preventDefault();prevQuestion();}
+    else if (e.key==="ArrowRight"){e.preventDefault();nextQuestion();}
+    else if (/^[1-9]$/.test(e.key)){
+      const i=parseInt(e.key,10)-1;
+      const q=normalizeQ(state.questions[state.current]);
+      if (q.type==="text"||q.type==="matching"||q.type==="sort") return;
+      if (i<(q.options||[]).length){
+        if (q.type==="multi"){
+          let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];
+          const idx=a.indexOf(i);
+          state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];
+        } else state.answers[state.current]=i;
+        saveState();renderQuestion();
+      }
+    }
+    return;
+  }
+  if ($("libraryScreen").classList.contains("hidden")) return;
+  if (e.ctrlKey||e.metaKey||e.altKey) return;
+  const tag=(e.target.tagName||"").toLowerCase();
+  if (tag==="input"||tag==="textarea") return;
+  if (e.key==="n"||e.key==="N"||e.key==="т"||e.key==="Т"){e.preventDefault();openEditor(null);}
+  else if (e.key==="a"||e.key==="A"||e.key==="ф"||e.key==="Ф"){e.preventDefault();openAiModal("test");}
+  else if (e.key==="Enter"){
+    const list=filterTests();
+    if (list.length===1){e.preventDefault();openStart(list[0].id);}
+  }
 });
 
 /* ==========================================================
-   КЛАВИАТУРА
+   СТАРТ
    ========================================================== */
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && !$("aiModal").classList.contains("hidden")){
-    closeAiModal(); return;
-  }
-  if ($("quizScreen").classList.contains("hidden") || !state) return;
-  if (e.key === "ArrowLeft"){ e.preventDefault(); prevQuestion(); }
-  else if (e.key === "ArrowRight"){ e.preventDefault(); nextQuestion(); }
-  else if (/^[1-9]$/.test(e.key)){
-    const i = parseInt(e.key, 10) - 1;
-    if (i < state.questions[state.current].options.length) selectOption(i);
-  }
-});
-
-/* ==========================================================
-   ЗАПУСК
-   ========================================================== */
-loadTests().then(() => {
+loadSettings();
+loadAttempts();
+loadTests().then(()=>{
   renderLibrary();
   show("libraryScreen");
+  checkHashImport();
 });
 </script>
 </body>
