@@ -15,353 +15,587 @@
   --line:1.5px solid var(--black);--line-thin:1px solid var(--gray-300);
   --mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
   --sans:"Inter","Helvetica Neue",-apple-system,sans-serif;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:18px;
 }
 body.dark{--black:#f5f5f5;--white:#0a0a0a;--gray-50:#141414;--gray-100:#1c1c1c;
   --gray-200:#252525;--gray-300:#3a3a3a;--gray-400:#6a6a6a;--gray-500:#8a8a8a;
   --gray-600:#b0b0b0;--gray-700:#d0d0d0;}
 body.font-large{font-size:17px;}
-body.font-large h1{font-size:34px;}
+body.font-large h1{font-size:30px;}
 body.font-large .question{font-size:26px;}
-body.density-compact .test-item{padding:10px 4px;}
+body.density-compact .test-item{padding:10px 10px;}
 body.density-compact .q-card{padding:12px;margin-bottom:10px;}
-body.density-spacious .test-item{padding:26px 4px;}
+body.density-spacious .test-item{padding:22px 12px;}
 body.density-spacious .q-card{padding:20px;margin-bottom:20px;}
 body.density-spacious .option{padding:20px 22px;}
 
 html,body{background:var(--white);color:var(--black);font-family:var(--sans);font-size:15px;
-  line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;
-  transition:background-color .3s ease,color .3s ease;}
-.app{max-width:920px;margin:0 auto;padding:32px 24px 80px;min-height:100vh;}
+  line-height:1.5;-webkit-font-smoothing:antialiased;height:100%;overflow:hidden;
+  transition:background-color .3s,color .3s;}
 
-.header{display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding-bottom:20px;margin-bottom:32px;border-bottom:var(--line);flex-wrap:wrap;}
-.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:700;font-size:15px;}
-.brand-mark{width:28px;height:28px;background:var(--black);color:var(--white);
-  display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700;}
+/* ============ LAYOUT ============ */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 24px;border-bottom:var(--line);flex-shrink:0;
+  background:var(--white);
+}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:-.01em;}
+.brand-mark{
+  width:30px;height:30px;background:var(--black);color:var(--white);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:15px;font-weight:800;border-radius:var(--r-sm);
+}
 .header-actions{display:flex;gap:8px;align-items:center;}
-.header-meta{font-family:var(--mono);font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;}
+.header-meta{font-family:var(--mono);font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;}
 
-h1{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:4px;}
-h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
-.subtitle{font-size:14px;color:var(--gray-500);margin-bottom:24px;}
+.layout{display:flex;flex:1;overflow:hidden;min-height:0;}
 
-button{font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;
+/* ============ SIDEBAR ============ */
+.sidebar{
+  width:340px;flex-shrink:0;
+  border-right:var(--line);padding:20px;
+  display:flex;flex-direction:column;gap:14px;
+  overflow-y:auto;background:var(--white);
+}
+.sidebar-toolbar{display:flex;flex-direction:column;gap:8px;}
+.sidebar-toolbar button{width:100%;display:flex;align-items:center;gap:8px;justify-content:center;}
+.search-wrap{position:relative;}
+.search-wrap svg{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;color:var(--gray-400);pointer-events:none;
+}
+.search-bar{
+  width:100%;padding:10px 12px 10px 36px;
+  border:var(--line);background:var(--white);color:var(--black);
+  font-family:var(--sans);font-size:14px;border-radius:var(--r-md);
+  transition:background-color .15s,border-color .15s;
+}
+.search-bar:focus{outline:none;background:var(--gray-50);border-color:var(--black);}
+.tag-filter-row{display:flex;gap:6px;flex-wrap:wrap;}
+.tag-chip{
+  display:inline-flex;align-items:center;
+  font-family:var(--mono);font-size:11px;padding:3px 9px;
+  border:1px solid var(--gray-400);background:var(--white);color:var(--gray-700);
+  cursor:pointer;text-transform:lowercase;border-radius:var(--r-sm);
+  transition:all .15s;
+}
+.tag-chip:hover{background:var(--black);color:var(--white);border-color:var(--black);transform:translateY(-1px);}
+.tag-chip.active{background:var(--black);color:var(--white);border-color:var(--black);}
+
+.sidebar-divider{border-top:1px solid var(--gray-200);padding-top:12px;margin-top:2px;}
+.sidebar-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--gray-500);margin-bottom:4px;}
+
+.test-list{display:flex;flex-direction:column;gap:4px;flex:1;overflow-y:auto;padding-right:-8px;margin-right:-8px;padding-right:8px;}
+.test-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 10px;border:var(--line-thin);border-radius:var(--r-md);
+  cursor:pointer;transition:all .18s ease;background:var(--white);
+  animation:item-in .3s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--i,0) * 25ms);
+}
+.test-item:hover{border-color:var(--black);background:var(--gray-50);transform:translateX(2px);}
+.test-item.active{border-color:var(--black);background:var(--gray-100);border-left-width:3px;}
+@keyframes item-in{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+.ti-body{flex:1;min-width:0;}
+.ti-title{font-size:13px;font-weight:700;margin-bottom:2px;word-break:break-word;line-height:1.3;}
+.ti-meta{font-family:var(--mono);font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;}
+.ti-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;}
+.ti-tags .tag-chip{font-size:9px;padding:1px 5px;}
+.ti-actions{display:flex;flex-wrap:wrap;gap:2px;margin-top:8px;justify-content:flex-start;}
+.ti-actions .icon-btn{width:26px;height:26px;border-radius:var(--r-sm);}
+.ti-actions .icon-btn svg{width:12px;height:12px;}
+
+.sidebar-footer{
+  display:flex;gap:6px;padding-top:12px;border-top:1px solid var(--gray-200);
+  flex-wrap:wrap;
+}
+.sidebar-footer button{flex:1;font-size:11px;padding:6px 8px;border-radius:var(--r-sm);}
+
+.empty-state{
+  text-align:center;padding:32px 16px;color:var(--gray-500);
+  border:1.5px dashed var(--gray-300);border-radius:var(--r-md);
+  font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+}
+.empty-state .hint{display:block;margin-top:10px;font-size:10px;color:var(--gray-400);text-transform:none;letter-spacing:0;}
+.empty-state .hint kbd{
+  display:inline-block;padding:0px 5px;border:1px solid var(--gray-400);
+  font-family:var(--mono);font-size:10px;margin:0 1px;border-radius:3px;
+}
+
+/* ============ MAIN ============ */
+.main{
+  flex:1;overflow-y:auto;padding:32px 40px 80px;
+  background:var(--white);
+}
+.main > div{max-width:960px;margin:0 auto;}
+
+/* ============ WELCOME ============ */
+.welcome{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 200px);text-align:center;gap:20px;
+}
+.welcome-mark{
+  width:80px;height:80px;background:var(--black);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:38px;font-weight:900;
+  border-radius:var(--r-xl);margin-bottom:8px;
+  animation:score-in .5s cubic-bezier(.2,.9,.3,1) both;
+}
+.welcome h1{font-size:36px;margin-bottom:6px;}
+.welcome-desc{color:var(--gray-500);max-width:480px;font-size:15px;margin-bottom:12px;}
+.welcome-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.welcome-kbd{
+  margin-top:40px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+  font-family:var(--mono);font-size:11px;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.welcome-kbd kbd{
+  display:inline-block;padding:2px 8px;border:1px solid var(--gray-300);
+  font-family:var(--mono);font-size:11px;margin:0 3px;border-radius:4px;
+  color:var(--gray-600);background:var(--gray-50);
+}
+
+/* ============ BUTTONS ============ */
+button{
+  font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;
   padding:10px 18px;border:var(--line);background:var(--white);color:var(--black);
-  transition:background-color .12s ease,color .12s ease,transform .08s ease,border-color .12s ease;
-  border-radius:0;letter-spacing:-.005em;}
-button:hover:not(:disabled){background:var(--black);color:var(--white);}
+  transition:background-color .14s,color .14s,transform .1s,border-color .14s,box-shadow .14s;
+  border-radius:var(--r-md);letter-spacing:-.005em;
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+button:hover:not(:disabled){background:var(--black);color:var(--white);transform:translateY(-1px);box-shadow:0 2px 0 var(--black);}
+button:active:not(:disabled){transform:translateY(0);box-shadow:none;}
 button:disabled{opacity:.3;cursor:not-allowed;}
-button:active:not(:disabled){transform:scale(.97);}
 .btn-primary{background:var(--black);color:var(--white);}
 .btn-primary:hover:not(:disabled){background:var(--gray-700);color:var(--white);}
-.btn-ghost{border-color:var(--gray-300);color:var(--gray-600);}
+.btn-ghost{border-color:var(--gray-300);color:var(--gray-600);background:var(--white);}
 .btn-ghost:hover:not(:disabled){border-color:var(--black);background:var(--white);color:var(--black);}
-.btn-small{padding:6px 12px;font-size:13px;font-family:var(--mono);}
+.btn-small{padding:7px 12px;font-size:13px;font-family:var(--mono);}
 .btn-ai{background:var(--black);color:var(--white);border-color:var(--black);}
 .btn-ai:hover:not(:disabled){background:var(--gray-700);}
 
-.icon-btn{width:34px;height:34px;padding:0;display:inline-flex;align-items:center;
-  justify-content:center;font-family:var(--mono);font-size:15px;background:var(--white);
-  border:var(--line-thin);color:var(--black);border-radius:0;}
-.icon-btn:hover:not(:disabled){border-color:var(--black);background:var(--black);color:var(--white);}
+.icon-btn{
+  width:36px;height:36px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--white);border:var(--line-thin);color:var(--black);
+  border-radius:var(--r-md);
+  transition:all .18s cubic-bezier(.2,.9,.3,1);
+}
+.icon-btn svg{width:16px;height:16px;transition:transform .22s cubic-bezier(.2,.9,.3,1.4);}
+.icon-btn:hover:not(:disabled){
+  border-color:var(--black);background:var(--black);color:var(--white);
+  transform:translateY(-1px);box-shadow:0 2px 0 var(--black);
+}
 .icon-btn.danger{border-color:var(--gray-300);color:var(--gray-500);}
 .icon-btn.danger:hover:not(:disabled){background:var(--black);color:var(--white);border-color:var(--black);}
+
+/* Анимации иконок при hover */
+.icon-btn[data-act="play"]:hover svg{transform:scale(1.2);}
+.icon-btn[data-act="edit"]:hover svg{transform:rotate(-12deg) scale(1.12);}
+.icon-btn[data-act="copy"]:hover svg{transform:scale(1.15) rotate(6deg);}
+.icon-btn[data-act="share"]:hover svg{transform:rotate(-12deg) scale(1.15);}
+.icon-btn[data-act="download"]:hover svg{transform:translateY(2px);}
+.icon-btn[data-act="print"]:hover svg{transform:scale(1.15) rotate(6deg);}
+.icon-btn[data-act="trash"]:hover svg{transform:scale(1.15);}
+.icon-btn[data-act="settings"]:hover svg{transform:rotate(90deg);}
+.icon-btn[data-act="plus"]:hover svg{transform:rotate(90deg);}
+.icon-btn[data-act="ai"]:hover svg{transform:scale(1.2) rotate(15deg);}
+.icon-btn[data-act="back"]:hover svg{transform:translateX(-3px);}
+.icon-btn[data-act="up"]:hover svg{transform:translateY(-3px);}
+.icon-btn[data-act="down"]:hover svg{transform:translateY(3px);}
 
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .spacer{flex:1;}
 .hidden{display:none!important;}
 
-.library-toolbar{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
-.library-toolbar > div:first-child{flex:1;min-width:200px;}
-.search-bar{width:100%;padding:10px 12px;border:var(--line);background:var(--white);
-  color:var(--black);font-family:var(--sans);font-size:14px;margin-bottom:12px;}
-.search-bar:focus{outline:none;background:var(--gray-50);}
-.tag-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:16px;border-bottom:var(--line-thin);}
-.tag-chip{display:inline-flex;align-items:center;font-family:var(--mono);font-size:11px;
-  padding:3px 8px;border:1px solid var(--gray-400);background:var(--white);color:var(--gray-700);
-  cursor:pointer;text-transform:lowercase;}
-.tag-chip:hover{background:var(--black);color:var(--white);border-color:var(--black);}
-.tag-chip.active{background:var(--black);color:var(--white);border-color:var(--black);}
+/* ============ TYPOGRAPHY ============ */
+h1{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:4px;}
+h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+.subtitle{font-size:14px;color:var(--gray-500);margin-bottom:20px;}
 
-.test-list{display:flex;flex-direction:column;border-top:var(--line-thin);}
-.test-item{display:flex;align-items:center;gap:14px;padding:18px 4px;
-  border-bottom:var(--line-thin);transition:padding .2s ease,background-color .2s ease;}
-.test-item:hover{padding-left:12px;padding-right:12px;background:var(--gray-50);}
-.ti-index{font-family:var(--mono);font-size:11px;color:var(--gray-400);width:32px;flex-shrink:0;}
-.ti-body{flex:1;min-width:0;}
-.ti-title{font-size:16px;font-weight:700;margin-bottom:3px;word-break:break-word;}
-.ti-meta{font-family:var(--mono);font-size:11px;color:var(--gray-500);text-transform:uppercase;
-  letter-spacing:.03em;margin-bottom:4px;}
-.ti-tags{display:flex;gap:4px;flex-wrap:wrap;}
-.ti-tags .tag-chip{padding:1px 6px;font-size:10px;}
-.ti-actions{display:flex;gap:3px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
-
-.empty-state{text-align:center;padding:48px 24px;color:var(--gray-500);
-  border:1.5px dashed var(--gray-300);font-family:var(--mono);font-size:13px;
-  text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px;}
-.empty-state .hint{display:block;margin-top:12px;font-size:11px;color:var(--gray-400);
-  text-transform:none;letter-spacing:0;}
-.empty-state .hint kbd{display:inline-block;padding:1px 6px;border:1px solid var(--gray-400);
-  font-family:var(--mono);font-size:11px;margin:0 2px;}
-
-.library-footer{display:flex;gap:8px;flex-wrap:wrap;padding-top:20px;}
-
+/* ============ FORMS ============ */
 .field{margin-bottom:16px;}
-.field label{display:block;font-family:var(--mono);font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--gray-500);margin-bottom:6px;}
+.field label{
+  display:block;font-family:var(--mono);font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--gray-500);margin-bottom:6px;
+}
 .field input[type="text"],.field input[type="number"],.field input[type="url"],.field input[type="password"],
-.field textarea,.field select{width:100%;padding:10px 12px;border:var(--line);border-radius:0;
-  background:var(--white);color:var(--black);font-family:var(--sans);font-size:14px;}
-.field input:focus,.field textarea:focus,.field select:focus{outline:none;background:var(--gray-50);border-color:var(--black);}
+.field textarea,.field select{
+  width:100%;padding:10px 12px;border:var(--line);
+  background:var(--white);color:var(--black);
+  font-family:var(--sans);font-size:14px;border-radius:var(--r-md);
+  transition:background-color .15s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none;background:var(--gray-50);border-color:var(--black);
+}
 .field textarea{resize:vertical;min-height:70px;}
 
-.resume-banner{border:var(--line);padding:14px 16px;margin-bottom:20px;display:flex;
-  justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--gray-50);}
-.resume-banner .info{font-family:var(--mono);font-size:12px;color:var(--gray-700);
-  text-transform:uppercase;letter-spacing:.03em;}
-
-.settings-box{border:var(--line-thin);padding:16px 18px;margin-bottom:20px;
-  display:flex;flex-direction:column;gap:10px;}
+/* ============ START ============ */
+.resume-banner{
+  border:var(--line);padding:14px 16px;margin-bottom:20px;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;background:var(--gray-50);border-radius:var(--r-md);
+}
+.resume-banner .info{font-family:var(--mono);font-size:12px;color:var(--gray-700);text-transform:uppercase;letter-spacing:.03em;}
+.settings-box{
+  border:var(--line-thin);padding:16px 18px;margin-bottom:20px;
+  display:flex;flex-direction:column;gap:10px;border-radius:var(--r-md);
+}
 .settings-box label{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;user-select:none;}
 .settings-box input[type="checkbox"]{width:18px;height:18px;accent-color:var(--black);cursor:pointer;}
-.settings-box input[type="number"]{width:70px;padding:6px 10px;border:var(--line);
-  font-family:var(--mono);font-size:13px;text-align:center;}
-.meta{font-family:var(--mono);font-size:12px;color:var(--gray-500);text-transform:uppercase;
-  letter-spacing:.05em;margin-bottom:20px;padding:12px 0;border-top:var(--line-thin);border-bottom:var(--line-thin);}
+.settings-box input[type="number"]{
+  width:70px;padding:6px 10px;border:var(--line);border-radius:var(--r-sm);
+  font-family:var(--mono);font-size:13px;text-align:center;background:var(--white);color:var(--black);
+}
+.meta{
+  font-family:var(--mono);font-size:12px;color:var(--gray-500);
+  text-transform:uppercase;letter-spacing:.05em;
+  margin-bottom:20px;padding:12px 0;
+  border-top:var(--line-thin);border-bottom:var(--line-thin);
+}
 
-.editor-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;
-  padding-bottom:16px;border-bottom:var(--line);flex-wrap:wrap;}
+/* ============ EDITOR ============ */
+.editor-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:24px;padding-bottom:16px;
+  border-bottom:var(--line);flex-wrap:wrap;
+}
 .editor-header h1{font-size:22px;margin:0;}
-.q-card{border:var(--line-thin);padding:16px;margin-bottom:14px;background:var(--white);}
-.q-card:hover{border-color:var(--black);}
+.q-card{
+  border:var(--line-thin);padding:16px;margin-bottom:14px;
+  background:var(--white);border-radius:var(--r-lg);
+  transition:border-color .18s,box-shadow .18s;
+  animation:item-in .3s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--i,0) * 20ms);
+}
+.q-card:hover{border-color:var(--black);box-shadow:0 2px 0 var(--gray-200);}
 .q-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-.q-num{width:28px;height:28px;background:var(--black);color:var(--white);display:inline-flex;
-  align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;
-  font-weight:700;flex-shrink:0;}
-.q-type-select{padding:4px 8px;border:var(--line-thin);background:var(--white);
-  color:var(--black);font-family:var(--mono);font-size:11px;text-transform:uppercase;
-  letter-spacing:.04em;cursor:pointer;}
+.q-num{
+  width:30px;height:30px;background:var(--black);color:var(--white);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:700;flex-shrink:0;
+  border-radius:var(--r-sm);
+}
+.q-type-select{
+  padding:5px 10px;border:var(--line-thin);background:var(--white);color:var(--black);
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+  cursor:pointer;border-radius:var(--r-sm);
+}
 .q-type-select:focus{outline:none;border-color:var(--black);}
 .opt-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.opt-row input[type="radio"],.opt-row input[type="checkbox"]{width:18px;height:18px;
-  accent-color:var(--black);flex-shrink:0;cursor:pointer;}
-.opt-row input[type="text"]{flex:1;padding:9px 12px;border:var(--line-thin);
-  font-family:var(--sans);font-size:14px;background:var(--white);color:var(--black);}
+.opt-row input[type="radio"],.opt-row input[type="checkbox"]{
+  width:18px;height:18px;accent-color:var(--black);flex-shrink:0;cursor:pointer;
+}
+.opt-row input[type="text"]{
+  flex:1;padding:9px 12px;border:var(--line-thin);
+  font-family:var(--sans);font-size:14px;background:var(--white);color:var(--black);
+  border-radius:var(--r-sm);transition:background-color .15s;
+}
 .opt-row input[type="text"]:focus{outline:none;border-color:var(--black);background:var(--gray-50);}
-.opt-row .icon-btn{width:32px;height:32px;font-size:13px;}
-.correct-hint{font-family:var(--mono);font-size:11px;color:var(--gray-400);
-  text-transform:uppercase;letter-spacing:.04em;margin-top:8px;}
-.add-opt-btn{background:none;border:none;color:var(--gray-600);padding:6px 0;
-  font-size:13px;font-family:var(--mono);font-weight:700;text-transform:uppercase;
-  letter-spacing:.05em;cursor:pointer;}
-.add-opt-btn:hover{background:none;color:var(--black);text-decoration:underline;}
+.opt-row .icon-btn{width:32px;height:32px;border-radius:var(--r-sm);}
+.opt-row .icon-btn svg{width:14px;height:14px;}
+.correct-hint{font-family:var(--mono);font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;margin-top:8px;}
+.add-opt-btn{
+  background:none;border:none;color:var(--gray-600);padding:8px 0;
+  font-size:13px;font-family:var(--mono);font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;cursor:pointer;
+  border-radius:0;display:flex;align-items:center;gap:6px;
+}
+.add-opt-btn:hover{background:none;color:var(--black);box-shadow:none;transform:none;}
+.add-opt-btn svg{width:14px;height:14px;transition:transform .2s;}
+.add-opt-btn:hover svg{transform:rotate(90deg);}
 
 .q-image-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
-.q-image{max-width:260px;max-height:160px;border:var(--line-thin);object-fit:contain;background:var(--gray-50);}
-.upload-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
-  border:var(--line-thin);font-family:var(--mono);font-size:12px;text-transform:uppercase;
-  letter-spacing:.04em;cursor:pointer;color:var(--gray-600);}
-.upload-btn:hover{border-color:var(--black);color:var(--black);}
+.q-image{max-width:260px;max-height:160px;border:var(--line-thin);object-fit:contain;background:var(--gray-50);border-radius:var(--r-sm);}
+.upload-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 12px;
+  border:var(--line-thin);font-family:var(--mono);font-size:12px;
+  text-transform:uppercase;letter-spacing:.04em;cursor:pointer;
+  color:var(--gray-600);border-radius:var(--r-sm);transition:all .15s;
+}
+.upload-btn:hover{border-color:var(--black);color:var(--black);background:var(--gray-50);}
+.upload-btn svg{width:14px;height:14px;}
 .upload-btn input{display:none;}
 
-.q-ai-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;
-  border-top:1px dashed var(--line-thin);}
-.q-ai-row button{font-size:12px;padding:5px 10px;font-family:var(--mono);}
+.q-ai-row{
+  display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:12px;
+  border-top:1px dashed var(--line-thin);
+}
+.q-ai-row button{font-size:12px;padding:6px 10px;font-family:var(--mono);border-radius:var(--r-sm);}
+.q-ai-row svg{width:13px;height:13px;}
 
-.quiz-top{display:flex;align-items:center;justify-content:space-between;gap:16px;
-  margin-bottom:24px;padding-bottom:16px;border-bottom:var(--line);flex-wrap:wrap;}
+/* ============ QUIZ ============ */
+.quiz-top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin-bottom:24px;padding-bottom:16px;
+  border-bottom:var(--line);flex-wrap:wrap;
+}
 .quiz-counter{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.03em;}
 .quiz-counter .big{font-size:24px;margin-right:6px;}
-.streak-badge{font-family:var(--mono);font-size:12px;padding:4px 10px;
-  border:var(--line);background:var(--white);text-transform:uppercase;letter-spacing:.04em;}
-.streak-badge.hot{background:var(--black);color:var(--white);}
-.timer{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;
-  padding:4px 10px;border:var(--line);background:var(--white);}
+.streak-badge{
+  font-family:var(--mono);font-size:12px;padding:5px 12px;
+  border:var(--line);background:var(--white);text-transform:uppercase;
+  letter-spacing:.04em;border-radius:var(--r-sm);
+  transition:all .25s;
+}
+.streak-badge.hot{background:var(--black);color:var(--white);animation:streak-bump .5s cubic-bezier(.2,.9,.3,1.4);}
+@keyframes streak-bump{0%{transform:scale(1);}40%{transform:scale(1.18);}100%{transform:scale(1);}}
+.timer{
+  font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;
+  padding:5px 12px;border:var(--line);background:var(--white);border-radius:var(--r-sm);
+}
 .timer.warning{background:var(--black);color:var(--white);animation:blink 1s ease-in-out infinite;}
 @keyframes blink{50%{opacity:.35;}}
 
 .progress-segments{display:flex;gap:4px;margin-bottom:28px;height:6px;}
-.progress-segments .seg{flex:1;background:var(--gray-200);transition:background-color .35s ease;}
+.progress-segments .seg{flex:1;background:var(--gray-200);transition:background-color .35s;border-radius:3px;}
 .progress-segments .seg.done{background:var(--black);}
 .progress-segments .seg.current{background:var(--gray-600);animation:seg-pop .4s ease;}
 .progress-segments .seg.uncertain{background:var(--gray-400);}
 @keyframes seg-pop{0%{transform:scaleY(1);}50%{transform:scaleY(1.6);}100%{transform:scaleY(1);}}
 
-.question{font-size:22px;font-weight:700;line-height:1.35;letter-spacing:-.015em;
-  margin-bottom:20px;padding-top:8px;}
-.question code,.option-text code,.explanation code{font-family:var(--mono);
-  font-size:.92em;padding:1px 5px;background:var(--gray-100);border:1px solid var(--gray-200);}
+.question{
+  font-size:22px;font-weight:700;line-height:1.35;letter-spacing:-.015em;
+  margin-bottom:20px;padding-top:8px;
+}
+.question code,.option-text code,.explanation code{
+  font-family:var(--mono);font-size:.92em;padding:1px 5px;
+  background:var(--gray-100);border:1px solid var(--gray-200);border-radius:4px;
+}
 .q-image-wrap{margin-bottom:16px;}
-.q-image-wrap img{max-width:100%;max-height:320px;border:var(--line);display:block;object-fit:contain;
-  animation:fade-in .3s ease;}
+.q-image-wrap img{
+  max-width:100%;max-height:320px;border:var(--line);
+  display:block;object-fit:contain;border-radius:var(--r-md);
+  animation:fade-in .3s ease;
+}
+@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
 
-.option{display:flex;align-items:center;gap:14px;padding:16px 18px;border:var(--line);
-  margin-bottom:10px;cursor:pointer;user-select:none;
-  transition:background-color .12s ease,color .12s ease;background:var(--white);border-radius:0;}
-.option:hover{background:var(--gray-50);}
+.option{
+  display:flex;align-items:center;gap:14px;padding:16px 18px;
+  border:var(--line);margin-bottom:10px;cursor:pointer;user-select:none;
+  background:var(--white);border-radius:var(--r-md);
+  transition:background-color .15s,color .15s,transform .1s,box-shadow .15s;
+}
+.option:hover{background:var(--gray-50);transform:translateX(2px);}
 .option.selected{background:var(--black);color:var(--white);}
 .option.selected.just-picked{animation:pick-pulse .28s ease;}
 @keyframes pick-pulse{
-  0%{transform:scale(1);}
-  40%{transform:scale(.985);}
-  70%{transform:scale(1.008);}
-  100%{transform:scale(1);}
+  0%{transform:scale(1);}40%{transform:scale(.985);}70%{transform:scale(1.008);}100%{transform:scale(1);}
 }
-.option-marker{font-family:var(--mono);font-size:12px;font-weight:700;width:26px;
-  flex-shrink:0;text-align:center;}
+.option-marker{font-family:var(--mono);font-size:12px;font-weight:700;width:26px;flex-shrink:0;text-align:center;}
 .option-text{flex:1;font-size:15px;line-height:1.5;}
-.option-key{font-family:var(--mono);font-size:11px;padding:2px 6px;
-  border:1px solid var(--gray-300);color:var(--gray-500);margin-left:auto;flex-shrink:0;}
+.option-key{
+  font-family:var(--mono);font-size:11px;padding:2px 6px;
+  border:1px solid var(--gray-300);color:var(--gray-500);margin-left:auto;flex-shrink:0;
+  border-radius:4px;
+}
 .option.selected .option-key{border-color:var(--gray-600);color:var(--gray-400);}
 
-.text-answer-input{width:100%;padding:16px 18px;border:var(--line);
-  background:var(--white);color:var(--black);font-family:var(--sans);font-size:15px;}
+.text-answer-input{
+  width:100%;padding:16px 18px;border:var(--line);
+  background:var(--white);color:var(--black);
+  font-family:var(--sans);font-size:15px;border-radius:var(--r-md);
+}
 .text-answer-input:focus{outline:none;background:var(--gray-50);}
 
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.match-item{padding:12px 14px;border:var(--line);background:var(--white);}
+.match-item{padding:12px 14px;border:var(--line);background:var(--white);border-radius:var(--r-md);}
 .match-item.left{font-weight:600;}
-.match-item select{width:100%;padding:8px;border:var(--line-thin);
-  background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;}
+.match-item select{
+  width:100%;padding:8px;border:var(--line-thin);
+  background:var(--white);color:var(--black);
+  font-family:var(--sans);font-size:13px;border-radius:var(--r-sm);
+}
 
 .sort-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
-.sort-item{display:flex;align-items:center;gap:10px;padding:12px 14px;
-  border:var(--line);background:var(--white);}
-.sort-item .handle{font-family:var(--mono);font-size:12px;color:var(--gray-400);
-  width:24px;flex-shrink:0;}
+.sort-item{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border:var(--line);background:var(--white);border-radius:var(--r-md);
+}
+.sort-item .handle{font-family:var(--mono);font-size:12px;color:var(--gray-400);width:24px;flex-shrink:0;}
 .sort-item .sort-text{flex:1;}
 .sort-item .sort-btns{display:flex;gap:4px;}
-.sort-item .icon-btn{width:28px;height:28px;font-size:12px;}
+.sort-item .icon-btn{width:28px;height:28px;border-radius:var(--r-sm);}
+.sort-item .icon-btn svg{width:12px;height:12px;}
 
-.uncertain-row{display:flex;align-items:center;gap:8px;margin:16px 0;
-  padding:10px 14px;border:1px dashed var(--gray-300);}
+.uncertain-row{
+  display:flex;align-items:center;gap:8px;margin:16px 0;padding:10px 14px;
+  border:1px dashed var(--gray-300);border-radius:var(--r-sm);
+}
 .uncertain-row input{width:16px;height:16px;accent-color:var(--black);cursor:pointer;}
-.uncertain-row label{font-family:var(--mono);font-size:12px;color:var(--gray-600);
-  text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;}
+.uncertain-row label{
+  font-family:var(--mono);font-size:12px;color:var(--gray-600);
+  text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;
+}
 
 .nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:var(--line-thin);}
 .nav .btn-primary{flex:1;}
 
+/* ============ RESULT ============ */
 .result-hero{text-align:center;padding:32px 0 28px;border-bottom:var(--line);margin-bottom:28px;}
-.result-hero .label{font-family:var(--mono);font-size:11px;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--gray-500);margin-bottom:8px;}
-.result-hero .score{font-size:88px;font-weight:900;letter-spacing:-.04em;
-  line-height:1;margin-bottom:12px;}
+.result-hero .label{
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--gray-500);margin-bottom:8px;
+}
+.result-hero .score{
+  font-size:88px;font-weight:900;letter-spacing:-.04em;
+  line-height:1;margin-bottom:12px;
+  animation:score-in .45s cubic-bezier(.2,.9,.3,1) both;
+}
+@keyframes score-in{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
 .result-hero .msg{font-size:15px;color:var(--gray-600);margin-bottom:4px;}
-.result-hero .stats{font-family:var(--mono);font-size:12px;color:var(--gray-400);
-  text-transform:uppercase;letter-spacing:.05em;margin-bottom:20px;}
+.result-hero .stats{
+  font-family:var(--mono);font-size:12px;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:20px;
+}
 .result-hero .row{justify-content:center;}
 
-.result-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
+.result-actions{
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;
+}
+.result-actions button svg{width:14px;height:14px;}
 
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:10px;margin-bottom:24px;}
-.stat-card{border:var(--line);padding:14px 16px;}
-.stat-card .stat-label{font-family:var(--mono);font-size:10px;color:var(--gray-500);
-  text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;margin-bottom:24px;
+}
+.stat-card{
+  border:var(--line);padding:14px 16px;border-radius:var(--r-md);
+  transition:transform .15s,box-shadow .15s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 3px 0 var(--gray-200);}
+.stat-card .stat-label{
+  font-family:var(--mono);font-size:10px;color:var(--gray-500);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;
+}
 .stat-card .stat-value{font-family:var(--mono);font-size:24px;font-weight:800;}
 
-.chart-box{border:var(--line-thin);padding:16px;margin-bottom:24px;}
-.chart-box h3{font-family:var(--mono);font-size:11px;color:var(--gray-500);
-  text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;font-weight:700;}
+.chart-box{border:var(--line-thin);padding:16px;margin-bottom:24px;border-radius:var(--r-md);}
+.chart-box h3{
+  font-family:var(--mono);font-size:11px;color:var(--gray-500);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;font-weight:700;
+}
 .chart-svg{width:100%;height:auto;display:block;}
 
-.weak-section{border:var(--line);padding:16px;margin-bottom:24px;}
-.weak-section h3{font-family:var(--mono);font-size:12px;margin-bottom:10px;
-  text-transform:uppercase;letter-spacing:.06em;}
+.weak-section{border:var(--line);padding:16px;margin-bottom:24px;border-radius:var(--r-md);}
+.weak-section h3{
+  font-family:var(--mono);font-size:12px;margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.06em;
+}
 .weak-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--gray-200);}
 .weak-item:last-child{border-bottom:none;}
 .weak-item .wi-text{flex:1;font-size:13px;}
-.weak-item .wi-count{font-family:var(--mono);font-size:12px;color:var(--gray-500);
-  padding:2px 8px;border:1px solid var(--gray-300);}
+.weak-item .wi-count{
+  font-family:var(--mono);font-size:12px;color:var(--gray-500);
+  padding:2px 8px;border:1px solid var(--gray-300);border-radius:4px;
+}
 
-.review-item{border:var(--line-thin);padding:16px;margin-bottom:12px;}
+.review-item{
+  border:var(--line-thin);padding:16px;margin-bottom:12px;border-radius:var(--r-md);
+  animation:review-in .35s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--i,0) * 40ms);
+}
+@keyframes review-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .review-q{font-weight:700;font-size:15px;margin-bottom:12px;line-height:1.4;}
 .review-q .num{font-family:var(--mono);color:var(--gray-400);margin-right:6px;}
-.review-q .badge{font-family:var(--mono);font-size:10px;padding:2px 6px;
-  border:1px solid var(--gray-400);margin-left:8px;text-transform:uppercase;}
+.review-q .badge{
+  font-family:var(--mono);font-size:10px;padding:2px 6px;
+  border:1px solid var(--gray-400);margin-left:8px;text-transform:uppercase;border-radius:4px;
+}
 .review-q .badge.uncertain{background:var(--black);color:var(--white);border-color:var(--black);}
-.review-opt{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;
-  font-size:14px;border:1px solid transparent;margin-bottom:4px;}
-.review-opt .mark{font-family:var(--mono);font-size:12px;font-weight:700;
-  width:16px;flex-shrink:0;color:var(--gray-400);}
-.review-opt.correct{border-color:var(--black);background:var(--gray-50);
-  animation:fill-correct .35s ease both;}
+.review-opt{
+  display:flex;align-items:flex-start;gap:10px;padding:8px 12px;
+  font-size:14px;border:1px solid transparent;margin-bottom:4px;border-radius:var(--r-sm);
+}
+.review-opt .mark{font-family:var(--mono);font-size:12px;font-weight:700;width:16px;flex-shrink:0;color:var(--gray-400);}
+.review-opt.correct{border-color:var(--black);background:var(--gray-50);animation:fill-correct .35s ease both;}
 @keyframes fill-correct{from{background-color:transparent;}to{background-color:var(--gray-50);}}
 .review-opt.correct .mark{color:var(--black);}
-.review-opt.wrong{border-color:var(--gray-400);color:var(--gray-600);
-  text-decoration:line-through;text-decoration-color:var(--gray-400);}
-.review-note{font-family:var(--mono);font-size:11px;color:var(--gray-400);
+.review-opt.wrong{border-color:var(--gray-400);color:var(--gray-600);text-decoration:line-through;text-decoration-color:var(--gray-400);}
+.review-note{
+  font-family:var(--mono);font-size:11px;color:var(--gray-400);
   text-transform:uppercase;letter-spacing:.05em;margin-top:8px;padding-top:8px;
-  border-top:1px dashed var(--gray-200);}
-.explanation{margin-top:10px;padding:10px 14px;background:var(--gray-50);
-  border-left:3px solid var(--black);font-size:13px;line-height:1.5;color:var(--gray-600);}
+  border-top:1px dashed var(--gray-200);
+}
+.explanation{
+  margin-top:10px;padding:10px 14px;background:var(--gray-50);
+  border-left:3px solid var(--black);font-size:13px;line-height:1.5;
+  color:var(--gray-600);border-radius:0 var(--r-sm) var(--r-sm) 0;
+}
 .explanation::before{content:"💡 ";}
 
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;
-  align-items:center;justify-content:center;padding:24px;z-index:200;
-  animation:fade-in .15s ease;}
-.modal-content{background:var(--white);color:var(--black);border:var(--line);
+/* ============ MODAL ============ */
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);
+  display:flex;align-items:center;justify-content:center;padding:24px;z-index:200;
+  animation:fade-in .15s ease;
+}
+.modal-content{
+  background:var(--white);color:var(--black);border:var(--line);
   padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;
-  animation:modal-in .22s cubic-bezier(.2,.9,.3,1) both;}
+  border-radius:var(--r-xl);
+  animation:modal-in .22s cubic-bezier(.2,.9,.3,1) both;
+}
 @keyframes modal-in{from{opacity:0;transform:scale(.94) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
-@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
-.modal-content h2{font-size:22px;font-family:var(--sans);font-weight:800;
-  text-transform:none;letter-spacing:-.01em;margin-bottom:6px;color:var(--black);}
+.modal-content h2{
+  font-size:22px;font-family:var(--sans);font-weight:800;
+  text-transform:none;letter-spacing:-.01em;margin-bottom:6px;color:var(--black);
+}
 .modal-sub{font-size:13px;color:var(--gray-500);margin-bottom:22px;}
-.ai-note{font-family:var(--mono);font-size:11px;color:var(--gray-500);line-height:1.6;
+.ai-note{
+  font-family:var(--mono);font-size:11px;color:var(--gray-500);line-height:1.6;
   padding:12px 14px;background:var(--gray-50);border-left:3px solid var(--black);
-  text-transform:uppercase;letter-spacing:.02em;margin:16px 0;}
-.ai-status{font-family:var(--mono);font-size:12px;padding:10px 14px;
-  margin-top:12px;border:1px solid var(--gray-300);text-transform:uppercase;
-  letter-spacing:.03em;display:none;}
+  text-transform:uppercase;letter-spacing:.02em;margin:16px 0;border-radius:0 var(--r-sm) var(--r-sm) 0;
+}
+.ai-status{
+  font-family:var(--mono);font-size:12px;padding:10px 14px;margin-top:12px;
+  border:1px solid var(--gray-300);text-transform:uppercase;letter-spacing:.03em;
+  display:none;border-radius:var(--r-sm);
+}
 .ai-status.info{display:block;background:var(--gray-50);}
 .ai-status.ok{display:block;background:var(--black);color:var(--white);border-color:var(--black);}
 .ai-status.err{display:block;border-color:var(--black);border-left-width:3px;}
 
 .skeleton{padding:20px 0;animation:pulse-dim 1.5s ease-in-out infinite;}
 @keyframes pulse-dim{0%,100%{opacity:1;}50%{opacity:.55;}}
-.skeleton-bar{height:12px;background:linear-gradient(90deg,var(--gray-100) 0%,
-  var(--gray-200) 50%,var(--gray-100) 100%);background-size:200% 100%;
-  animation:sk 1.2s linear infinite;margin-bottom:10px;}
+.skeleton-bar{
+  height:12px;background:linear-gradient(90deg,var(--gray-100) 0%,var(--gray-200) 50%,var(--gray-100) 100%);
+  background-size:200% 100%;animation:sk 1.2s linear infinite;margin-bottom:10px;border-radius:4px;
+}
 .skeleton-bar:nth-child(1){width:80%;}
 .skeleton-bar:nth-child(2){width:60%;}
 .skeleton-bar:nth-child(3){width:70%;}
 @keyframes sk{from{background-position:200% 0;}to{background-position:-200% 0;}}
 
 .set-group{margin-bottom:22px;}
-.set-group h3{font-family:var(--mono);font-size:11px;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--gray-500);margin-bottom:10px;font-weight:700;}
+.set-group h3{
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--gray-500);margin-bottom:10px;font-weight:700;
+}
 .set-row{display:flex;gap:6px;flex-wrap:wrap;}
-.set-btn{padding:8px 14px;border:var(--line-thin);background:var(--white);
-  color:var(--black);font-size:13px;font-family:var(--sans);cursor:pointer;}
-.set-btn:hover{border-color:var(--black);}
+.set-btn{
+  padding:8px 14px;border:var(--line-thin);background:var(--white);
+  color:var(--black);font-size:13px;font-family:var(--sans);cursor:pointer;
+  border-radius:var(--r-sm);transition:all .15s;
+}
+.set-btn:hover{border-color:var(--black);background:var(--gray-50);transform:none;box-shadow:none;}
 .set-btn.active{background:var(--black);color:var(--white);border-color:var(--black);}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
-  background:var(--black);color:var(--white);padding:12px 20px;font-family:var(--mono);
-  font-size:12px;text-transform:uppercase;letter-spacing:.04em;z-index:300;
-  transition:transform .25s ease;max-width:calc(100% - 40px);text-align:center;
-  border:2px solid var(--white);outline:2px solid var(--black);}
+/* ============ TOAST ============ */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+  background:var(--black);color:var(--white);padding:12px 20px;
+  font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;
+  z-index:300;transition:transform .25s ease;max-width:calc(100% - 40px);
+  text-align:center;border:2px solid var(--white);outline:2px solid var(--black);
+  border-radius:var(--r-md);
+}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
-/* ============ АНИМАЦИИ ============ */
-@keyframes screen-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-#libraryScreen:not(.hidden),
-#startScreen:not(.hidden),
-#editorScreen:not(.hidden),
-#quizScreen:not(.hidden),
-#resultScreen:not(.hidden){animation:screen-in .28s cubic-bezier(.2,.9,.3,1) both;}
-
-@keyframes item-in{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
-.test-item{animation:item-in .3s cubic-bezier(.2,.9,.3,1) both;
-  animation-delay:calc(var(--i,0) * 30ms);}
-.q-card{animation:item-in .3s cubic-bezier(.2,.9,.3,1) both;
-  animation-delay:calc(var(--i,0) * 20ms);}
-
-@keyframes streak-bump{0%{transform:scale(1);}40%{transform:scale(1.18);}100%{transform:scale(1);}}
-.streak-badge.hot{animation:streak-bump .5s cubic-bezier(.2,.9,.3,1.4);}
-
+/* ============ SHAKE ============ */
 @keyframes shake{
   10%,90%{transform:translateX(-1px);}
   20%,80%{transform:translateX(2px);}
@@ -370,49 +604,44 @@ button:active:not(:disabled){transform:scale(.97);}
 }
 .shake{animation:shake .4s ease;}
 
-@keyframes review-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.review-item{animation:review-in .35s cubic-bezier(.2,.9,.3,1) both;
-  animation-delay:calc(var(--i,0) * 40ms);}
-
-@keyframes score-in{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
-.result-hero .score{animation:score-in .45s cubic-bezier(.2,.9,.3,1) both;}
-
-@keyframes copy-flash{0%{background-color:var(--black);color:var(--white);}
-  100%{background-color:var(--white);color:var(--black);}}
+@keyframes copy-flash{0%{background-color:var(--black);color:var(--white);}100%{background-color:var(--white);color:var(--black);}}
 button.copied{animation:copy-flash .7s ease;}
 
-@media(max-width:640px){
-  .app{padding:20px 16px 60px;}
-  h1{font-size:22px;}
-  .question{font-size:18px;}
+/* ============ MOBILE ============ */
+@media(max-width:900px){
+  html,body{overflow:auto;height:auto;}
+  .app{height:auto;min-height:100vh;}
+  .layout{flex-direction:column;overflow:visible;}
+  .sidebar{
+    width:100%;max-height:45vh;border-right:none;border-bottom:var(--line);
+    overflow-y:auto;
+  }
+  .main{padding:20px 16px 60px;overflow:visible;}
+  .main > div{max-width:none;}
+  .header{padding:10px 16px;}
+  .brand span:not(.brand-mark){font-size:12px;}
+  .welcome-mark{width:60px;height:60px;font-size:28px;}
+  .welcome h1{font-size:26px;}
+  .match-grid{grid-template-columns:1fr;}
   .result-hero .score{font-size:64px;}
-  .header{flex-direction:column;align-items:flex-start;gap:8px;}
-  .library-toolbar{flex-direction:column;align-items:stretch;}
-  .ti-index{display:none;}
-  .ti-actions{width:100%;justify-content:flex-start;margin-top:8px;}
-  .quiz-counter .big{font-size:18px;}
   .modal{padding:12px;}
   .modal-content{padding:20px;}
-  .test-item{flex-wrap:wrap;}
-  .match-grid{grid-template-columns:1fr;}
+  .question{font-size:18px;}
 }
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{
-    animation-duration:.01ms!important;
-    animation-iteration-count:1!important;
-    transition-duration:.01ms!important;
+    animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;
   }
 }
 
 @media print{
-  body{background:white!important;color:black!important;}
-  .app{max-width:100%!important;padding:0!important;}
-  .header,.library-toolbar,.search-bar,.tag-filter-row,.library-footer,
-  .nav,button,.toast,.modal,.progress-segments,.quiz-top,.quiz-counter,.timer,
-  .resume-banner,.settings-box,.result-actions,.chart-box{display:none!important;}
-  .test-item{border-bottom:1px solid #ccc;}
-  .ti-actions{display:none;}
+  body{background:white!important;color:black!important;overflow:visible!important;}
+  .app{height:auto!important;}
+  .header,.sidebar,.nav,button,.toast,.modal,.progress-segments,
+  .quiz-top,.resume-banner,.settings-box,.result-actions,.chart-box{display:none!important;}
+  .main{padding:0!important;overflow:visible!important;}
+  .main > div{max-width:100%!important;}
   .option{border:1px solid #999!important;background:white!important;color:black!important;}
   .option.selected{background:#f0f0f0!important;color:black!important;}
   .option-marker,.option-text{color:black!important;}
@@ -433,159 +662,194 @@ button.copied{animation:copy-flash .7s ease;}
       <span>QUIZ / TEST STUDIO PRO</span>
     </div>
     <div class="header-actions">
-      <div class="header-meta" id="headerMeta">v3.1</div>
-      <button class="icon-btn" title="Настройки" onclick="openSettings()">⚙</button>
+      <div class="header-meta" id="headerMeta">v3.2</div>
+      <button class="icon-btn" title="Настройки" data-act="settings" onclick="openSettings()" id="settingsBtn"></button>
     </div>
   </header>
 
-  <div id="libraryScreen">
-    <div class="library-toolbar">
-      <div>
-        <h1>Библиотека тестов</h1>
-        <p class="subtitle" style="margin-bottom:0">Создавайте, редактируйте и проходите тесты.</p>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-toolbar">
+        <button class="btn-primary" onclick="openEditor(null)" id="btnNew"></button>
+        <button class="btn-ai" onclick="openAiModal('test')" id="btnAiNew"></button>
       </div>
-      <button class="btn-primary" onclick="openEditor(null)">＋ Создать</button>
-      <button class="btn-ai" onclick="openAiModal('test')">🤖 AI Создать</button>
-    </div>
-    <input type="text" class="search-bar" id="searchInput"
-      placeholder="Поиск по названию, описанию, тегам…  (нажмите /)" oninput="onSearch(this.value)">
-    <div class="tag-filter-row" id="tagFilterRow"></div>
-    <div class="test-list" id="testList"></div>
-    <div class="library-footer">
-      <button class="btn-ghost btn-small" onclick="document.getElementById('fileInput').click()">ИМПОРТ JSON</button>
-      <button class="btn-ghost btn-small" onclick="importCsvDialog()">ИМПОРТ CSV</button>
-      <button class="btn-ghost btn-small" onclick="exportAll()">ЭКСПОРТ ВСЕХ</button>
-    </div>
-    <input type="file" id="fileInput" accept="application/json,.json" class="hidden" onchange="importJSON(event)">
-    <input type="file" id="csvInput" accept=".csv,.txt" class="hidden" onchange="importCsv(event)">
-  </div>
 
-  <div id="startScreen" class="hidden">
-    <div class="editor-header">
-      <button class="icon-btn" onclick="backToLibrary()">←</button>
-      <h1 id="startTitle"></h1>
-    </div>
-    <p class="subtitle" id="startDesc"></p>
-    <div class="ti-tags" id="startTags" style="margin-bottom:16px;"></div>
-    <div id="resumeBanner" class="resume-banner hidden">
-      <div class="info" id="resumeInfo"></div>
-      <div class="row" style="gap:6px">
-        <button class="btn-ghost btn-small" onclick="discardSaved()">УДАЛИТЬ</button>
-        <button class="btn-primary btn-small" onclick="resumeTest()">ПРОДОЛЖИТЬ</button>
+      <div class="search-wrap" id="searchWrap">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Поиск… (/)" oninput="onSearch(this.value)">
       </div>
-    </div>
-    <div class="settings-box">
-      <label><input type="checkbox" id="optShuffleQ" checked> Перемешать вопросы</label>
-      <label><input type="checkbox" id="optShuffleA" checked> Перемешать варианты</label>
-      <label><input type="checkbox" id="optSample" onchange="toggleSample()"> Случайная выборка N из M</label>
-      <label id="sampleRow" class="hidden" style="padding-left:26px;">
-        Взять вопросов: <input type="number" id="optSampleN" value="5" min="1" max="200" style="width:70px;">
-      </label>
-      <label>Лимит времени, мин (0 = без лимита):
-        <input type="number" id="optTime" value="0" min="0" max="300">
-      </label>
-    </div>
-    <div class="meta" id="startMeta"></div>
-    <button class="btn-primary" style="width:100%;padding:14px" onclick="startTest()">НАЧАТЬ ТЕСТ →</button>
-  </div>
 
-  <div id="editorScreen" class="hidden">
-    <div class="editor-header">
-      <button class="icon-btn" onclick="closeEditor()">←</button>
-      <h1 id="editorTitle">Новый тест</h1>
-    </div>
+      <div class="tag-filter-row" id="tagFilterRow"></div>
 
-    <div class="field">
-      <label>Название теста *</label>
-      <input type="text" id="edTitle" placeholder="Например: Основы веб-разработки">
-    </div>
-    <div class="field">
-      <label>Описание</label>
-      <textarea id="edDesc" placeholder="Краткое описание (необязательно)"></textarea>
-    </div>
-    <div class="field">
-      <label>Теги (через запятую)</label>
-      <input type="text" id="edTags" placeholder="python, основы, для новичков">
-    </div>
-    <div class="field">
-      <label>Лимит времени, мин (0 = без лимита)</label>
-      <input type="number" id="edTime" min="0" max="300" value="0">
-    </div>
-
-    <div style="display:flex;align-items:center;gap:10px;margin-top:24px;
-      padding-top:20px;border-top:var(--line-thin);flex-wrap:wrap;">
-      <h2 style="margin:0">Вопросы <span id="qCount" style="color:var(--gray-400)"></span></h2>
-      <div class="spacer"></div>
-      <button class="btn-ai btn-small" onclick="openAiModal('questions')">🤖 AI ВОПРОСЫ</button>
-      <button class="btn-ghost btn-small" onclick="aiTranslateTest()">🌐 AI ПЕРЕВОД</button>
-    </div>
-    <div id="edQuestions" style="margin-top:16px;"></div>
-    <button class="btn-ghost" style="width:100%;margin-bottom:20px;padding:14px"
-      onclick="addQuestion()">＋ ДОБАВИТЬ ВОПРОС</button>
-
-    <div style="display:flex;gap:8px;padding-top:20px;border-top:var(--line);flex-wrap:wrap;">
-      <button class="btn-ghost" onclick="closeEditor()">ОТМЕНА</button>
-      <div class="spacer"></div>
-      <button class="btn-primary" onclick="saveTest()">💾 СОХРАНИТЬ ТЕСТ</button>
-    </div>
-  </div>
-
-  <div id="quizScreen" class="hidden">
-    <div class="quiz-top">
-      <div class="quiz-counter">
-        <span class="big" id="counterBig">01</span>
-        <span id="counterSmall" style="color:var(--gray-400)">/ 10</span>
+      <div class="sidebar-divider">
+        <div class="sidebar-label">Тесты <span id="testCount" style="color:var(--gray-400);font-weight:400;"></span></div>
+        <div class="test-list" id="testList"></div>
       </div>
-      <div class="row" style="gap:8px;">
-        <div class="streak-badge" id="streakBadge">🔥 0</div>
-        <div class="timer" id="timer"></div>
+
+      <div class="sidebar-footer">
+        <button class="btn-ghost" onclick="document.getElementById('fileInput').click()" id="btnImport"></button>
+        <button class="btn-ghost" onclick="importCsvDialog()" id="btnCsv"></button>
+        <button class="btn-ghost" onclick="exportAll()" id="btnExport"></button>
       </div>
-    </div>
-    <div class="progress-segments" id="progressSegments"></div>
-    <div class="q-image-wrap" id="questionImage" style="display:none;"></div>
-    <div class="question" id="questionText"></div>
-    <div id="options"></div>
-    <div class="uncertain-row">
-      <input type="checkbox" id="uncertainCheck" onchange="toggleUncertain(this.checked)">
-      <label for="uncertainCheck">Не уверен в ответе — отметить как «спорный»</label>
-    </div>
-    <div class="nav">
-      <button class="btn-ghost" id="prevBtn" onclick="prevQuestion()">← НАЗАД</button>
-      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">ДАЛЕЕ →</button>
-    </div>
-  </div>
+      <input type="file" id="fileInput" accept="application/json,.json" class="hidden" onchange="importJSON(event)">
+      <input type="file" id="csvInput" accept=".csv,.txt" class="hidden" onchange="importCsv(event)">
+    </aside>
 
-  <div id="resultScreen" class="hidden">
-    <div class="result-hero">
-      <div class="label">Результат</div>
-      <div class="score" id="scoreText">—</div>
-      <p class="msg" id="scoreMsg"></p>
-      <p class="stats" id="scoreStats"></p>
-    </div>
-    <div class="result-actions">
-      <button class="btn-ghost btn-small" onclick="copyResult(event)">📋 КОПИРОВАТЬ</button>
-      <button class="btn-ghost btn-small" onclick="exportResultCsv()">📊 CSV</button>
-      <button class="btn-ghost btn-small" onclick="printResult()">🖨 PDF</button>
-      <button class="btn-ghost btn-small" onclick="aiAnalyzeErrors()">🤖 AI АНАЛИЗ</button>
-      <button class="btn-ghost btn-small" onclick="backToLibrary()">К ТЕСТАМ</button>
-      <button class="btn-primary btn-small" onclick="restart()">ЕЩЁ РАЗ</button>
-    </div>
+    <!-- MAIN -->
+    <main class="main">
 
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="chart-box hidden" id="chartBox">
-      <h3>📈 Прогресс по попыткам</h3>
-      <div id="chartSvg"></div>
-    </div>
-    <div class="weak-section hidden" id="weakSection">
-      <h3>⚠ Слабые вопросы (чаще всего проваливаете)</h3>
-      <div id="weakList"></div>
-    </div>
+      <!-- WELCOME -->
+      <div id="welcomeScreen">
+        <div class="welcome">
+          <div class="welcome-mark">Q</div>
+          <h1>Quiz Studio Pro</h1>
+          <p class="welcome-desc">Выберите тест в списке слева или создайте новый. Все данные хранятся в вашем браузере.</p>
+          <div class="welcome-actions">
+            <button class="btn-primary" onclick="openEditor(null)" id="welcomeCreate"></button>
+            <button class="btn-ai" onclick="openAiModal('test')" id="welcomeAi"></button>
+          </div>
+          <div class="welcome-kbd">
+            <span><kbd>N</kbd> — новый</span>
+            <span><kbd>A</kbd> — AI</span>
+            <span><kbd>/</kbd> — поиск</span>
+          </div>
+        </div>
+      </div>
 
-    <h2>Разбор ответов</h2>
-    <div id="reviewList"></div>
+      <!-- START -->
+      <div id="startScreen" class="hidden">
+        <div class="editor-header">
+          <button class="icon-btn" onclick="backToWelcome()" data-act="back" title="Назад" id="startBackBtn"></button>
+          <h1 id="startTitle"></h1>
+        </div>
+        <p class="subtitle" id="startDesc"></p>
+        <div class="ti-tags" id="startTags" style="margin-bottom:16px;"></div>
+        <div id="resumeBanner" class="resume-banner hidden">
+          <div class="info" id="resumeInfo"></div>
+          <div class="row" style="gap:6px">
+            <button class="btn-ghost btn-small" onclick="discardSaved()">УДАЛИТЬ</button>
+            <button class="btn-primary btn-small" onclick="resumeTest()">ПРОДОЛЖИТЬ</button>
+          </div>
+        </div>
+        <div class="settings-box">
+          <label><input type="checkbox" id="optShuffleQ" checked> Перемешать вопросы</label>
+          <label><input type="checkbox" id="optShuffleA" checked> Перемешать варианты</label>
+          <label><input type="checkbox" id="optSample" onchange="toggleSample()"> Случайная выборка N из M</label>
+          <label id="sampleRow" class="hidden" style="padding-left:26px;">
+            Взять вопросов: <input type="number" id="optSampleN" value="5" min="1" max="200" style="width:70px;">
+          </label>
+          <label>Лимит времени, мин (0 = без лимита):
+            <input type="number" id="optTime" value="0" min="0" max="300">
+          </label>
+        </div>
+        <div class="meta" id="startMeta"></div>
+        <button class="btn-primary" style="width:100%;padding:14px" onclick="startTest()" id="startBtn"></button>
+      </div>
+
+      <!-- EDITOR -->
+      <div id="editorScreen" class="hidden">
+        <div class="editor-header">
+          <button class="icon-btn" onclick="closeEditor()" data-act="back" title="Назад" id="editorBackBtn"></button>
+          <h1 id="editorTitle">Новый тест</h1>
+        </div>
+
+        <div class="field">
+          <label>Название теста *</label>
+          <input type="text" id="edTitle" placeholder="Например: Основы веб-разработки">
+        </div>
+        <div class="field">
+          <label>Описание</label>
+          <textarea id="edDesc" placeholder="Краткое описание (необязательно)"></textarea>
+        </div>
+        <div class="field">
+          <label>Теги (через запятую)</label>
+          <input type="text" id="edTags" placeholder="python, основы, для новичков">
+        </div>
+        <div class="field">
+          <label>Лимит времени, мин (0 = без лимита)</label>
+          <input type="number" id="edTime" min="0" max="300" value="0">
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-top:24px;
+          padding-top:20px;border-top:var(--line-thin);flex-wrap:wrap;">
+          <h2 style="margin:0">Вопросы <span id="qCount" style="color:var(--gray-400)"></span></h2>
+          <div class="spacer"></div>
+          <button class="btn-ai btn-small" onclick="openAiModal('questions')" id="btnAiQ"></button>
+          <button class="btn-ghost btn-small" onclick="aiTranslateTest()" id="btnTranslate"></button>
+        </div>
+        <div id="edQuestions" style="margin-top:16px;"></div>
+        <button class="btn-ghost" style="width:100%;margin-bottom:20px;padding:14px"
+          onclick="addQuestion()" id="btnAddQ"></button>
+
+        <div style="display:flex;gap:8px;padding-top:20px;border-top:var(--line);flex-wrap:wrap;">
+          <button class="btn-ghost" onclick="closeEditor()">ОТМЕНА</button>
+          <div class="spacer"></div>
+          <button class="btn-primary" onclick="saveTest()" id="btnSaveTest"></button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="quizScreen" class="hidden">
+        <div class="quiz-top">
+          <div class="quiz-counter">
+            <span class="big" id="counterBig">01</span>
+            <span id="counterSmall" style="color:var(--gray-400)">/ 10</span>
+          </div>
+          <div class="row" style="gap:8px;">
+            <div class="streak-badge" id="streakBadge">🔥 0</div>
+            <div class="timer" id="timer"></div>
+          </div>
+        </div>
+        <div class="progress-segments" id="progressSegments"></div>
+        <div class="q-image-wrap" id="questionImage" style="display:none;"></div>
+        <div class="question" id="questionText"></div>
+        <div id="options"></div>
+        <div class="uncertain-row">
+          <input type="checkbox" id="uncertainCheck" onchange="toggleUncertain(this.checked)">
+          <label for="uncertainCheck">Не уверен в ответе — отметить как «спорный»</label>
+        </div>
+        <div class="nav">
+          <button class="btn-ghost" id="prevBtn" onclick="prevQuestion()"></button>
+          <button class="btn-primary" id="nextBtn" onclick="nextQuestion()"></button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultScreen" class="hidden">
+        <div class="result-hero">
+          <div class="label">Результат</div>
+          <div class="score" id="scoreText">—</div>
+          <p class="msg" id="scoreMsg"></p>
+          <p class="stats" id="scoreStats"></p>
+        </div>
+        <div class="result-actions">
+          <button class="btn-ghost btn-small" onclick="copyResult(event)" id="btnCopyRes"></button>
+          <button class="btn-ghost btn-small" onclick="exportResultCsv()" id="btnCsvRes"></button>
+          <button class="btn-ghost btn-small" onclick="printResult()" id="btnPdfRes"></button>
+          <button class="btn-ghost btn-small" onclick="aiAnalyzeErrors()" id="btnAiAnalyze"></button>
+          <button class="btn-ghost btn-small" onclick="backToWelcome()">К ТЕСТАМ</button>
+          <button class="btn-primary btn-small" onclick="restart()" id="btnRestart"></button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="chart-box hidden" id="chartBox">
+          <h3>📈 Прогресс по попыткам</h3>
+          <div id="chartSvg"></div>
+        </div>
+        <div class="weak-section hidden" id="weakSection">
+          <h3>⚠ Слабые вопросы (чаще всего проваливаете)</h3>
+          <div id="weakList"></div>
+        </div>
+
+        <h2>Разбор ответов</h2>
+        <div id="reviewList"></div>
+      </div>
+
+    </main>
   </div>
 </div>
 
+<!-- AI MODAL -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2 id="aiModalTitle">🤖 Создать тест с AI</h2>
@@ -621,6 +885,7 @@ button.copied{animation:copy-flash .7s ease;}
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
@@ -652,7 +917,7 @@ button.copied{animation:copy-flash .7s ease;}
       <p style="font-size:12px;color:var(--gray-500);margin-bottom:8px;line-height:1.5;">
         Если указан — используется вместо прямого Pollinations.
       </p>
-      <input type="url" id="setProxy" placeholder="https://your-worker.workers.dev/chat" style="width:100%;padding:9px 12px;border:var(--line);background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;margin-bottom:6px;">
+      <input type="url" id="setProxy" placeholder="https://your-worker.workers.dev/chat" style="width:100%;padding:9px 12px;border:var(--line);background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;margin-bottom:6px;border-radius:var(--r-sm);">
       <button class="btn-ghost btn-small" onclick="saveProxy()">СОХРАНИТЬ URL</button>
     </div>
     <div class="row" style="justify-content:flex-end;gap:8px;margin-top:20px">
@@ -664,6 +929,73 @@ button.copied{animation:copy-flash .7s ease;}
 <div class="toast" id="toast"></div>
 
 <script>
+/* ==========================================================
+   SVG ИКОНКИ
+   ========================================================== */
+const ICONS = {
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  sparkles:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.09 6.26L20 12l-5.91 2.74L12 21l-2.09-6.26L4 12l5.91-2.74L12 3z"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  arrowLeft:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+  arrowRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  chevronUp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>',
+  chevronDown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>',
+  image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  translate:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>',
+  lightbulb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-7 7c0 2 1 3 1 5h12c0-2 1-3 1-5a7 7 0 0 0-7-7z"/></svg>',
+  clipboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  fileText:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+};
+function ic(name){ return ICONS[name] || ''; }
+
+/* Инициализация статических иконок в кнопках */
+function initStaticIcons(){
+  $("settingsBtn").innerHTML = ic('settings');
+  $("btnNew").innerHTML = ic('plus') + ' Создать';
+  $("btnAiNew").innerHTML = ic('sparkles') + ' AI Создать';
+  $("btnImport").innerHTML = ic('upload') + ' ИМПОРТ';
+  $("btnCsv").innerHTML = ic('fileText') + ' CSV';
+  $("btnExport").innerHTML = ic('download') + ' ЭКСПОРТ';
+  $("welcomeCreate").innerHTML = ic('plus') + ' Новый тест';
+  $("welcomeAi").innerHTML = ic('sparkles') + ' AI Создать';
+  $("startBackBtn").innerHTML = ic('arrowLeft');
+  $("editorBackBtn").innerHTML = ic('arrowLeft');
+  $("btnAiQ").innerHTML = ic('sparkles') + ' AI ВОПРОСЫ';
+  $("btnTranslate").innerHTML = ic('translate') + ' AI ПЕРЕВОД';
+  $("btnAddQ").innerHTML = ic('plus') + ' ДОБАВИТЬ ВОПРОС';
+  $("btnSaveTest").innerHTML = ic('download') + ' СОХРАНИТЬ ТЕСТ';
+  $("prevBtn").innerHTML = ic('arrowLeft') + ' НАЗАД';
+  $("nextBtn").innerHTML = 'ДАЛЕЕ ' + ic('arrowRight');
+  $("startBtn").innerHTML = 'НАЧАТЬ ТЕСТ ' + ic('arrowRight');
+  $("btnCopyRes").innerHTML = ic('clipboard') + ' КОПИРОВАТЬ';
+  $("btnCsvRes").innerHTML = ic('chart') + ' CSV';
+  $("btnPdfRes").innerHTML = ic('print') + ' PDF';
+  $("btnAiAnalyze").innerHTML = ic('sparkles') + ' AI АНАЛИЗ';
+  $("btnRestart").innerHTML = ic('refresh') + ' ЕЩЁ РАЗ';
+  // Search icon
+  const sw = $("searchWrap");
+  const iconEl = document.createElement('span');
+  iconEl.innerHTML = ic('search');
+  const svg = iconEl.firstChild;
+  sw.insertBefore(svg, sw.firstChild);
+}
+
+/* ==========================================================
+   ХРАНИЛИЩЕ
+   ========================================================== */
 const TESTS_KEY = "quiz_tests_v3";
 const STATE_KEY = "quiz_state_v3";
 const SETTINGS_KEY = "quiz_settings_v3";
@@ -685,9 +1017,7 @@ function showToast(msg){
 }
 function shakeEl(el){
   if (!el) return;
-  el.classList.remove("shake");
-  void el.offsetWidth;
-  el.classList.add("shake");
+  el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");
   setTimeout(()=>el.classList.remove("shake"),500);
 }
 function md(text){
@@ -746,21 +1076,10 @@ document.querySelectorAll("#setTheme .set-btn").forEach(b=>b.onclick=()=>{settin
 document.querySelectorAll("#setFont .set-btn").forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.onclick=()=>{settings.density=b.dataset.v;saveSettings();renderSettingsButtons();});
 
-function blankQuestion(){
-  return { type:"single", question:"",
-    options:[{text:"",correct:true},{text:"",correct:false}],
-    explanation:"", image:null };
-}
-function blankMatching(){
-  return { type:"matching", question:"",
-    pairs:[{left:"",right:""},{left:"",right:""}],
-    explanation:"", image:null };
-}
-function blankSort(){
-  return { type:"sort", question:"",
-    items:["","",""],
-    explanation:"", image:null };
-}
+/* ==========================================================
+   МОДЕЛЬ ВОПРОСА
+   ========================================================== */
+function blankQuestion(){ return { type:"single", question:"", options:[{text:"",correct:true},{text:"",correct:false}], explanation:"", image:null }; }
 function normalizeQ(q){
   if (!q.type) q.type = "single";
   if (q.type === "single" || q.type === "multi"){
@@ -780,6 +1099,9 @@ function normalizeQ(q){
   return q;
 }
 
+/* ==========================================================
+   ГЛОБАЛЬНОЕ
+   ========================================================== */
 let tests = [];
 let TEST = null;
 let editing = null;
@@ -853,27 +1175,27 @@ function saveTests(){
   try { localStorage.setItem(TESTS_KEY, JSON.stringify(tests)); }
   catch(e){ showToast("⚠ ХРАНИЛИЩЕ ПЕРЕПОЛНЕНО"); }
 }
-
 function loadAttempts(){
-  try {
-    const raw = localStorage.getItem(ATTEMPTS_KEY);
-    attempts = raw ? JSON.parse(raw) : [];
-    if (!Array.isArray(attempts)) attempts = [];
-  } catch(e){ attempts = []; }
+  try { const raw = localStorage.getItem(ATTEMPTS_KEY); attempts = raw ? JSON.parse(raw) : []; if (!Array.isArray(attempts)) attempts = []; } catch(e){ attempts = []; }
 }
-function saveAttempts(){
-  try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts)); } catch(e){}
-}
+function saveAttempts(){ try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts)); } catch(e){} }
 
+/* ==========================================================
+   НАВИГАЦИЯ
+   ========================================================== */
 function show(id){
-  ["libraryScreen","startScreen","editorScreen","quizScreen","resultScreen"]
+  ["welcomeScreen","startScreen","editorScreen","quizScreen","resultScreen"]
     .forEach(s=>$(s).classList.toggle("hidden",s!==id));
-  window.scrollTo({top:0});
-  const names={libraryScreen:"LIBRARY",startScreen:"TEST / START",
-    editorScreen:"TEST / EDIT",quizScreen:"TEST / IN PROGRESS",resultScreen:"TEST / RESULT"};
-  $("headerMeta").textContent = "v3.1 · " + (names[id]||"");
+  const main = document.querySelector(".main");
+  if (main) main.scrollTop = 0;
+  const names={welcomeScreen:"WELCOME",startScreen:"START",editorScreen:"EDIT",
+    quizScreen:"IN PROGRESS",resultScreen:"RESULT"};
+  $("headerMeta").textContent = "v3.2 · " + (names[id]||"");
 }
 
+/* ==========================================================
+   БИБЛИОТЕКА (SIDEBAR)
+   ========================================================== */
 function filterTests(){
   return tests.filter(t=>{
     if (searchQuery){
@@ -892,39 +1214,36 @@ function renderTagFilter(){
   tests.forEach(t=>(t.tags||[]).forEach(tag=>all.add(tag)));
   const row=$("tagFilterRow");
   if (!all.size){row.innerHTML="";return;}
-  row.innerHTML=[...all].sort().map(tag=>`<span class="tag-chip ${tag===activeTag?"active":""}" onclick="toggleTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join("");
+  row.innerHTML=[...all].sort().slice(0,10).map(tag=>`<span class="tag-chip ${tag===activeTag?"active":""}" onclick="toggleTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join("");
 }
 function toggleTag(tag){ activeTag=activeTag===tag?"":tag; renderLibrary(); }
 function renderLibrary(){
   renderTagFilter();
   const box=$("testList");
   const filtered=filterTests();
+  $("testCount").textContent = `(${filtered.length}${filtered.length!==tests.length?"/"+tests.length:""})`;
   if (!filtered.length){
     box.innerHTML = !tests.length
-      ? `<div class="empty-state">Тестов пока нет
-          <span class="hint">Нажмите <kbd>N</kbd> — новый · <kbd>A</kbd> — AI · <kbd>/</kbd> — поиск</span>
-        </div>`
-      : `<div class="empty-state">Ничего не найдено
-          <span class="hint">Попробуйте другой запрос или сбросьте фильтр</span>
-        </div>`;
+      ? `<div class="empty-state">Нет тестов<span class="hint"><kbd>N</kbd> создать · <kbd>A</kbd> AI</span></div>`
+      : `<div class="empty-state">Не найдено<span class="hint">Другой запрос</span></div>`;
     return;
   }
+  const activeId = TEST ? TEST.id : null;
   box.innerHTML=filtered.map((t,idx)=>`
-    <div class="test-item" style="--i:${idx}">
-      <div class="ti-index">${pad(idx+1)}</div>
+    <div class="test-item ${t.id===activeId?'active':''}" style="--i:${idx}" onclick="openStart('${t.id}')">
       <div class="ti-body">
         <div class="ti-title">${escapeHtml(t.title||"Без названия")}</div>
-        <div class="ti-meta">${t.questions.length} вопр.${t.timeLimit?` · ${Math.round(t.timeLimit/60)} мин`:" · без лимита"}</div>
-        ${(t.tags&&t.tags.length)?`<div class="ti-tags">${t.tags.map(tag=>`<span class="tag-chip" onclick="event.stopPropagation();toggleTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join("")}</div>`:""}
-      </div>
-      <div class="ti-actions">
-        <button class="icon-btn" title="Пройти" onclick="openStart('${t.id}')" ${t.questions.length?"":"disabled"}>▶</button>
-        <button class="icon-btn" title="Редактировать" onclick="openEditor('${t.id}')">✎</button>
-        <button class="icon-btn" title="Копия" onclick="copyTest('${t.id}')">⎘</button>
-        <button class="icon-btn" title="Поделиться" onclick="shareTest('${t.id}')">🔗</button>
-        <button class="icon-btn" title="Экспорт JSON" onclick="exportTest('${t.id}')">↓</button>
-        <button class="icon-btn" title="Печать" onclick="printTest('${t.id}')">🖨</button>
-        <button class="icon-btn danger" title="Удалить" onclick="deleteTest('${t.id}')">✕</button>
+        <div class="ti-meta">${t.questions.length} вопр.${t.timeLimit?` · ${Math.round(t.timeLimit/60)} мин`:""}</div>
+        ${(t.tags&&t.tags.length)?`<div class="ti-tags">${t.tags.slice(0,4).map(tag=>`<span class="tag-chip" onclick="event.stopPropagation();toggleTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join("")}</div>`:""}
+        <div class="ti-actions" onclick="event.stopPropagation()">
+          <button class="icon-btn" title="Пройти" data-act="play" onclick="openStart('${t.id}')" ${t.questions.length?"":"disabled"}>${ic('play')}</button>
+          <button class="icon-btn" title="Редактировать" data-act="edit" onclick="openEditor('${t.id}')">${ic('edit')}</button>
+          <button class="icon-btn" title="Копия" data-act="copy" onclick="copyTest('${t.id}')">${ic('copy')}</button>
+          <button class="icon-btn" title="Поделиться" data-act="share" onclick="shareTest('${t.id}')">${ic('share')}</button>
+          <button class="icon-btn" title="Экспорт" data-act="download" onclick="exportTest('${t.id}')">${ic('download')}</button>
+          <button class="icon-btn" title="Печать" data-act="print" onclick="printTest('${t.id}')">${ic('print')}</button>
+          <button class="icon-btn danger" title="Удалить" data-act="trash" onclick="deleteTest('${t.id}')">${ic('trash')}</button>
+        </div>
       </div>
     </div>
   `).join("");
@@ -935,7 +1254,10 @@ function deleteTest(id){
   if(!confirm(`Удалить тест «${t.title||"Без названия"}»?`)) return;
   tests=tests.filter(x=>x.id!==id);
   attempts=attempts.filter(a=>a.testId!==id); saveAttempts();
-  saveTests(); renderLibrary(); showToast("ТЕСТ УДАЛЁН");
+  saveTests();
+  if (TEST && TEST.id===id){ TEST=null; show("welcomeScreen"); }
+  renderLibrary();
+  showToast("ТЕСТ УДАЛЁН");
 }
 function copyTest(id){
   const t=tests.find(x=>x.id===id); if(!t) return;
@@ -960,29 +1282,16 @@ function buildPrintHTML(test){
     let opts="";
     if (nq.type==="text") opts=`<div class="print-line"></div>`;
     else if (nq.type==="matching"){
-      opts=`<div style="margin-left:24px;margin-top:6px;font-size:13px;">Столбец А: ${nq.pairs.map((p,j)=>`${j+1}) ${escapeHtml(p.left)}`).join("; ")}<br>Столбец Б (перемешано): ${shuffle(nq.pairs.map(p=>p.right)).map((r,j)=>`${String.fromCharCode(65+j)}) ${escapeHtml(r)}`).join("; ")}</div>`;
+      opts=`<div style="margin-left:24px;margin-top:6px;font-size:13px;">Столбец А: ${nq.pairs.map((p,j)=>`${j+1}) ${escapeHtml(p.left)}`).join("; ")}<br>Столбец Б: ${shuffle(nq.pairs.map(p=>p.right)).map((r,j)=>`${String.fromCharCode(65+j)}) ${escapeHtml(r)}`).join("; ")}</div>`;
     } else if (nq.type==="sort"){
       opts=`<div style="margin-left:24px;margin-top:6px;font-size:13px;">${shuffle(nq.items).map(it=>`☐ ${escapeHtml(it)}`).join("<br>")}</div>`;
     } else {
       opts=nq.options.map((o,j)=>`<div class="print-opt"><span class="print-mark">${String.fromCharCode(65+j)}.</span> ${escapeHtml(o.text)}</div>`).join("");
     }
-    return `<div class="print-q">
-      <div class="print-qh"><b>${i+1}.</b> ${escapeHtml(nq.question)}</div>
-      ${nq.image?`<img src="${nq.image}" class="print-img">`:""}
-      ${opts}
-    </div>`;
+    return `<div class="print-q"><div class="print-qh"><b>${i+1}.</b> ${escapeHtml(nq.question)}</div>${nq.image?`<img src="${nq.image}" class="print-img">`:""}${opts}</div>`;
   }).join("");
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(test.title||"Тест")}</title>
-  <style>body{font-family:Georgia,serif;padding:24px;color:#000;background:#fff;max-width:800px;margin:0 auto;}
-  h1{font-size:22px;margin-bottom:6px;}.desc{color:#555;font-style:italic;margin-bottom:20px;font-size:14px;}
-  .print-q{margin-bottom:22px;page-break-inside:avoid;}.print-qh{font-size:15px;line-height:1.4;margin-bottom:6px;}
-  .print-opt{margin-left:24px;margin-top:4px;font-size:14px;}.print-mark{font-weight:bold;display:inline-block;width:20px;}
-  .print-line{border-bottom:1px solid #000;height:24px;margin:10px 0 0 24px;width:60%;}
-  .print-img{max-width:300px;max-height:200px;display:block;margin:10px 0;border:1px solid #ccc;}
-  @media print{body{padding:0;}}</style></head><body>
-  <h1>${escapeHtml(test.title||"Тест")}</h1>
-  ${test.description?`<div class="desc">${escapeHtml(test.description)}</div>`:""}
-  ${questions}</body></html>`;
+  <style>body{font-family:Georgia,serif;padding:24px;color:#000;background:#fff;max-width:800px;margin:0 auto;}h1{font-size:22px;margin-bottom:6px;}.desc{color:#555;font-style:italic;margin-bottom:20px;font-size:14px;}.print-q{margin-bottom:22px;page-break-inside:avoid;}.print-qh{font-size:15px;line-height:1.4;margin-bottom:6px;}.print-opt{margin-left:24px;margin-top:4px;font-size:14px;}.print-mark{font-weight:bold;display:inline-block;width:20px;}.print-line{border-bottom:1px solid #000;height:24px;margin:10px 0 0 24px;width:60%;}.print-img{max-width:300px;max-height:200px;display:block;margin:10px 0;border:1px solid #ccc;}@media print{body{padding:0;}}</style></head><body><h1>${escapeHtml(test.title||"Тест")}</h1>${test.description?`<div class="desc">${escapeHtml(test.description)}</div>`:""}${questions}</body></html>`;
 }
 function printTest(id){
   const t=tests.find(x=>x.id===id); if(!t) return;
@@ -996,15 +1305,10 @@ function shareTest(id){
     const data = JSON.stringify(t);
     const b64 = btoa(unescape(encodeURIComponent(data)));
     const url = location.origin + location.pathname + "#test=" + b64;
-    if (url.length > 8000){
-      if (!confirm("Тест большой, ссылка может не работать в некоторых браузерах. Продолжить?")) return;
-    }
-    navigator.clipboard.writeText(url).then(()=>showToast("🔗 ССЫЛКА СКОПИРОВАНА")).catch(()=>{
-      prompt("Скопируйте ссылку:", url);
-    });
+    if (url.length > 8000){ if (!confirm("Тест большой, ссылка может не работать в некоторых браузерах. Продолжить?")) return; }
+    navigator.clipboard.writeText(url).then(()=>showToast("🔗 ССЫЛКА СКОПИРОВАНА")).catch(()=>{ prompt("Скопируйте ссылку:", url); });
   } catch(e){ showToast("ОШИБКА"); }
 }
-
 function checkHashImport(){
   const hash = location.hash;
   if (!hash.startsWith("#test=")) return;
@@ -1023,6 +1327,9 @@ function checkHashImport(){
   history.replaceState(null, "", location.pathname + location.search);
 }
 
+/* ==========================================================
+   СТАРТ
+   ========================================================== */
 function openStart(id){
   TEST=tests.find(t=>t.id===id); if(!TEST) return;
   $("startTitle").textContent=TEST.title||"Тест";
@@ -1040,17 +1347,16 @@ function openStart(id){
     banner.classList.remove("hidden");
     $("resumeInfo").textContent=`Незавершено · вопрос ${pendingSaved.current+1} из ${pendingSaved.questions.length}`+(pendingSaved.totalTime>0?` · осталось ${formatTime(pendingSaved.timeLeft)}`:"");
   } else banner.classList.add("hidden");
+  renderLibrary();
   show("startScreen");
 }
-function toggleSample(){
-  $("sampleRow").classList.toggle("hidden", !$("optSample").checked);
-}
-function backToLibrary(){
+function toggleSample(){ $("sampleRow").classList.toggle("hidden", !$("optSample").checked); }
+function backToWelcome(){
   if (state && state.answers && state.answers.some(a=>a!==null && !(Array.isArray(a)&&a.length===0))){
     if (!confirm("Прервать попытку? Прогресс сохранится.")) return;
   }
   state=null; TEST=null;
-  renderLibrary(); show("libraryScreen");
+  renderLibrary(); show("welcomeScreen");
 }
 function prepareQuestions(questions, shufQ, shufA, sampleN){
   let qs=questions.slice();
@@ -1107,6 +1413,9 @@ function resumeTest(){
   if (state.totalTime===0||state.timeLeft>0) startTimer(); else finish(true);
 }
 
+/* ==========================================================
+   ТАЙМЕР
+   ========================================================== */
 function startTimer(){
   if (timerId) clearInterval(timerId);
   updateTimer();
@@ -1127,6 +1436,9 @@ function updateTimer(){
   el.classList.toggle("warning",state.timeLeft<=30);
 }
 
+/* ==========================================================
+   ПРОХОЖДЕНИЕ
+   ========================================================== */
 function hasAnswer(ans,q){
   const nq=normalizeQ(q);
   if (nq.type==="text") return typeof ans==="string" && ans.trim()!=="";
@@ -1138,7 +1450,7 @@ function hasAnswer(ans,q){
 function updateNav(){
   $("prevBtn").disabled=state.current===0;
   const total=state.questions.length;
-  $("nextBtn").textContent=state.current===total-1?"ЗАВЕРШИТЬ ✓":"ДАЛЕЕ →";
+  $("nextBtn").innerHTML = state.current===total-1 ? 'ЗАВЕРШИТЬ ' + ic('check') : 'ДАЛЕЕ ' + ic('arrowRight');
   $("nextBtn").disabled=!hasAnswer(state.answers[state.current], state.questions[state.current]);
 }
 function updateProgressSegments(){
@@ -1224,8 +1536,8 @@ function renderQuestion(){
       row.innerHTML=`<span class="handle">${idx+1}</span>
         <span class="sort-text">${escapeHtml(item.text||item)}</span>
         <span class="sort-btns">
-          <button class="icon-btn" onclick="moveSort(${idx},-1)" ${idx===0?"disabled":""}>↑</button>
-          <button class="icon-btn" onclick="moveSort(${idx},1)" ${idx===items.length-1?"disabled":""}>↓</button>
+          <button class="icon-btn" data-act="up" onclick="moveSort(${idx},-1)" ${idx===0?"disabled":""}>${ic('chevronUp')}</button>
+          <button class="icon-btn" data-act="down" onclick="moveSort(${idx},1)" ${idx===items.length-1?"disabled":""}>${ic('chevronDown')}</button>
         </span>`;
       list.appendChild(row);
     });
@@ -1258,10 +1570,7 @@ function moveSort(idx, dir){
   state.answers[state.current] = raw._userOrder.map(it=>it._orig);
   saveState(); renderQuestion();
 }
-function toggleUncertain(checked){
-  state.uncertain[state.current]=checked;
-  saveState(); updateProgressSegments();
-}
+function toggleUncertain(checked){ state.uncertain[state.current]=checked; saveState(); updateProgressSegments(); }
 function prevQuestion(){if(state.current>0){state.current--;saveState();renderQuestion();}}
 function nextQuestion(){
   if (!hasAnswer(state.answers[state.current], state.questions[state.current])) return;
@@ -1269,9 +1578,7 @@ function nextQuestion(){
   if (isAnswerCorrect(state.questions[state.current], state.answers[state.current])){
     state.streak++;
     if (state.streak > state.maxStreak) state.maxStreak = state.streak;
-  } else {
-    state.streak = 0;
-  }
+  } else { state.streak = 0; }
   if (state.current<state.questions.length-1){
     state.current++;saveState();renderQuestion();
     if (!wasHot && state.streak >= 3){
@@ -1361,8 +1668,6 @@ function finish(byTimeout){
   renderChart();
   renderWeakTopics();
   renderReview();
-
-  document.querySelectorAll(".result-actions button").forEach(b=>b.style.display="");
 }
 
 function renderStats(){
@@ -1371,7 +1676,6 @@ function renderStats(){
   const avg = n ? Math.round(testAttempts.reduce((s,a)=>s+a.percent,0)/n) : 0;
   const best = n ? Math.max(...testAttempts.map(a=>a.percent)) : 0;
   const last = testAttempts[n-1] ? testAttempts[n-1].percent : 0;
-
   $("statsGrid").innerHTML = `
     <div class="stat-card"><div class="stat-label">Попыток</div><div class="stat-value">${n}</div></div>
     <div class="stat-card"><div class="stat-label">Средний</div><div class="stat-value">${avg}%</div></div>
@@ -1385,47 +1689,27 @@ function renderChart(){
   const box = $("chartBox");
   if (testAttempts.length < 2){ box.classList.add("hidden"); return; }
   box.classList.remove("hidden");
-
   const recent = testAttempts.slice(-10);
   const W=600, H=180, PAD=30;
   const stepX = recent.length>1 ? (W-PAD*2)/(recent.length-1) : 0;
   const y = v => PAD + (H-PAD*2) * (1 - v/100);
-
   const points = recent.map((a,i)=>`${PAD + i*stepX},${y(a.percent)}`).join(" ");
   const circles = recent.map((a,i)=>`<circle cx="${PAD+i*stepX}" cy="${y(a.percent)}" r="4" fill="currentColor"/>`).join("");
   const labels = recent.map((a,i)=>`<text x="${PAD+i*stepX}" y="${H-5}" font-size="10" font-family="monospace" text-anchor="middle" fill="currentColor">${i+1}</text>`).join("");
   const grid = [0,25,50,75,100].map(v=>`<line x1="${PAD}" y1="${y(v)}" x2="${W-PAD}" y2="${y(v)}" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>`).join("");
-
-  $("chartSvg").innerHTML=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
-    ${grid}
-    <polyline points="${points}" fill="none" stroke="currentColor" stroke-width="2"/>
-    ${circles}${labels}
-  </svg>`;
+  $("chartSvg").innerHTML=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${grid}<polyline points="${points}" fill="none" stroke="currentColor" stroke-width="2"/>${circles}${labels}</svg>`;
 }
 
 function renderWeakTopics(){
   const testAttempts = attempts.filter(a=>a.testId===state.testId);
   const section = $("weakSection");
   if (testAttempts.length < 2){ section.classList.add("hidden"); return; }
-
   const failureMap = {};
-  testAttempts.forEach(a=>{
-    a.perQuestion.forEach(pq=>{
-      if (!pq.correct){
-        failureMap[pq.question] = (failureMap[pq.question] || 0) + 1;
-      }
-    });
-  });
+  testAttempts.forEach(a=>{ a.perQuestion.forEach(pq=>{ if (!pq.correct){ failureMap[pq.question] = (failureMap[pq.question] || 0) + 1; } }); });
   const weak = Object.entries(failureMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
   if (!weak.length){ section.classList.add("hidden"); return; }
-
   section.classList.remove("hidden");
-  $("weakList").innerHTML = weak.map(([q,count])=>`
-    <div class="weak-item">
-      <div class="wi-text">${escapeHtml(q.slice(0,100))}${q.length>100?"…":""}</div>
-      <div class="wi-count">${count}×</div>
-    </div>
-  `).join("");
+  $("weakList").innerHTML = weak.map(([q,count])=>`<div class="weak-item"><div class="wi-text">${escapeHtml(q.slice(0,100))}${q.length>100?"…":""}</div><div class="wi-count">${count}×</div></div>`).join("");
 }
 
 function renderReview(){
@@ -1437,7 +1721,6 @@ function renderReview(){
     const uncertainBadge = state.uncertain[i] ? `<span class="badge uncertain">спорный</span>` : "";
     html.push(`<div class="review-item" style="--i:${i}"><div class="review-q"><span class="num">${pad(i+1)}</span>${md(nq.question)}${uncertainBadge}</div>`);
     if (nq.image) html.push(`<div style="margin-bottom:10px"><img src="${nq.image}" class="q-image"></div>`);
-
     if (nq.type==="text"){
       html.push(`<div class="review-opt ${ok?"correct":"wrong"}"><span class="mark">${ok?"✓":"✗"}</span><span>Ваш: ${escapeHtml(String(ua||"<пусто>"))}</span></div>`);
       if (!ok) html.push(`<div class="review-opt correct"><span class="mark">✓</span><span>Правильно: ${escapeHtml(nq.answer||"")}</span></div>`);
@@ -1447,17 +1730,12 @@ function renderReview(){
         const chosenIdx = Array.isArray(ua)?ua[j]:null;
         const chosenText = (chosenIdx!==null && chosenIdx!==undefined && raw[chosenIdx]) ? raw[chosenIdx].right : "—";
         const okItem = chosenIdx!==null && chosenIdx!==undefined && raw[chosenIdx] && raw[chosenIdx]._orig === j;
-        html.push(`<div class="review-opt ${okItem?"correct":"wrong"}">
-          <span class="mark">${okItem?"✓":"✗"}</span>
-          <span>${escapeHtml(pair.left)} → <b>${escapeHtml(chosenText)}</b>${!okItem?` (правильно: ${escapeHtml(pair.right)})`:""}</span>
-        </div>`);
+        html.push(`<div class="review-opt ${okItem?"correct":"wrong"}"><span class="mark">${okItem?"✓":"✗"}</span><span>${escapeHtml(pair.left)} → <b>${escapeHtml(chosenText)}</b>${!okItem?` (правильно: ${escapeHtml(pair.right)})`:""}</span></div>`);
       });
     } else if (nq.type==="sort"){
       const userOrder = Array.isArray(ua) ? ua.map(idx=>nq.items[idx]) : [];
-      html.push(`<div class="review-opt ${ok?"correct":"wrong"}"><span class="mark">${ok?"✓":"✗"}</span>
-        <span>Ваш порядок: ${userOrder.map(x=>escapeHtml(x)).join(" → ")}</span></div>`);
-      if (!ok) html.push(`<div class="review-opt correct"><span class="mark">✓</span>
-        <span>Правильно: ${nq.items.map(x=>escapeHtml(x)).join(" → ")}</span></div>`);
+      html.push(`<div class="review-opt ${ok?"correct":"wrong"}"><span class="mark">${ok?"✓":"✗"}</span><span>Ваш порядок: ${userOrder.map(x=>escapeHtml(x)).join(" → ")}</span></div>`);
+      if (!ok) html.push(`<div class="review-opt correct"><span class="mark">✓</span><span>Правильно: ${nq.items.map(x=>escapeHtml(x)).join(" → ")}</span></div>`);
     } else {
       nq.options.forEach((opt,j)=>{
         let cls="review-opt", mark="○";
@@ -1476,7 +1754,7 @@ function renderReview(){
   renderMath($("reviewList"));
 }
 
-function restart(){ if (TEST) openStart(TEST.id); else show("libraryScreen"); }
+function restart(){ if (TEST) openStart(TEST.id); else show("welcomeScreen"); }
 
 function copyResult(ev){
   const total = state.questions.length;
@@ -1486,11 +1764,8 @@ function copyResult(ev){
   const text = `${correct} из ${total} (${percent}%) — ${testTitle}`;
   navigator.clipboard.writeText(text).then(()=>{
     showToast("✓ СКОПИРОВАНО");
-    const btn = (ev && ev.target) || (ev && ev.currentTarget);
-    if (btn && btn.classList){
-      btn.classList.add("copied");
-      setTimeout(()=>btn.classList.remove("copied"), 800);
-    }
+    const btn = (ev && ev.target && ev.target.closest('button')) || ev?.currentTarget;
+    if (btn && btn.classList){ btn.classList.add("copied"); setTimeout(()=>btn.classList.remove("copied"), 800); }
   }).catch(()=>prompt("Копировать:", text));
 }
 
@@ -1501,16 +1776,10 @@ function exportResultCsv(){
     const ua=state.answers[i];
     const ok=isAnswerCorrect(q, ua);
     let userText = "", correctText = "";
-    if (nq.type==="text"){
-      userText = String(ua||"");
-      correctText = nq.answer||"";
-    } else if (nq.type==="matching"){
-      userText = JSON.stringify(ua);
-      correctText = nq.pairs.map(p=>p.right).join(" | ");
-    } else if (nq.type==="sort"){
-      userText = (ua||[]).map(idx=>nq.items[idx]).join(" | ");
-      correctText = nq.items.join(" | ");
-    } else {
+    if (nq.type==="text"){ userText = String(ua||""); correctText = nq.answer||""; }
+    else if (nq.type==="matching"){ userText = JSON.stringify(ua); correctText = nq.pairs.map(p=>p.right).join(" | "); }
+    else if (nq.type==="sort"){ userText = (ua||[]).map(idx=>nq.items[idx]).join(" | "); correctText = nq.items.join(" | "); }
+    else {
       userText = (Array.isArray(ua)?ua.map(idx=>nq.options[idx]?.text):[nq.options[ua]?.text]).filter(Boolean).join(" | ");
       correctText = nq.options.filter(o=>o.correct).map(o=>o.text).join(" | ");
     }
@@ -1530,7 +1799,6 @@ function printResult(){
   const correct = state.questions.reduce((acc,q,i)=>acc+(isAnswerCorrect(q,state.answers[i])?1:0),0);
   const percent = Math.round((correct/total)*100);
   const title = TEST ? TEST.title : "Тест";
-
   const html = state.questions.map((q,i)=>{
     const nq=normalizeQ(q);
     const ua=state.answers[i];
@@ -1562,53 +1830,36 @@ function printResult(){
     const exp = nq.explanation ? `<div class="exp">💡 ${escapeHtml(nq.explanation)}</div>` : "";
     return `<div class="q"><div class="qh">${i+1}. ${escapeHtml(nq.question)} ${ok?"✓":"✗"}</div>${body}${exp}</div>`;
   }).join("");
-
   const w = window.open("","_blank");
   w.document.open();
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Результат — ${escapeHtml(title)}</title>
-    <style>body{font-family:Georgia,serif;padding:24px;color:#000;background:#fff;max-width:800px;margin:0 auto;}
-    h1{font-size:24px;margin-bottom:6px;}.meta{color:#555;margin-bottom:20px;font-size:14px;}
-    .q{margin-bottom:16px;page-break-inside:avoid;padding-bottom:12px;border-bottom:1px solid #eee;}
-    .qh{font-weight:bold;font-size:15px;margin-bottom:6px;}.opt{padding:3px 0 3px 20px;font-size:13px;}
-    .opt.correct{background:#eef;font-weight:bold;}.opt.wrong{color:#666;text-decoration:line-through;}
-    .exp{font-size:12px;color:#555;margin-top:6px;padding-left:10px;border-left:2px solid #999;}
-    @media print{body{padding:0;}}</style></head><body>
-    <h1>Результат — ${escapeHtml(title)}</h1>
-    <div class="meta">${correct} из ${total} (${percent}%)</div>
-    ${html}</body></html>`);
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Результат — ${escapeHtml(title)}</title><style>body{font-family:Georgia,serif;padding:24px;color:#000;background:#fff;max-width:800px;margin:0 auto;}h1{font-size:24px;margin-bottom:6px;}.meta{color:#555;margin-bottom:20px;font-size:14px;}.q{margin-bottom:16px;page-break-inside:avoid;padding-bottom:12px;border-bottom:1px solid #eee;}.qh{font-weight:bold;font-size:15px;margin-bottom:6px;}.opt{padding:3px 0 3px 20px;font-size:13px;}.opt.correct{background:#eef;font-weight:bold;}.opt.wrong{color:#666;text-decoration:line-through;}.exp{font-size:12px;color:#555;margin-top:6px;padding-left:10px;border-left:2px solid #999;}@media print{body{padding:0;}}</style></head><body><h1>Результат — ${escapeHtml(title)}</h1><div class="meta">${correct} из ${total} (${percent}%)</div>${html}</body></html>`);
   w.document.close();
   setTimeout(()=>w.print(),400);
 }
 
+/* ==========================================================
+   РЕДАКТОР
+   ========================================================== */
 function openEditor(idOrTest){
   let existing=null;
   if (typeof idOrTest==="string") existing=tests.find(t=>t.id===idOrTest);
   else if (idOrTest && typeof idOrTest==="object") existing=idOrTest;
-
   if (!existing){
     try {
       const draftRaw = localStorage.getItem(DRAFT_KEY);
       if (draftRaw){
         const draft = JSON.parse(draftRaw);
-        if (draft && draft.title && confirm(`Восстановить черновик «${draft.title}»?`)){
-          existing = draft;
-        } else if (draft && draft.questions && draft.questions.some(q=>q.question && q.question.trim())){
-          if (confirm("Найден несохранённый черновик. Восстановить?")){
-            existing = draft;
-          } else {
-            localStorage.removeItem(DRAFT_KEY);
-          }
+        if (draft && draft.title && confirm(`Восстановить черновик «${draft.title}»?`)) existing = draft;
+        else if (draft && draft.questions && draft.questions.some(q=>q.question && q.question.trim())){
+          if (confirm("Найден несохранённый черновик. Восстановить?")) existing = draft;
+          else localStorage.removeItem(DRAFT_KEY);
         }
       }
     } catch(e){}
   }
-
-  editing = existing ? deepCopy(existing) : {
-    id: uid(), title:"", description:"", tags:[], timeLimit:0, questions:[blankQuestion()]
-  };
+  editing = existing ? deepCopy(existing) : { id: uid(), title:"", description:"", tags:[], timeLimit:0, questions:[blankQuestion()] };
   editing.questions = editing.questions.map(normalizeQ);
-  $("editorTitle").textContent = existing && existing.id && tests.find(t=>t.id===existing.id)
-    ? "Редактирование теста" : "Новый тест";
+  $("editorTitle").textContent = existing && existing.id && tests.find(t=>t.id===existing.id) ? "Редактирование теста" : "Новый тест";
   $("edTitle").value = editing.title;
   $("edDesc").value = editing.description||"";
   $("edTags").value = (editing.tags||[]).join(", ");
@@ -1619,25 +1870,15 @@ function openEditor(idOrTest){
 
 function closeEditor(){
   if (editing && (editing.title || editing.questions.some(q=>q.question.trim()))){
-    if (!confirm("Выйти без сохранения? Черновик сохранится для следующего раза.")){
-      return;
-    }
+    if (!confirm("Выйти без сохранения? Черновик сохранится.")) return;
     saveDraft();
   }
-  editing=null;
-  renderLibrary();
-  show("libraryScreen");
+  editing=null; renderLibrary(); show("welcomeScreen");
 }
 
 let draftSaveTimer = null;
-function saveDraft(){
-  if (!editing) return;
-  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(editing)); } catch(e){}
-}
-function scheduleDraftSave(){
-  clearTimeout(draftSaveTimer);
-  draftSaveTimer = setTimeout(saveDraft, 1500);
-}
+function saveDraft(){ if (!editing) return; try { localStorage.setItem(DRAFT_KEY, JSON.stringify(editing)); } catch(e){} }
+function scheduleDraftSave(){ clearTimeout(draftSaveTimer); draftSaveTimer = setTimeout(saveDraft, 1500); }
 
 function renderEditor(){
   $("qCount").textContent=`(${editing.questions.length})`;
@@ -1645,36 +1886,31 @@ function renderEditor(){
     const nq=normalizeQ(q);
     let inner="";
     if (nq.type==="text"){
-      inner=`<div class="field"><label>Правильный ответ</label>
-        <input type="text" class="q-answer" data-i="${i}" value="${escapeHtml(nq.answer||"")}" placeholder="Правильный текст"></div>`;
+      inner=`<div class="field"><label>Правильный ответ</label><input type="text" class="q-answer" data-i="${i}" value="${escapeHtml(nq.answer||"")}" placeholder="Правильный текст"></div>`;
     } else if (nq.type==="matching"){
       inner = nq.pairs.map((pair,j)=>`
         <div class="opt-row">
           <input type="text" class="pair-left" data-i="${i}" data-j="${j}" placeholder="Левая часть" value="${escapeHtml(pair.left)}">
           <span style="font-family:var(--mono);font-size:12px;">→</span>
           <input type="text" class="pair-right" data-i="${i}" data-j="${j}" placeholder="Правая часть" value="${escapeHtml(pair.right)}">
-          <button class="icon-btn danger" onclick="deletePair(${i},${j})" ${nq.pairs.length<=2?"disabled":""}>✕</button>
-        </div>
-      `).join("") + `<button class="add-opt-btn" onclick="addPair(${i})">＋ ДОБАВИТЬ ПАРУ</button>`;
+          <button class="icon-btn danger" data-act="trash" onclick="deletePair(${i},${j})" ${nq.pairs.length<=2?"disabled":""}>${ic('x')}</button>
+        </div>`).join("") + `<button class="add-opt-btn" onclick="addPair(${i})">${ic('plus')} ДОБАВИТЬ ПАРУ</button>`;
     } else if (nq.type==="sort"){
       inner = nq.items.map((item,j)=>`
         <div class="opt-row">
           <span style="font-family:var(--mono);font-size:12px;width:24px;text-align:center;">${j+1}.</span>
           <input type="text" class="sort-input" data-i="${i}" data-j="${j}" placeholder="Элемент ${j+1}" value="${escapeHtml(item)}">
-          <button class="icon-btn danger" onclick="deleteSortItem(${i},${j})" ${nq.items.length<=2?"disabled":""}>✕</button>
-        </div>
-      `).join("") + `<button class="add-opt-btn" onclick="addSortItem(${i})">＋ ДОБАВИТЬ ЭЛЕМЕНТ</button>
-        <div class="correct-hint">Элементы в правильном порядке (в прохождении перемешаются)</div>`;
+          <button class="icon-btn danger" data-act="trash" onclick="deleteSortItem(${i},${j})" ${nq.items.length<=2?"disabled":""}>${ic('x')}</button>
+        </div>`).join("") + `<button class="add-opt-btn" onclick="addSortItem(${i})">${ic('plus')} ДОБАВИТЬ ЭЛЕМЕНТ</button>
+        <div class="correct-hint">Элементы в правильном порядке</div>`;
     } else {
       const inputType = nq.type==="multi"?"checkbox":"radio";
       inner = nq.options.map((opt,j)=>`
         <div class="opt-row">
-          <input type="${inputType}" class="opt-correct" data-i="${i}" data-j="${j}"
-            ${nq.type==="single"?`name="correct_${i}"`:""} ${opt.correct?"checked":""}>
+          <input type="${inputType}" class="opt-correct" data-i="${i}" data-j="${j}" ${nq.type==="single"?`name="correct_${i}"`:""} ${opt.correct?"checked":""}>
           <input type="text" class="opt-text" data-i="${i}" data-j="${j}" placeholder="Вариант ${j+1}" value="${escapeHtml(opt.text)}">
-          <button class="icon-btn danger" onclick="deleteOption(${i},${j})" ${nq.options.length<=2?"disabled":""}>✕</button>
-        </div>
-      `).join("") + `<button class="add-opt-btn" onclick="addOption(${i})">＋ ДОБАВИТЬ ВАРИАНТ</button>`;
+          <button class="icon-btn danger" data-act="trash" onclick="deleteOption(${i},${j})" ${nq.options.length<=2?"disabled":""}>${ic('x')}</button>
+        </div>`).join("") + `<button class="add-opt-btn" onclick="addOption(${i})">${ic('plus')} ДОБАВИТЬ ВАРИАНТ</button>`;
     }
     return `
       <div class="q-card" style="--i:${i}">
@@ -1688,16 +1924,16 @@ function renderEditor(){
             <option value="sort" ${nq.type==="sort"?"selected":""}>Сортировка</option>
           </select>
           <div class="spacer"></div>
-          <button class="icon-btn" title="Выше" onclick="moveQuestion(${i},-1)" ${i===0?"disabled":""}>↑</button>
-          <button class="icon-btn" title="Ниже" onclick="moveQuestion(${i},1)" ${i===editing.questions.length-1?"disabled":""}>↓</button>
-          <button class="icon-btn danger" title="Удалить" onclick="deleteQuestion(${i})">✕</button>
+          <button class="icon-btn" data-act="up" title="Выше" onclick="moveQuestion(${i},-1)" ${i===0?"disabled":""}>${ic('chevronUp')}</button>
+          <button class="icon-btn" data-act="down" title="Ниже" onclick="moveQuestion(${i},1)" ${i===editing.questions.length-1?"disabled":""}>${ic('chevronDown')}</button>
+          <button class="icon-btn danger" data-act="trash" title="Удалить" onclick="deleteQuestion(${i})">${ic('trash')}</button>
         </div>
         <div class="field" style="margin-bottom:10px">
           <input type="text" class="q-text" data-i="${i}" placeholder="Текст вопроса (markdown, $формулы$)" value="${escapeHtml(nq.question)}">
         </div>
         <div class="q-image-row">
-          ${nq.image?`<img src="${nq.image}" class="q-image"><button class="icon-btn danger" onclick="removeImage(${i})">✕</button>`:""}
-          <label class="upload-btn">🖼 ${nq.image?"Заменить":"Картинка"}<input type="file" accept="image/*" onchange="uploadImage(${i},this)"></label>
+          ${nq.image?`<img src="${nq.image}" class="q-image"><button class="icon-btn danger" data-act="trash" onclick="removeImage(${i})">${ic('x')}</button>`:""}
+          <label class="upload-btn">${ic('image')} ${nq.image?"Заменить":"Картинка"}<input type="file" accept="image/*" onchange="uploadImage(${i},this)"></label>
         </div>
         ${inner}
         <div class="field" style="margin-top:10px;margin-bottom:0">
@@ -1705,13 +1941,12 @@ function renderEditor(){
           <textarea class="q-explanation" data-i="${i}" rows="2" placeholder="Почему этот ответ правильный">${escapeHtml(nq.explanation||"")}</textarea>
         </div>
         <div class="q-ai-row">
-          <button class="btn-ghost" onclick="aiImprove(${i},'rephrase')">🤖 Переформулировать</button>
-          <button class="btn-ghost" onclick="aiImprove(${i},'harder')">🔺 Усложнить</button>
-          <button class="btn-ghost" onclick="aiImprove(${i},'easier')">🔻 Упростить</button>
-          <button class="btn-ghost" onclick="aiImprove(${i},'explain')">💡 Объяснение</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'rephrase')">${ic('sparkles')} Переформулировать</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'harder')">${ic('arrowRight')} Усложнить</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'easier')">${ic('arrowLeft')} Упростить</button>
+          <button class="btn-ghost" onclick="aiImprove(${i},'explain')">${ic('lightbulb')} Объяснение</button>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join("");
   scheduleDraftSave();
 }
@@ -1722,11 +1957,7 @@ function changeQType(i, newType){
   if (old===newType) return;
   normalizeQ(q);
   if (newType==="text"){
-    if (Array.isArray(q.options)){
-      const c=q.options.find(o=>o.correct);
-      q.answer=c?c.text:"";
-      delete q.options;
-    }
+    if (Array.isArray(q.options)){ const c=q.options.find(o=>o.correct); q.answer=c?c.text:""; delete q.options; }
   } else if (newType==="matching"){
     if (!Array.isArray(q.pairs)) q.pairs=[{left:"",right:""},{left:"",right:""}];
     delete q.options; delete q.answer; delete q.items;
@@ -1734,18 +1965,11 @@ function changeQType(i, newType){
     if (!Array.isArray(q.items)) q.items=["","",""];
     delete q.options; delete q.answer; delete q.pairs;
   } else {
-    if (old==="text"){
-      q.options=[{text:q.answer||"",correct:true},{text:"",correct:false}];
-      delete q.answer;
-    } else if (old==="matching"||old==="sort"){
-      q.options=[{text:"",correct:true},{text:"",correct:false}];
-    }
+    if (old==="text"){ q.options=[{text:q.answer||"",correct:true},{text:"",correct:false}]; delete q.answer; }
+    else if (old==="matching"||old==="sort"){ q.options=[{text:"",correct:true},{text:"",correct:false}]; }
     if (newType==="single"&&Array.isArray(q.options)){
       let found=false;
-      q.options=q.options.map(o=>{
-        if (o.correct&&!found){found=true;return{...o,correct:true};}
-        return{...o,correct:false};
-      });
+      q.options=q.options.map(o=>{ if (o.correct&&!found){found=true;return{...o,correct:true};} return{...o,correct:false}; });
       if (!found&&q.options.length) q.options[0].correct=true;
     }
   }
@@ -1832,20 +2056,13 @@ function saveTest(){
   editing.description=$("edDesc").value.trim();
   editing.tags=$("edTags").value.split(",").map(s=>s.trim()).filter(Boolean);
   editing.timeLimit=Math.max(0,parseInt($("edTime").value,10)||0)*60;
-
-  if (!editing.title){
-    showToast("ВВЕДИТЕ НАЗВАНИЕ");
-    $("edTitle").focus();
-    shakeEl($("edTitle"));
-    return;
-  }
+  if (!editing.title){showToast("ВВЕДИТЕ НАЗВАНИЕ");$("edTitle").focus();shakeEl($("edTitle"));return;}
   if (!editing.questions.length){showToast("ДОБАВЬТЕ ВОПРОС");return;}
   for (let i=0;i<editing.questions.length;i++){
     const q=editing.questions[i];
     if (!q.question.trim()){showToast(`ВОПРОС ${i+1}: ВВЕДИТЕ ТЕКСТ`);return;}
-    if (q.type==="text"){
-      if (!q.answer||!q.answer.trim()){showToast(`ВОПРОС ${i+1}: ВВЕДИТЕ ОТВЕТ`);return;}
-    } else if (q.type==="matching"){
+    if (q.type==="text"){ if (!q.answer||!q.answer.trim()){showToast(`ВОПРОС ${i+1}: ВВЕДИТЕ ОТВЕТ`);return;} }
+    else if (q.type==="matching"){
       if (!q.pairs||q.pairs.length<2){showToast(`ВОПРОС ${i+1}: МИНИМУМ 2 ПАРЫ`);return;}
       if (q.pairs.some(p=>!p.left.trim()||!p.right.trim())){showToast(`ВОПРОС ${i+1}: ЗАПОЛНИТЕ ПАРЫ`);return;}
     } else if (q.type==="sort"){
@@ -1859,20 +2076,19 @@ function saveTest(){
   }
   const idx=tests.findIndex(t=>t.id===editing.id);
   const clean=deepCopy(editing);
-  clean.questions = clean.questions.map(q=>{
-    const c = {...q};
-    delete c._userOrder; delete c._rightShuffled;
-    return c;
-  });
+  clean.questions = clean.questions.map(q=>{ const c = {...q}; delete c._userOrder; delete c._rightShuffled; return c; });
   if (idx>=0) tests[idx]=clean; else tests.push(clean);
   saveTests();
   localStorage.removeItem(DRAFT_KEY);
   editing=null;
   renderLibrary();
-  show("libraryScreen");
+  show("welcomeScreen");
   showToast("✓ ТЕСТ СОХРАНЁН");
 }
 
+/* ==========================================================
+   ИМПОРТ / ЭКСПОРТ
+   ========================================================== */
 function exportAll(){
   const data=JSON.stringify(tests,null,2);
   const blob=new Blob([data],{type:"application/json"});
@@ -1882,7 +2098,6 @@ function exportAll(){
   a.click(); URL.revokeObjectURL(a.href);
   showToast("ЭКСПОРТИРОВАНО");
 }
-
 function importJSON(event){
   const file=event.target.files[0];event.target.value="";
   if (!file) return;
@@ -1894,14 +2109,7 @@ function importJSON(event){
       let added=0;
       for (const raw of incoming){
         if (!isValidTest(raw)) continue;
-        tests.push({
-          id:uid(),
-          title:String(raw.title||"Импортированный тест"),
-          description:String(raw.description||""),
-          tags:Array.isArray(raw.tags)?raw.tags.map(String):[],
-          timeLimit:Math.max(0,Number(raw.timeLimit)||0),
-          questions:raw.questions.map(normalizeQ)
-        });
+        tests.push({ id:uid(), title:String(raw.title||"Импортированный тест"), description:String(raw.description||""), tags:Array.isArray(raw.tags)?raw.tags.map(String):[], timeLimit:Math.max(0,Number(raw.timeLimit)||0), questions:raw.questions.map(normalizeQ) });
         added++;
       }
       if (!added){alert("Нет корректных тестов");return;}
@@ -1911,9 +2119,7 @@ function importJSON(event){
   };
   reader.readAsText(file);
 }
-function isValidTest(t){
-  return t&&typeof t==="object"&&typeof t.title==="string"&&Array.isArray(t.questions)&&t.questions.length>0;
-}
+function isValidTest(t){ return t&&typeof t==="object"&&typeof t.title==="string"&&Array.isArray(t.questions)&&t.questions.length>0; }
 
 function importCsvDialog(){ $("csvInput").click(); }
 function importCsv(event){
@@ -1937,18 +2143,11 @@ function importCsv(event){
           const ci = parseInt(parts[5],10);
           correctIdx = (!isNaN(ci) && ci>=1 && ci<=opts.length) ? ci-1 : 0;
           if (parts[6]) explanation = parts[6];
-        } else {
-          opts = parts.slice(1,-1).map(t=>({text:t,correct:false}));
-          correctIdx = 0;
-        }
-        if (opts.length>=2){
-          opts[correctIdx].correct=true;
-          questions.push({type:"single",question:qtext,options:opts,explanation,image:null});
-        }
+        } else { opts = parts.slice(1,-1).map(t=>({text:t,correct:false})); correctIdx = 0; }
+        if (opts.length>=2){ opts[correctIdx].correct=true; questions.push({type:"single",question:qtext,options:opts,explanation,image:null}); }
       }
-      if (!questions.length){alert("Не удалось разобрать CSV. Формат: Вопрос;A;B;C;D;Правильный(1-4);Объяснение");return;}
-      const test={id:uid(),title:file.name.replace(/\.(csv|txt)$/i,""),description:"",
-        tags:[],timeLimit:0,questions};
+      if (!questions.length){alert("Формат: Вопрос;A;B;C;D;Правильный(1-4);Объяснение");return;}
+      const test={id:uid(),title:file.name.replace(/\.(csv|txt)$/i,""),description:"",tags:[],timeLimit:0,questions};
       tests.push(test);saveTests();renderLibrary();
       showToast(`ИМПОРТ: ${questions.length} ВОПРОСОВ`);
     } catch(err){alert("Ошибка CSV: "+err.message);}
@@ -1956,6 +2155,9 @@ function importCsv(event){
   reader.readAsText(file);
 }
 
+/* ==========================================================
+   AI
+   ========================================================== */
 async function callAI(messages){
   const useProxy = proxyUrl && proxyUrl.trim();
   const url = useProxy ? proxyUrl : "https://text.pollinations.ai/openai";
@@ -1963,8 +2165,7 @@ async function callAI(messages){
   const timeoutId = setTimeout(()=>controller.abort(), 90000);
   try {
     const res = await fetch(url, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
+      method:"POST", headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"openai",messages,temperature:0.8,max_tokens:4096}),
       signal:controller.signal
     });
@@ -1985,7 +2186,6 @@ async function callAI(messages){
     throw err;
   }
 }
-
 function parseJsonLoose(text){
   if (!text) throw new Error("пустой ответ");
   try {return JSON.parse(text);}catch(e){}
@@ -1995,7 +2195,6 @@ function parseJsonLoose(text){
   if (s>=0&&e>s){try{return JSON.parse(text.slice(s,e+1));}catch(e){}}
   throw new Error("не удалось найти JSON");
 }
-
 function openAiModal(mode){
   aiMode=mode;aiResult=null;
   $("aiTopic").value="";$("aiCount").value=5;$("aiDiff").value="medium";
@@ -2015,7 +2214,6 @@ function openAiModal(mode){
 }
 function closeAiModal(){$("aiModal").classList.add("hidden");aiResult=null;}
 function setStatus(msg,kind){const el=$("aiStatus");el.className="ai-status"+(kind?" "+kind:"");el.textContent=msg||"";}
-
 function normalizeAiQuestions(raw){
   if (!Array.isArray(raw)) return [];
   return raw.map(q=>{
@@ -2023,12 +2221,9 @@ function normalizeAiQuestions(raw){
     while (opts.length<2) opts.push("Вариант "+(opts.length+1));
     let c=Number(q.correct);
     if (!Number.isFinite(c)||c<0||c>=opts.length) c=0;
-    return {type:"single",question:String(q.question||"").trim()||"Вопрос",
-      options:opts.map((text,i)=>({text,correct:i===c})),
-      explanation:"",image:null};
+    return {type:"single",question:String(q.question||"").trim()||"Вопрос",options:opts.map((text,i)=>({text,correct:i===c})),explanation:"",image:null};
   }).filter(q=>q.question);
 }
-
 async function generateWithAi(){
   if (aiResult){applyAiResult();return;}
   const topic=$("aiTopic").value.trim();
@@ -2036,19 +2231,15 @@ async function generateWithAi(){
   const diff=$("aiDiff").value;
   if (!topic){setStatus("Введите тему","err");shakeEl($("aiTopic"));$("aiTopic").focus();return;}
   const diffLabel={easy:"лёгкий",medium:"средний",hard:"сложный",mixed:"смешанный"}[diff];
-
   const sys="Ты — методист. Отвечай ТОЛЬКО валидным JSON, без markdown-обёрток.";
   const user=`Создай ${count} тестовых вопроса по теме "${topic}". Уровень: ${diffLabel}.
 Ответ ТОЛЬКО в JSON:
-{"title":"Название","description":"Одно предложение","timeLimit":${count*60},
-"questions":[{"question":"Текст?","options":["A","B","C","D"],"correct":0}]}
+{"title":"Название","description":"Одно предложение","timeLimit":${count*60},"questions":[{"question":"Текст?","options":["A","B","C","D"],"correct":0}]}
 Правила: ровно ${count} вопросов, 4 варианта, correct=0..3, правильный не всегда первый. На русском.`;
-
   const btn=$("aiGenBtn");
   btn.disabled=true;btn.textContent="⏳ ГЕНЕРИРУЮ...";
   setStatus("Запрос к AI. 10–40 секунд…","info");
   $("aiSkeleton").classList.remove("hidden");
-
   try {
     const content=await callAI([{role:"system",content:sys},{role:"user",content:user}]);
     let parsed;
@@ -2056,13 +2247,7 @@ async function generateWithAi(){
     if (!parsed.questions||!Array.isArray(parsed.questions)) throw new Error("Нет questions");
     const qs=normalizeAiQuestions(parsed.questions);
     if (!qs.length) throw new Error("AI не вернул вопросов");
-    aiResult={
-      title:String(parsed.title||`Тест: ${topic}`).trim(),
-      description:String(parsed.description||"").trim(),
-      tags:[topic.toLowerCase()],
-      timeLimit:Math.max(0,Number(parsed.timeLimit)||qs.length*60),
-      questions:qs
-    };
+    aiResult={title:String(parsed.title||`Тест: ${topic}`).trim(),description:String(parsed.description||"").trim(),tags:[topic.toLowerCase()],timeLimit:Math.max(0,Number(parsed.timeLimit)||qs.length*60),questions:qs};
     $("aiSkeleton").classList.add("hidden");
     setStatus(`✓ Готово: ${qs.length} вопросов`,"ok");
     btn.textContent="✓ ПРИМЕНИТЬ";btn.disabled=false;btn.onclick=applyAiResult;
@@ -2072,7 +2257,6 @@ async function generateWithAi(){
     btn.disabled=false;btn.textContent="✨ СГЕНЕРИРОВАТЬ";btn.onclick=generateWithAi;
   }
 }
-
 function applyAiResult(){
   if (!aiResult) return;
   if (aiMode==="questions"&&editing){
@@ -2086,19 +2270,16 @@ function applyAiResult(){
   closeAiModal();openEditor(draft);
   showToast("✓ СГЕНЕРИРОВАН");
 }
-
 async function aiImprove(i, action){
   const q = editing.questions[i];
   if (!q || !q.question.trim()){showToast("ВОПРОС ПУСТ");return;}
   normalizeQ(q);
-
   const actions = {
     rephrase: "Переформулируй вопрос яснее, сохранив смысл. Измени только текст вопроса.",
     harder: "Сделай вопрос СЛОЖНЕЕ: добавь детали, усложни формулировку или варианты. Сохрани правильный ответ.",
     easier: "Сделай вопрос ПРОЩЕ: упрости формулировку и варианты. Сохрани правильный ответ.",
     explain: "Напиши краткое объяснение, почему правильный ответ верный. 1-2 предложения."
   };
-
   const context = q.type === "text"
     ? `Вопрос: "${q.question}". Правильный ответ: "${q.answer}"`
     : q.type === "matching"
@@ -2110,37 +2291,19 @@ async function aiImprove(i, action){
   if (action === "explain"){
     showToast("⏳ ГЕНЕРАЦИЯ ОБЪЯСНЕНИЯ…");
     try {
-      const content = await callAI([
-        {role:"system",content:"Ты — методист. Отвечай кратко."},
-        {role:"user",content:`${actions.explain}\n\n${context}\n\nОтветь простым текстом (без JSON) на русском.`}
-      ]);
-      q.explanation = content.trim();
-      renderEditor();
-      showToast("✓ ОБЪЯСНЕНИЕ ДОБАВЛЕНО");
+      const content = await callAI([{role:"system",content:"Ты — методист. Отвечай кратко."},{role:"user",content:`${actions.explain}\n\n${context}\n\nОтветь простым текстом (без JSON) на русском.`}]);
+      q.explanation = content.trim(); renderEditor(); showToast("✓ ОБЪЯСНЕНИЕ ДОБАВЛЕНО");
     } catch(err){ showToast("❌ "+err.message); }
     return;
   }
-
   showToast("⏳ AI УЛУЧШАЕТ…");
   try {
-    const content = await callAI([
-      {role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},
-      {role:"user",content:`${actions[action]}\n\n${context}\n\nОтветь JSON:
-{"question":"Новый текст","options":["A","B","C","D"],"correct":0}
-Для текстового вопроса: {"question":"...","answer":"..."}
-Для matching: {"question":"...","pairs":[{"left":"","right":""}]}
-Для sort: {"question":"...","items":["1","2","3"]}
-Только релевантные поля.`}
-    ]);
+    const content = await callAI([{role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},{role:"user",content:`${actions[action]}\n\n${context}\n\nОтветь JSON:\n{"question":"Новый текст","options":["A","B","C","D"],"correct":0}\nДля текстового: {"question":"...","answer":"..."}\nДля matching: {"question":"...","pairs":[{"left":"","right":""}]}\nДля sort: {"question":"...","items":["1","2","3"]}\nТолько релевантные поля.`}]);
     const parsed = parseJsonLoose(content);
     if (parsed.question) q.question = String(parsed.question);
     if (q.type === "text" && parsed.answer) q.answer = String(parsed.answer);
-    if (q.type === "matching" && Array.isArray(parsed.pairs)){
-      q.pairs = parsed.pairs.map(p=>({left:String(p.left||""),right:String(p.right||"")}));
-    }
-    if (q.type === "sort" && Array.isArray(parsed.items)){
-      q.items = parsed.items.map(String);
-    }
+    if (q.type === "matching" && Array.isArray(parsed.pairs)) q.pairs = parsed.pairs.map(p=>({left:String(p.left||""),right:String(p.right||"")}));
+    if (q.type === "sort" && Array.isArray(parsed.items)) q.items = parsed.items.map(String);
     if ((q.type === "single" || q.type === "multi") && Array.isArray(parsed.options)){
       const correctIdx = parseInt(parsed.correct,10) || 0;
       q.options = parsed.options.map((text,j)=>({text:String(text),correct:j===correctIdx}));
@@ -2149,18 +2312,12 @@ async function aiImprove(i, action){
     showToast("✓ ОБНОВЛЕНО");
   } catch(err){ showToast("❌ "+err.message); }
 }
-
 async function aiTranslateTest(){
   if (!editing){showToast("ОТКРОЙТЕ РЕДАКТОР");return;}
   if (!confirm("Перевести тест на английский через AI?")) return;
   showToast("⏳ AI ПЕРЕВОДИТ…");
   try {
-    const content = await callAI([
-      {role:"system",content:"Переводчик тестов. Отвечай ТОЛЬКО валидным JSON."},
-      {role:"user",content:`Переведи тест на английский. Сохрани структуру.
-Тест: ${JSON.stringify({title:editing.title,description:editing.description,questions:editing.questions})}
-Ответь JSON: {"title":"...","description":"...","questions":[...]}`}
-    ]);
+    const content = await callAI([{role:"system",content:"Переводчик тестов. Отвечай ТОЛЬКО валидным JSON."},{role:"user",content:`Переведи тест на английский. Сохрани структуру.\nТест: ${JSON.stringify({title:editing.title,description:editing.description,questions:editing.questions})}\nОтветь JSON: {"title":"...","description":"...","questions":[...]}`}]);
     const parsed = parseJsonLoose(content);
     if (parsed.title) editing.title = parsed.title;
     if (parsed.description) editing.description = parsed.description;
@@ -2169,9 +2326,7 @@ async function aiTranslateTest(){
         if (editing.questions[i]){
           if (pq.question) editing.questions[i].question = pq.question;
           if (Array.isArray(pq.options) && editing.questions[i].options){
-            pq.options.forEach((t,j)=>{
-              if (editing.questions[i].options[j]) editing.questions[i].options[j].text = String(t);
-            });
+            pq.options.forEach((t,j)=>{ if (editing.questions[i].options[j]) editing.questions[i].options[j].text = String(t); });
           }
         }
       });
@@ -2182,50 +2337,34 @@ async function aiTranslateTest(){
     showToast("✓ ПЕРЕВЕДЕНО");
   } catch(err){ showToast("❌ "+err.message); }
 }
-
 async function aiAnalyzeErrors(){
   if (!state || !TEST){showToast("НЕТ РЕЗУЛЬТАТА");return;}
   const wrongQuestions = state.questions.filter((q,i)=>!isAnswerCorrect(q, state.answers[i]));
   if (!wrongQuestions.length){showToast("ОШИБОК НЕТ 🎉");return;}
-
   const summary = wrongQuestions.slice(0,10).map(q=>normalizeQ(q).question).join("; ");
   showToast("⏳ AI АНАЛИЗИРУЕТ…");
-
   try {
-    const content = await callAI([
-      {role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},
-      {role:"user",content:`Пользователь ошибся в вопросах: ${summary}
-Сгенерируй 5 новых вопросов по этим же темам (чтобы закрепить слабые места).
-Ответ ТОЛЬКО JSON: {"title":"Закрепление","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}
-На русском, 5 вопросов, 4 варианта, correct=0..3.`}
-    ]);
+    const content = await callAI([{role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},{role:"user",content:`Пользователь ошибся в вопросах: ${summary}\nСгенерируй 5 новых вопросов по этим же темам.\nОтвет ТОЛЬКО JSON: {"title":"Закрепление","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}\nНа русском, 5 вопросов, 4 варианта.`}]);
     const parsed = parseJsonLoose(content);
     const qs = normalizeAiQuestions(parsed.questions || []);
     if (!qs.length) throw new Error("нет вопросов");
-    const draft = {
-      id: uid(),
-      title: `Закрепление — ${TEST.title}`,
-      description: "Сгенерировано по ошибкам в предыдущем тесте",
-      tags: ["закрепление", ...(TEST.tags||[])],
-      timeLimit: 0,
-      questions: qs
-    };
+    const draft = { id: uid(), title: `Закрепление — ${TEST.title}`, description: "Сгенерировано по ошибкам", tags: ["закрепление", ...(TEST.tags||[])], timeLimit: 0, questions: qs };
     openEditor(draft);
     showToast("✓ ТЕСТ ПО ОШИБКАМ СОЗДАН");
-  } catch(err){
-    showToast("❌ "+err.message);
-  }
+  } catch(err){ showToast("❌ "+err.message); }
 }
-
 $("aiTopic").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiCount").focus();}});
 $("aiCount").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiGenBtn").click();}});
 
+/* ==========================================================
+   ХОТКЕИ
+   ========================================================== */
 document.addEventListener("keydown",e=>{
   if (e.key==="Escape"){
     if (!$("aiModal").classList.contains("hidden")){closeAiModal();return;}
     if (!$("settingsModal").classList.contains("hidden")){closeSettings();return;}
   }
-  if (e.key==="/"&&!$("libraryScreen").classList.contains("hidden")){
+  if (e.key==="/"){
     const tag=(e.target.tagName||"").toLowerCase();
     if (tag!=="input"&&tag!=="textarea"){
       e.preventDefault();$("searchInput").focus();$("searchInput").select();return;
@@ -2250,7 +2389,6 @@ document.addEventListener("keydown",e=>{
     }
     return;
   }
-  if ($("libraryScreen").classList.contains("hidden")) return;
   if (e.ctrlKey||e.metaKey||e.altKey) return;
   const tag=(e.target.tagName||"").toLowerCase();
   if (tag==="input"||tag==="textarea") return;
@@ -2262,11 +2400,15 @@ document.addEventListener("keydown",e=>{
   }
 });
 
+/* ==========================================================
+   СТАРТ
+   ========================================================== */
+initStaticIcons();
 loadSettings();
 loadAttempts();
 loadTests().then(()=>{
   renderLibrary();
-  show("libraryScreen");
+  show("welcomeScreen");
   checkHashImport();
 });
 </script>
