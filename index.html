@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AuraQuiz v6.1</title>
+<title>AuraQuiz v7.0</title>
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.2/confetti.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -27,71 +28,27 @@
   --font-current:var(--f-manrope);
   --r-sm:10px;--r-md:16px;--r-lg:24px;--r-xl:32px;--blur:10px;
 }
-body.dark{
-  --text:#f8f9fa;--text-muted:#a0a0a0;--bg:#0a0a0a;
-  --glass-bg:rgba(20,20,20,0.7);--glass-border:rgba(255,255,255,0.15);--glass-hover:rgba(35,35,35,0.9);
-  --accent:#fff;--accent-hover:#ccc;
-}
+body.dark{--text:#f8f9fa;--text-muted:#a0a0a0;--bg:#0a0a0a;--glass-bg:rgba(20,20,20,0.7);--glass-border:rgba(255,255,255,0.15);--glass-hover:rgba(35,35,35,0.9);--accent:#fff;--accent-hover:#ccc;}
 
-/* ==========================================================
-   ИКОНКИ В ТЁМНОЙ ТЕМЕ — все белые
-   ========================================================== */
-body.dark svg {
-  color: #ffffff !important;
-}
-
-/* Исключения: элементы с белым/светлым фоном — иконки чёрные */
-body.dark .btn-primary svg,
-body.dark .btn-primary,
-body.dark .btn-accent svg,
-body.dark .btn-accent,
-body.dark .set-btn.active svg,
-body.dark .set-btn.active,
-body.dark .tag-chip.active svg,
-body.dark .tag-chip.active,
-body.dark .option.selected svg,
-body.dark .option.selected .option-marker,
-body.dark .q-num,
-body.dark .q-num svg,
-body.dark .brand-mark svg,
-body.dark .brand-mark,
-body.dark .review-opt.correct svg,
-body.dark .review-opt.correct .mark,
-body.dark .streak-badge.hot,
-body.dark .ai-status.ok,
+body.dark svg{color:#ffffff !important;}
+body.dark .btn-primary svg,body.dark .btn-primary,
+body.dark .btn-accent svg,body.dark .btn-accent,
+body.dark .set-btn.active svg,body.dark .set-btn.active,
+body.dark .tag-chip.active svg,body.dark .tag-chip.active,
+body.dark .option.selected svg,body.dark .option.selected .option-marker,
+body.dark .q-num,body.dark .q-num svg,
+body.dark .brand-mark svg,body.dark .brand-mark,
+body.dark .review-opt.correct svg,body.dark .review-opt.correct .mark,
+body.dark .streak-badge.hot,body.dark .ai-status.ok,
 body.dark .flashcard-answer,
 body.dark .flashcard-actions .btn-primary svg,
-body.dark .btn-ai,
-body.dark .btn-ai svg,
-body.dark .ai-status.ok svg {
-  color: #0a0a0a !important;
-}
+body.dark .btn-ai,body.dark .btn-ai svg,
+body.dark .ai-status.ok svg{color:#0a0a0a !important;}
+body.dark .icon-btn,body.dark .icon-btn svg{color:#ffffff;}
+body.dark .icon-btn:hover,body.dark .icon-btn:hover svg{color:#ffffff;}
+body.dark .icon-btn.danger:hover,body.dark .icon-btn.danger:hover svg{color:#dc2626 !important;}
+body.dark .ti-fav,body.dark .ti-fav svg{color:#fbbf24 !important;}
 
-/* Icon-btn — всегда белый контур в тёмной теме */
-body.dark .icon-btn,
-body.dark .icon-btn svg {
-  color: #ffffff;
-}
-
-/* Hover: остаётся белым (кроме danger) */
-body.dark .icon-btn:hover,
-body.dark .icon-btn:hover svg {
-  color: #ffffff;
-}
-body.dark .icon-btn.danger:hover,
-body.dark .icon-btn.danger:hover svg {
-  color: #dc2626 !important;
-}
-
-/* Звезда избранного остаётся жёлтой */
-body.dark .ti-fav,
-body.dark .ti-fav svg {
-  color: #fbbf24 !important;
-}
-
-/* ========================================================== */
-
-/* ТЕМЫ */
 body.theme-light{background:#fafafa;}
 body.theme-academic{background:linear-gradient(#fefefe 0%,#fefefe 100%);background-image:repeating-linear-gradient(0deg,transparent 0,transparent 31px,rgba(0,0,0,0.05) 31px,rgba(0,0,0,0.05) 32px);}
 body.theme-academic .option{background:rgba(255,255,180,0.4)!important;}
@@ -115,6 +72,14 @@ body{
 body.dark{background-image:linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75)),url('bg.jpg');}
 body.font-large{font-size:17px;}
 body.font-large h1{font-size:30px;}
+
+/* MULTIPLAYER MODE: скрываем ненужное */
+body.multiplayer-active .timer,
+body.multiplayer-active #streakBadge,
+body.multiplayer-active .uncertain-row,
+body.multiplayer-active #progressSegments{display:none !important;}
+
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
 
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:16px;}
 .header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;flex-shrink:0;background:var(--glass-bg);backdrop-filter:blur(var(--blur));border:1px solid var(--glass-border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);margin-bottom:16px;}
@@ -259,7 +224,6 @@ body.dark .option{background:rgba(255,255,255,0.05);}
 body.dark .option:hover{background:rgba(255,255,255,0.12);}
 .option.selected{background:var(--accent);color:var(--bg);border-color:var(--accent);}
 .option-marker{font-family:var(--mono);font-size:14px;font-weight:700;width:24px;flex-shrink:0;text-align:center;display:inline-flex;align-items:center;justify-content:center;}
-.option-marker svg{width:18px;height:18px;}
 .option-text{flex:1;font-size:16px;}
 .option-img{max-width:150px;max-height:100px;border-radius:var(--r-sm);object-fit:cover;}
 
@@ -296,7 +260,6 @@ body.dark .review-opt{background:rgba(255,255,255,0.06);}
 body.dark .review-opt.correct{color:#34d399;background:rgba(16,185,129,0.2);}
 .review-opt.wrong{background:rgba(239,68,68,0.1);color:#991b1b;text-decoration:line-through;}
 body.dark .review-opt.wrong{color:#f87171;background:rgba(239,68,68,0.15);}
-.notes-box{margin-top:10px;padding:10px 14px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;font-size:13px;}
 
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200;}
 .modal-content{background:rgba(255,255,255,0.97);color:var(--text);padding:32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:var(--r-xl);box-shadow:var(--shadow-lg);border:1px solid var(--glass-border);}
@@ -343,6 +306,10 @@ body.dark .ach-card{background:rgba(255,255,255,0.05);}
 .cert-testname{font-size:20px;font-weight:700;margin-bottom:28px;}
 .cert-footer{display:flex;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:2px solid rgba(0,0,0,0.1);font-family:var(--mono);font-size:11px;color:#444;}
 
+/* Multiplayer scoreboard */
+#multiplayerScore{padding:16px;background:rgba(255,255,255,0.4);border-radius:12px;margin:16px 0;border:1px solid var(--glass-border);}
+body.dark #multiplayerScore{background:rgba(255,255,255,0.06);}
+
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.2);border-radius:3px;}
 body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
@@ -354,6 +321,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   .main{border-radius:0;padding:20px 14px;min-height:60vh;}
   .header{border-radius:0;margin-bottom:0;padding:12px;}
   .xp-bar{display:none;}
+  .mp-cols{grid-template-columns:1fr !important;}
 }
 </style>
 </head>
@@ -375,7 +343,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div class="xp-fill"><div id="xpFill" style="width:0%"></div></div>
         <span id="xpText">0 XP</span>
       </div>
-      <div class="header-meta" id="headerMeta">v6.1</div>
+      <div class="header-meta" id="headerMeta">v7.0</div>
       <button class="icon-btn" title="Достижения" onclick="openAchievements()" id="achBtn">🏆</button>
       <button class="icon-btn" title="Настройки" onclick="openSettings()" id="settingsBtn"></button>
     </div>
@@ -402,14 +370,16 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
     </aside>
 
     <main class="main">
+      <!-- ========== WELCOME ========== -->
       <div id="welcomeScreen">
         <div class="welcome">
           <div style="font-size:80px">🎓</div>
           <h1>AuraQuiz</h1>
-          <p class="subtitle" style="max-width:420px">Платформа для создания и прохождения тестов с AI, геймификацией и аналитикой.</p>
-          <div class="row">
+          <p class="subtitle" style="max-width:420px">Платформа для создания и прохождения тестов с AI, геймификацией и мультиплеером.</p>
+          <div class="row" style="justify-content:center">
             <button class="btn-primary" onclick="openEditor(null)" id="welcomeCreate"></button>
             <button class="btn-ghost" onclick="startDailyChallenge()">🎯 Челлендж дня</button>
+            <button class="btn-ghost" onclick="openMultiplayerMenu()" style="border:2px solid var(--accent)">🎮 Мультиплеер</button>
           </div>
           <div class="stats-grid" style="margin-top:32px;max-width:600px;width:100%">
             <div class="stat-card"><div class="stat-label">🔥 Стрик</div><div class="stat-value" id="statStreak">0</div></div>
@@ -419,6 +389,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
+      <!-- ========== START ========== -->
       <div id="startScreen" class="hidden">
         <div class="row" style="margin-bottom:16px"><button class="icon-btn" onclick="backToWelcome()">←</button></div>
         <h1 id="startTitle"></h1>
@@ -451,13 +422,14 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div style="padding:16px;background:rgba(255,255,255,0.3);border-radius:var(--r-md);margin-bottom:16px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--glass-border)">
           <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="optShuffleQ" checked> Перемешать вопросы</label>
           <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="optShuffleA" checked> Перемешать варианты</label>
-          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="optStrict"> 🔒 Строгий режим (без возврата, без AI)</label>
-          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="optAntiCheat"> 👁 Anti-cheat (вкладка)</label>
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="optStrict"> 🔒 Строгий режим</label>
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="optAntiCheat"> 👁 Anti-cheat</label>
           <label>Лимит времени (мин, 0=нет): <input type="number" id="optTime" value="0" min="0" style="width:70px;padding:4px 8px;border:1px solid var(--glass-border);border-radius:6px;background:rgba(255,255,255,0.4);color:var(--text)"></label>
         </div>
         <div style="text-align:center;margin-top:20px"><button class="start-test-btn" onclick="startTest()" id="startBtn"></button></div>
       </div>
 
+      <!-- ========== EDITOR ========== -->
       <div id="editorScreen" class="hidden">
         <div class="row" style="margin-bottom:16px">
           <button class="icon-btn" onclick="closeEditor()">←</button>
@@ -468,8 +440,8 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <h1 id="editorTitle">Новый тест</h1>
         <div class="field"><label>Название *</label><input type="text" id="edTitle"></div>
         <div class="field"><label>Описание</label><textarea id="edDesc" rows="2"></textarea></div>
-        <div class="field"><label>Теги (через запятую)</label><input type="text" id="edTags"></div>
-        <div class="field"><label>Теория (показывается перед стартом)</label><textarea id="edTheory" rows="3" placeholder="Краткая теория, формулы, ссылки…"></textarea></div>
+        <div class="field"><label>Теги</label><input type="text" id="edTags"></div>
+        <div class="field"><label>Теория (перед стартом)</label><textarea id="edTheory" rows="3"></textarea></div>
         <div class="field"><label>Лимит времени, мин</label><input type="number" id="edTime" min="0" value="0"></div>
         <div class="row" style="margin-top:24px">
           <h2 style="margin:0">Вопросы <span id="qCount" style="color:var(--text-muted)"></span></h2>
@@ -485,6 +457,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
+      <!-- ========== QUIZ ========== -->
       <div id="quizScreen" class="hidden">
         <div class="quiz-top">
           <div class="quiz-counter"><span class="big" id="counterBig">01</span><span id="counterSmall" style="color:var(--text-muted)">/ 10</span></div>
@@ -503,6 +476,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
+      <!-- ========== FLASHCARD ========== -->
       <div id="flashcardScreen" class="hidden">
         <div class="quiz-top">
           <div class="quiz-counter"><span class="big" id="fcCounterBig">01</span><span id="fcCounterSmall" style="color:var(--text-muted)">/ 10</span></div>
@@ -513,6 +487,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
+      <!-- ========== RESULT ========== -->
       <div id="resultScreen" class="hidden">
         <div class="result-hero">
           <div class="score" id="scoreText">—</div>
@@ -528,10 +503,97 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
         <div id="reviewList"></div>
       </div>
+
+      <!-- ========== MULTIPLAYER: MENU ========== -->
+      <div id="multiplayerMenuScreen" class="hidden">
+        <div class="row" style="margin-bottom:16px">
+          <button class="icon-btn" onclick="show('welcomeScreen')">←</button>
+        </div>
+        <h1>🎮 Мультиплеер</h1>
+        <p class="subtitle">Один экран — учитель, остальные — ученики. Учитель создаёт комнату, ученики входят по PIN.</p>
+
+        <div class="mp-cols" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
+          <!-- Хост -->
+          <div style="padding:24px;background:rgba(255,255,255,0.4);border-radius:16px;border:1px solid var(--glass-border)">
+            <div style="font-size:40px;margin-bottom:12px">👨‍🏫</div>
+            <h2 style="margin-bottom:8px">Я учитель</h2>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.5">
+              Выберите тест, создайте комнату и покажите PIN-код ученикам.
+            </p>
+            <button class="btn-primary" style="width:100%" onclick="selectTestForHost()">
+              🚀 Создать комнату
+            </button>
+          </div>
+
+          <!-- Игрок -->
+          <div style="padding:24px;background:rgba(255,255,255,0.4);border-radius:16px;border:1px solid var(--glass-border)">
+            <div style="font-size:40px;margin-bottom:12px">🧑‍🎓</div>
+            <h2 style="margin-bottom:8px">Я ученик</h2>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.5">
+              Введите PIN-код от учителя и своё имя.
+            </p>
+            <input type="text" id="joinPinInput" placeholder="PIN" maxlength="6" inputmode="numeric"
+              style="width:100%;padding:12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--glass-border);
+                     background:rgba(255,255,255,0.5);color:var(--text);text-align:center;
+                     font-size:20px;letter-spacing:4px;font-family:var(--mono)">
+            <input type="text" id="joinNameInput" placeholder="Ваше имя" maxlength="20"
+              style="width:100%;padding:12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--glass-border);
+                     background:rgba(255,255,255,0.5);color:var(--text);text-align:center">
+            <button class="btn-primary" style="width:100%" onclick="playerJoinRoom()">
+              🎯 Войти
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;padding:14px;background:rgba(0,0,0,0.05);border-radius:12px;font-size:12px;color:var(--text-muted);line-height:1.6">
+          ℹ️ <b>Как это работает:</b> учитель открывает AuraQuiz на большом экране, ученики — на своих телефонах.
+          Учитель создаёт комнату → получает PIN → ученики вводят PIN и имя. Когда все готовы — учитель
+          нажимает «Начать». Вопросы появляются синхронно у всех, очки обновляются в реальном времени.
+        </div>
+      </div>
+
+      <!-- ========== MULTIPLAYER: LOBBY (HOST) ========== -->
+      <div id="multiplayerLobbyScreen" class="hidden">
+        <div class="row" style="margin-bottom:16px">
+          <button class="icon-btn" onclick="leaveMultiplayer()">←</button>
+        </div>
+        <h1>Комната создана</h1>
+        <p class="subtitle">Покажите этот PIN ученикам</p>
+
+        <div style="padding:32px;background:rgba(255,255,255,0.5);border-radius:20px;text-align:center;margin-bottom:24px;border:2px solid var(--accent)">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px">PIN-код</div>
+          <div id="roomPinDisplay" style="font-size:56px;font-weight:900;letter-spacing:12px;font-family:var(--mono);line-height:1">000000</div>
+          <div style="font-size:12px;margin-top:8px;color:var(--text-muted)">Тест: <b id="roomTestName">—</b></div>
+        </div>
+
+        <h2>👥 Игроки (<span id="playerCount">0</span>)</h2>
+        <div id="lobbyPlayerList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;min-height:60px;padding:16px;background:rgba(255,255,255,0.3);border-radius:12px;align-content:flex-start"></div>
+
+        <div class="row">
+          <button class="btn-primary" style="flex:1;padding:16px;font-size:16px" onclick="hostStartGame()">🚀 Начать игру</button>
+          <button class="btn-ghost" onclick="leaveMultiplayer()">Покинуть</button>
+        </div>
+      </div>
+
+      <!-- ========== MULTIPLAYER: WAIT (PLAYER) ========== -->
+      <div id="multiplayerWaitScreen" class="hidden">
+        <div style="text-align:center;padding:60px 20px">
+          <div style="font-size:80px;animation:pulse 1.5s infinite">⏳</div>
+          <h1 style="margin:16px 0">Ждём учителя…</h1>
+          <p style="color:var(--text-muted);margin-bottom:24px">
+            Вы в комнате <b id="waitRoomPin" style="font-family:var(--mono)">—</b>
+            как <b id="waitPlayerName">—</b>
+          </p>
+          <p style="font-size:14px;color:var(--text-muted)">Игра начнётся, как только учитель нажмёт «Начать».</p>
+          <button class="btn-ghost" style="margin-top:32px" onclick="leaveMultiplayer()">Покинуть комнату</button>
+        </div>
+      </div>
+
     </main>
   </div>
 </div>
 
+<!-- AI Modal -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2>🤖 AI Генератор</h2>
@@ -541,22 +603,22 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
       <button class="tab" data-tab="batch" onclick="aiSetTab('batch')">Батч</button>
     </div>
     <div id="aiTopicTab"><div class="field"><label>Тема</label><input type="text" id="aiTopic" placeholder="Python, История, CSS"></div></div>
-    <div id="aiTextTab" class="hidden"><div class="field"><label>Текст</label><textarea id="aiText" rows="6" placeholder="Вставьте статью/конспект"></textarea></div></div>
-    <div id="aiBatchTab" class="hidden"><div class="field"><label>Темы (через запятую)</label><textarea id="aiBatchTopics" rows="3" placeholder="Python, HTML, CSS, JS, SQL"></textarea></div></div>
+    <div id="aiTextTab" class="hidden"><div class="field"><label>Текст</label><textarea id="aiText" rows="6"></textarea></div></div>
+    <div id="aiBatchTab" class="hidden"><div class="field"><label>Темы через запятую</label><textarea id="aiBatchTopics" rows="3"></textarea></div></div>
     <div class="row" style="gap:12px;align-items:flex-start">
       <div class="field" style="flex:1;margin:0"><label>Вопросов</label><input type="number" id="aiCount" value="5" min="1" max="20"></div>
       <div class="field" style="flex:2;margin:0"><label>Сложность</label><select id="aiDiff"><option value="easy">Лёгкая</option><option value="medium" selected>Средняя</option><option value="hard">Сложная</option><option value="mixed">Смешанная</option></select></div>
     </div>
-    <div class="field" style="margin-top:12px"><label>Стиль (опционально)</label><input type="text" id="aiCustom" placeholder="'как для детей', 'с юмором'"></div>
+    <div class="field" style="margin-top:12px"><label>Стиль</label><input type="text" id="aiCustom"></div>
     <div id="aiStatus" style="font-family:var(--mono);font-size:12px;padding:12px;margin-top:12px;border-radius:8px;display:none"></div>
     <div class="row" style="justify-content:flex-end;margin-top:20px"><button class="btn-ghost" onclick="closeAiModal()">Отмена</button><button class="btn-primary" id="aiGenBtn" onclick="generateWithAi()">✨ Сгенерировать</button></div>
   </div>
 </div>
 
+<!-- Settings Modal -->
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
-    <p class="modal-sub">Тема, шрифт, звук, AI.</p>
     <div class="set-group"><h3>Тема</h3><div class="set-row" id="setTheme">
       <button class="set-btn" data-v="light" data-lvl="0">☀ Светлая</button>
       <button class="set-btn" data-v="dark" data-lvl="0">🌙 Тёмная</button>
@@ -574,24 +636,25 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
     </div></div>
     <div class="set-group"><h3>Размер</h3><div class="set-row" id="setFont"><button class="set-btn" data-v="normal">Обычный</button><button class="set-btn" data-v="large">Крупный</button></div></div>
     <div class="set-group"><h3>Звук</h3><div class="set-row" id="setSound"><button class="set-btn" data-v="on">🔊 Вкл</button><button class="set-btn" data-v="off">🔇 Выкл</button></div></div>
-    <div class="set-group"><h3>Авто-тема</h3><div class="set-row" id="setAutoTheme"><button class="set-btn" data-v="off">Выкл</button><button class="set-btn" data-v="on">Авто (утро/вечер)</button></div></div>
+    <div class="set-group"><h3>Авто-тема</h3><div class="set-row" id="setAutoTheme"><button class="set-btn" data-v="off">Выкл</button><button class="set-btn" data-v="on">Авто</button></div></div>
     <div class="set-group"><h3>AI Провайдер</h3><div class="set-row" id="setAiProvider"><button class="set-btn" data-v="pollinations">Pollinations</button><button class="set-btn" data-v="ovhcloud">OVHcloud</button><button class="set-btn" data-v="hackclub">Hack Club</button></div></div>
     <div class="row" style="justify-content:space-between;margin-top:20px">
-      <button class="btn-ghost btn-small" onclick="resetProgress()">Reset прогресс</button>
+      <button class="btn-ghost btn-small" onclick="resetProgress()">Reset</button>
       <button class="btn-primary" onclick="closeSettings()">Готово</button>
     </div>
   </div>
 </div>
 
+<!-- Trash Modal -->
 <div id="trashModal" class="modal hidden">
   <div class="modal-content">
     <h2>🗑 Корзина</h2>
-    <p class="modal-sub">Удалённые тесты можно восстановить</p>
     <div id="trashList"></div>
     <div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn-primary" onclick="closeTrash()">Закрыть</button></div>
   </div>
 </div>
 
+<!-- Achievements Modal -->
 <div id="achModal" class="modal hidden">
   <div class="modal-content">
     <h2>🏆 Достижения</h2>
@@ -601,6 +664,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
+<!-- Certificate Modal -->
 <div id="certModal" class="certificate-modal hidden">
   <div class="certificate-content">
     <div id="certRender"></div>
@@ -608,6 +672,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
+<!-- Onboarding -->
 <div id="onboardModal" class="onboarding-overlay hidden">
   <div class="onboarding-card">
     <div class="onboarding-dots"><span class="active"></span><span></span><span></span></div>
@@ -620,8 +685,36 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
 <div class="toast" id="toast"></div>
 
 <script>
+/* ==========================================================
+   SUPABASE (мультиплеер)
+   ========================================================== */
+const SUPABASE_URL = 'https://jdszmkyarbkjrqcirpkh.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_NV0ytzdKVjnvhg7li88YsA_xO6wCrEM';
+
+let sbClient = null;
+let currentChannel = null;
+let currentUser = null;
+let isHost = false;
+let multiplayerState = null;
+
+function initSupabase() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !window.supabase) {
+    toast('⚠ Supabase не загружен');
+    return null;
+  }
+  if (!sbClient) {
+    try {
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch(e) {
+      toast('❌ Ошибка Supabase: ' + e.message);
+      return null;
+    }
+  }
+  return sbClient;
+}
+
 /* ============ ICONS ============ */
-const ICONS={
+const ICONS = {
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
@@ -633,28 +726,29 @@ const ICONS={
   star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
   starOutline:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
 };
-const ic=n=>ICONS[n]||'';
+const ic = n => ICONS[n] || '';
 
-/* ============ STATE ============ */
-const K={
+/* ============ STORAGE KEYS ============ */
+const K = {
   TESTS:'aq_tests_v6',TRASH:'aq_trash_v6',SET:'aq_settings_v6',DRAFT:'aq_draft_v6',
-  ATT:'aq_attempts_v6',PROXY:'aq_proxy_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',NOTES:'aq_notes_v6',CACHE:'aq_aicache_v6'
+  ATT:'aq_attempts_v6',PROXY:'aq_proxy_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',
+  CACHE:'aq_aicache_v6'
 };
 
-const $=id=>document.getElementById(id);
-const deep=x=>JSON.parse(JSON.stringify(x));
-const pad=n=>String(n).padStart(2,'0');
+const $ = id => document.getElementById(id);
+const deep = x => JSON.parse(JSON.stringify(x));
+const pad = n => String(n).padStart(2, '0');
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function uid(){return 't'+Date.now()+Math.random().toString(36).slice(2,6);}
 function md(t){if(!t)return '';let s=esc(t);s=s.replace(/`([^`]+)`/g,'<code>$1</code>');s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*]+)\*/g,'<em>$1</em>');s=s.replace(/\n/g,'<br>');return s;}
 function rMath(el){if(typeof renderMathInElement!=='function'||!el)return;try{renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});}catch(e){}}
-function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);}
 function shake(el){if(!el)return;el.style.animation='shake .4s';setTimeout(()=>el.style.animation='',400);}
 function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 function fmtTime(s){s=Math.max(0,Math.ceil(s));return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;}
 
 let settings={theme:'light',fontFamily:'manrope',fontSize:'normal',sound:true,aiProvider:'pollinations',autoTheme:false};
-let tests=[],trash=[],attempts=[],notes={},game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0};
+let tests=[],trash=[],attempts=[],game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0};
 let proxyUrl='',aiCache={};
 let TEST=null,editing=null,state=null,timerId=null,pendingSaved=null;
 let aiMode='test',aiResult=null,aiTab='topic';
@@ -669,7 +763,6 @@ function loadAll(){
   try{proxyUrl=localStorage.getItem(K.PROXY)||'';}catch(e){}
   try{const p=localStorage.getItem(K.AI);if(p)settings.aiProvider=p;}catch(e){}
   try{const g=localStorage.getItem(K.GAME);if(g)game={...game,...JSON.parse(g)};}catch(e){}
-  try{const n=localStorage.getItem(K.NOTES);if(n)notes=JSON.parse(n);}catch(e){}
   try{const c=localStorage.getItem(K.CACHE);if(c)aiCache=JSON.parse(c);}catch(e){}
   checkStreak();applySettings();renderXP();
 }
@@ -681,6 +774,7 @@ function applySettings(){
   if(settings.theme==='light')document.body.classList.remove('theme-light');
   if(settings.theme==='dark')document.body.classList.add('dark');
   if(settings.fontSize==='large')document.body.classList.add('font-large');
+  if(state&&state.multiplayer)document.body.classList.add('multiplayer-active');
   const fm={manrope:'var(--f-manrope)',inter:'var(--f-inter)',playfair:'var(--f-playfair)',space:'var(--f-space)'};
   document.documentElement.style.setProperty('--font-current',fm[settings.fontFamily]||fm.manrope);
 }
@@ -694,9 +788,9 @@ function checkStreak(){
 function renderXP(){
   const need=(game.level)*100;
   const pct=Math.min(100,(game.xp%need)/need*100);
-  $('xpFill').style.width=pct+'%';
-  $('lvlText').textContent='Lv.'+game.level;
-  $('xpText').textContent=game.xp+' XP';
+  if($('xpFill'))$('xpFill').style.width=pct+'%';
+  if($('lvlText'))$('lvlText').textContent='Lv.'+game.level;
+  if($('xpText'))$('xpText').textContent=game.xp+' XP';
   if($('statStreak'))$('statStreak').textContent=game.streak;
   if($('statXP'))$('statXP').textContent=game.xp;
   if($('statAch'))$('statAch').textContent=game.achievements.length;
@@ -731,6 +825,7 @@ const ACHIEVEMENTS=[
   {id:'lvl_5',icon:'🏅',title:'Уровень 5',desc:'Lv.5',check:()=>game.level>=5},
   {id:'creator',icon:'✏️',title:'Создатель',desc:'5 тестов',check:()=>tests.length>=5},
   {id:'ai_master',icon:'🤖',title:'AI Мастер',desc:'10 AI-генераций',check:()=>game.aiGenerated>=10},
+  {id:'multiplayer',icon:'🎮',title:'Мультиплеер',desc:'Сыграй в комнате',check:()=>game.multiplayerGames>=1},
 ];
 function checkAchievements(){
   ACHIEVEMENTS.forEach(a=>{
@@ -781,7 +876,11 @@ function defaultTest(){
 
 /* ============ NAV ============ */
 function show(id){
-  ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen'].forEach(s=>$(s).classList.toggle('hidden',s!==id));
+  ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen',
+   'multiplayerMenuScreen','multiplayerLobbyScreen','multiplayerWaitScreen'].forEach(s=>{
+    const el = $(s);
+    if (el) el.classList.toggle('hidden', s!==id);
+  });
   document.querySelector('.main').scrollTop=0;
 }
 
@@ -828,7 +927,7 @@ function deleteTest(id){
 }
 function openTrash(){
   if(!trash.length)$('trashList').innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">Пусто</div>';
-  else $('trashList').innerHTML=trash.map(t=>`<div style="padding:12px;background:rgba(255,255,255,0.3);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div><b>${esc(t.title)}</b><div style="font-size:11px;color:var(--text-muted)">${t.questions.length} вопр.</div></div><div class="row"><button class="btn-primary btn-small" onclick="restoreTest('${t.id}')">Восстановить</button><button class="btn-danger btn-small" onclick="permanentDelete('${t.id}')">✕</button></div></div>`).join('');
+  else $('trashList').innerHTML=trash.map(t=>`<div style="padding:12px;background:rgba(255,255,255,0.3);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><b>${esc(t.title)}</b><div style="font-size:11px;color:var(--text-muted)">${t.questions.length} вопр.</div></div><div class="row"><button class="btn-primary btn-small" onclick="restoreTest('${t.id}')">Восстановить</button><button class="btn-danger btn-small" onclick="permanentDelete('${t.id}')">✕</button></div></div>`).join('');
   $('trashModal').classList.remove('hidden');
 }
 function closeTrash(){$('trashModal').classList.add('hidden');}
@@ -839,21 +938,12 @@ function permanentDelete(id){trash=trash.filter(x=>x.id!==id);saveTrash();openTr
 function shareTest(id){
   const t=tests.find(x=>x.id===id);if(!t)return;
   const url=location.origin+location.pathname+'#test='+btoa(unescape(encodeURIComponent(JSON.stringify(t))));
-  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка скопирована')).catch(()=>prompt('Скопируйте:',url));
-}
-function shareQuestion(qi){
-  const q=state.questions[qi];
-  const data={q:q,t:TEST?TEST.title:''};
-  const url=location.origin+location.pathname+'#q='+btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка на вопрос')).catch(()=>prompt('Скопируйте:',url));
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка на тест скопирована')).catch(()=>prompt('Скопируйте:',url));
 }
 function checkHash(){
   const h=location.hash;
   if(h.startsWith('#test=')){
-    try{const t=JSON.parse(decodeURIComponent(escape(atob(h.slice(6)))));if(t.questions){t.id=uid();t.questions=t.questions.map(normQ);if(confirm('Импортировать?')){tests.push(t);saveTests();renderLib();toast('✓ Импортирован');}}}catch(e){toast('Ошибка');}
-    history.replaceState(null,'',location.pathname);
-  } else if(h.startsWith('#q=')){
-    try{const d=JSON.parse(decodeURIComponent(escape(atob(h.slice(3)))));alert('Вопрос: '+d.q.question+'\n\n(от '+d.t+')');}catch(e){}
+    try{const t=JSON.parse(decodeURIComponent(escape(atob(h.slice(6)))));if(t.questions){t.id=uid();t.questions=t.questions.map(normQ);if(confirm('Импортировать тест «'+(t.title||'Без названия')+'»?')){tests.push(t);saveTests();renderLib();toast('✓ Импортирован');}}}catch(e){toast('Ошибка ссылки');}
     history.replaceState(null,'',location.pathname);
   }
 }
@@ -875,7 +965,7 @@ function openStart(id){
   selectMode('normal');
   renderLib();show('startScreen');
 }
-function backToWelcome(){TEST=null;renderLib();show('welcomeScreen');}
+function backToWelcome(){TEST=null;state=null;document.body.classList.remove('multiplayer-active');renderLib();show('welcomeScreen');}
 function selectMode(m){
   startMode=m;
   document.querySelectorAll('.mode-card').forEach(c=>{
@@ -917,8 +1007,9 @@ function startTest(){
     const weak=attempts.filter(a=>a.testId===TEST.id).flatMap(a=>a.perQuestion.filter(p=>!p.correct).map(p=>p.question));
     if(weak.length){qs=qs.filter(q=>weak.includes(q.question));if(!qs.length)qs=prepareQuestions(TEST.questions,shufQ,shufA,0);}
   }
-  state={testId:TEST.id,mode:startMode,questions:qs,answers:new Array(qs.length).fill(null),uncertain:new Array(qs.length).fill(false),current:0,totalTime,timeLeft:totalTime,strict,antiCheat,streak:0,maxStreak:0,flashKnown:0,flashUnknown:0,flashRevealed:false,survival:startMode==='survival',reverse:startMode==='reverse',speedrun:startMode==='speedrun',speedStart:startMode==='speedrun'?Date.now():0};
+  state={testId:TEST.id,mode:startMode,questions:qs,answers:new Array(qs.length).fill(null),uncertain:new Array(qs.length).fill(false),current:0,totalTime,timeLeft:totalTime,strict,antiCheat,streak:0,maxStreak:0,flashKnown:0,flashUnknown:0,flashRevealed:false,survival:startMode==='survival',reverse:startMode==='reverse',speedrun:startMode==='speedrun',multiplayer:false};
   localStorage.removeItem(K.ATT);
+  document.body.classList.remove('multiplayer-active');
   if(antiCheat){
     antiCheatWarnings=0;
     window._acHandler=()=>{if(document.hidden&&state){antiCheatWarnings++;toast('⚠ Переключение #'+antiCheatWarnings);if(antiCheatWarnings>=3){toast('Слишком много');finish(true);}}};
@@ -928,7 +1019,7 @@ function startTest(){
   if(startMode==='flashcards'){show('flashcardScreen');renderFC();}
   else{show('quizScreen');renderQ();if(totalTime>0)startTimer();}
 }
-function saveState(){if(!state)return;try{localStorage.setItem(K.ATT,JSON.stringify(state));}catch(e){}}
+function saveState(){if(!state||state.multiplayer)return;try{localStorage.setItem(K.ATT,JSON.stringify(state));}catch(e){}}
 function loadSaved(){try{const r=localStorage.getItem(K.ATT);if(!r)return null;const d=JSON.parse(r);if(!d||!Array.isArray(d.questions))return null;return d;}catch(e){return null;}}
 
 /* ============ TIMER ============ */
@@ -964,6 +1055,8 @@ function hasAnswer(ans,q){
   return ans!==null&&ans!==undefined;
 }
 function renderQ(){
+  $('prevBtn').onclick=()=>prevQuestion();
+  $('nextBtn').onclick=()=>nextQuestion();
   const raw=state.questions[state.current];
   const q=normQ(raw);
   const ans=state.answers[state.current];
@@ -979,103 +1072,46 @@ function renderQ(){
   if(q.image){imgWrap.innerHTML=`<img src="${q.image}" style="max-width:100%;max-height:280px;border-radius:12px">`;imgWrap.style.display='block';}
   else{imgWrap.style.display='none';imgWrap.innerHTML='';}
   let actions=`<button class="q-action-btn" onclick="speak()">🔊 Озвучить</button>`;
-  if(!state.strict)actions+=`<button class="q-action-btn" onclick="getHint()">💡 Подсказка</button><button class="q-action-btn" onclick="shareQuestion(${state.current})">🔗 Поделиться</button>`;
+  if(!state.strict)actions+=`<button class="q-action-btn" onclick="getHint()">💡 Подсказка</button>`;
   $('qActions').innerHTML=actions;
   $('hintBox').classList.add('hidden');$('hintBox').textContent='';
   const box=$('options');box.innerHTML='';
   if(q.type==='text'){
-    const inp=document.createElement('input');
-    inp.type='text';inp.className='text-answer-input';inp.placeholder='Ваш ответ…';inp.value=typeof ans==='string'?ans:'';
+    const inp=document.createElement('input');inp.type='text';inp.className='text-answer-input';inp.placeholder='Ваш ответ…';inp.value=typeof ans==='string'?ans:'';
     inp.oninput=()=>{state.answers[state.current]=inp.value;saveState();updateNav();};
     box.appendChild(inp);setTimeout(()=>inp.focus(),50);
   } else if(q.type==='fill'){
-    const parts=(q.text||'').split('___');
-    const ua=Array.isArray(ans)?ans:[];
-    const div=document.createElement('div');
-    div.style.cssText='padding:16px;background:rgba(255,255,255,0.4);border-radius:12px;font-size:16px;line-height:2';
-    parts.forEach((part,i)=>{
-      div.appendChild(document.createTextNode(part));
-      if(i<parts.length-1){
-        const inp=document.createElement('input');
-        inp.type='text';inp.className='fill-blank-input';inp.placeholder='___';inp.value=ua[i]||'';
-        inp.oninput=()=>{const arr=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:[];while(arr.length<q.blanks.length)arr.push('');arr[i]=inp.value;state.answers[state.current]=arr;saveState();updateNav();};
-        div.appendChild(inp);
-      }
-    });
+    const parts=(q.text||'').split('___');const ua=Array.isArray(ans)?ans:[];
+    const div=document.createElement('div');div.style.cssText='padding:16px;background:rgba(255,255,255,0.4);border-radius:12px;font-size:16px;line-height:2';
+    parts.forEach((part,i)=>{div.appendChild(document.createTextNode(part));if(i<parts.length-1){const inp=document.createElement('input');inp.type='text';inp.className='fill-blank-input';inp.placeholder='___';inp.value=ua[i]||'';inp.oninput=()=>{const arr=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:[];while(arr.length<q.blanks.length)arr.push('');arr[i]=inp.value;state.answers[state.current]=arr;saveState();updateNav();};div.appendChild(inp);}});
     box.appendChild(div);
   } else if(q.type==='image'){
     const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px';
-    q.options.forEach((opt,i)=>{
-      const el=document.createElement('div');
-      el.className='option'+(ans===i?' selected':'');el.style.cssText='flex-direction:column;padding:10px';
-      el.innerHTML=`<img src="${esc(opt.image||'')}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-bottom:8px"><div style="font-size:13px;text-align:center">${esc(opt.text||'')}</div>`;
-      el.onclick=()=>{state.answers[state.current]=i;playS('click');saveState();renderQ();};
-      grid.appendChild(el);
-    });
+    q.options.forEach((opt,i)=>{const el=document.createElement('div');el.className='option'+(ans===i?' selected':'');el.style.cssText='flex-direction:column;padding:10px';el.innerHTML=`<img src="${esc(opt.image||'')}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-bottom:8px"><div style="font-size:13px;text-align:center">${esc(opt.text||'')}</div>`;el.onclick=()=>{state.answers[state.current]=i;playS('click');saveState();renderQ();};grid.appendChild(el);});
     box.appendChild(grid);
   } else if(q.type==='file'){
-    const div=document.createElement('div');
-    div.style.cssText='padding:20px;background:rgba(255,255,255,0.4);border-radius:12px;text-align:center';
-    const label=document.createElement('div');
-    label.style.cssText='font-size:14px;margin-bottom:10px';
-    label.textContent=ans&&ans.name?'✓ Загружено: '+ans.name:'Загрузите файл';
-    const inp=document.createElement('input');inp.type='file';
-    inp.onchange=()=>{const f=inp.files[0];if(!f)return;if(f.size>500000){toast('Файл большой');return;}const r=new FileReader();r.onload=e=>{state.answers[state.current]={name:f.name,data:e.target.result};saveState();renderQ();};r.readAsText(f);};
-    div.appendChild(label);div.appendChild(inp);
-    box.appendChild(div);
+    const div=document.createElement('div');div.style.cssText='padding:20px;background:rgba(255,255,255,0.4);border-radius:12px;text-align:center';
+    const label=document.createElement('div');label.style.cssText='font-size:14px;margin-bottom:10px';label.textContent=ans&&ans.name?'✓ Загружено: '+ans.name:'Загрузите файл';
+    const inp=document.createElement('input');inp.type='file';inp.onchange=()=>{const f=inp.files[0];if(!f)return;if(f.size>500000){toast('Файл большой');return;}const r=new FileReader();r.onload=e=>{state.answers[state.current]={name:f.name,data:e.target.result};saveState();renderQ();};r.readAsText(f);};
+    div.appendChild(label);div.appendChild(inp);box.appendChild(div);
   } else if(q.type==='truefalse'){
     const flip=raw._flip;const tLabel=flip?'Ложь':'Правда',fLabel=flip?'Правда':'Ложь';const tVal=!flip;
-    [tVal,!tVal].forEach((v,i)=>{
-      const el=document.createElement('div');
-      el.className='option'+(ans===v?' selected':'');
-      el.innerHTML=`<span class="option-marker">${ans===v?'■':'□'}</span><span class="option-text">${i===0?tLabel:fLabel}</span>`;
-      el.onclick=()=>{state.answers[state.current]=v;playS('click');saveState();renderQ();};
-      box.appendChild(el);
-    });
+    [tVal,!tVal].forEach((v,i)=>{const el=document.createElement('div');el.className='option'+(ans===v?' selected':'');el.innerHTML=`<span class="option-marker">${ans===v?'■':'□'}</span><span class="option-text">${i===0?tLabel:fLabel}</span>`;el.onclick=()=>{state.answers[state.current]=v;playS('click');saveState();renderQ();};box.appendChild(el);});
   } else if(q.type==='multi'){
     const arr=Array.isArray(ans)?ans:[];
-    q.options.forEach((opt,i)=>{
-      const el=document.createElement('div');
-      el.className='option'+(arr.includes(i)?' selected':'');
-      el.innerHTML=`<span class="option-marker">${arr.includes(i)?'■':'□'}</span><span class="option-text">${md(opt.text)}</span>`;
-      el.onclick=()=>{let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];const idx=a.indexOf(i);state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];playS('click');saveState();renderQ();};
-      rMath(el.querySelector('.option-text'));
-      box.appendChild(el);
-    });
+    q.options.forEach((opt,i)=>{const el=document.createElement('div');el.className='option'+(arr.includes(i)?' selected':'');el.innerHTML=`<span class="option-marker">${arr.includes(i)?'■':'□'}</span><span class="option-text">${md(opt.text)}</span>`;el.onclick=()=>{let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];const idx=a.indexOf(i);state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];playS('click');saveState();renderQ();};rMath(el.querySelector('.option-text'));box.appendChild(el);});
   } else if(q.type==='matching'){
-    const rights=raw._rightShuffled||q.pairs.map((p,i)=>({...p,_orig:i}));
-    const ua=Array.isArray(ans)?ans:new Array(q.pairs.length).fill(null);
+    const rights=raw._rightShuffled||q.pairs.map((p,i)=>({...p,_orig:i}));const ua=Array.isArray(ans)?ans:new Array(q.pairs.length).fill(null);
     const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px';
-    q.pairs.forEach((pair,i)=>{
-      const left=document.createElement('div');left.style.cssText='padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;font-weight:600';left.textContent=pair.left;
-      const right=document.createElement('div');right.style.cssText='padding:4px;background:rgba(255,255,255,0.4);border-radius:8px';
-      const sel=document.createElement('select');
-      sel.style.cssText='width:100%;padding:8px;border:none;background:rgba(255,255,255,0.6);border-radius:6px';
-      sel.innerHTML='<option value="">—</option>'+rights.map((r,j)=>`<option value="${j}" ${ua[i]===j?'selected':''}>${esc(r.right)}</option>`).join('');
-      sel.onchange=()=>{const ua2=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:new Array(q.pairs.length).fill(null);ua2[i]=sel.value===''?null:parseInt(sel.value);state.answers[state.current]=ua2;saveState();updateNav();};
-      right.appendChild(sel);grid.appendChild(left);grid.appendChild(right);
-    });
+    q.pairs.forEach((pair,i)=>{const left=document.createElement('div');left.style.cssText='padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;font-weight:600';left.textContent=pair.left;const right=document.createElement('div');right.style.cssText='padding:4px;background:rgba(255,255,255,0.4);border-radius:8px';const sel=document.createElement('select');sel.style.cssText='width:100%;padding:8px;border:none;background:rgba(255,255,255,0.6);border-radius:6px';sel.innerHTML='<option value="">—</option>'+rights.map((r,j)=>`<option value="${j}" ${ua[i]===j?'selected':''}>${esc(r.right)}</option>`).join('');sel.onchange=()=>{const ua2=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:new Array(q.pairs.length).fill(null);ua2[i]=sel.value===''?null:parseInt(sel.value);state.answers[state.current]=ua2;saveState();updateNav();};right.appendChild(sel);grid.appendChild(left);grid.appendChild(right);});
     box.appendChild(grid);
   } else if(q.type==='sort'){
     const items=raw._userOrder||q.items.map((it,i)=>({...it,_orig:i}));
     const list=document.createElement('div');
-    items.forEach((item,idx)=>{
-      const row=document.createElement('div');
-      row.style.cssText='display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;margin-bottom:8px';
-      row.innerHTML=`<span style="font-family:var(--mono);font-weight:700;color:var(--text-muted);width:20px">${idx+1}</span><span style="flex:1">${esc(typeof item==='string'?item:item.text||item)}</span><button class="icon-btn" onclick="moveSort(${idx},-1)" ${idx===0?'disabled':''}>↑</button><button class="icon-btn" onclick="moveSort(${idx},1)" ${idx===items.length-1?'disabled':''}>↓</button>`;
-      list.appendChild(row);
-    });
-    box.appendChild(list);
-    state.answers[state.current]=items.map(it=>typeof it==='object'?it._orig:it);
+    items.forEach((item,idx)=>{const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;margin-bottom:8px';row.innerHTML=`<span style="font-family:var(--mono);font-weight:700;color:var(--text-muted);width:20px">${idx+1}</span><span style="flex:1">${esc(typeof item==='string'?item:item.text||item)}</span><button class="icon-btn" onclick="moveSort(${idx},-1)" ${idx===0?'disabled':''}>↑</button><button class="icon-btn" onclick="moveSort(${idx},1)" ${idx===items.length-1?'disabled':''}>↓</button>`;list.appendChild(row);});
+    box.appendChild(list);state.answers[state.current]=items.map(it=>typeof it==='object'?it._orig:it);
   } else {
-    q.options.forEach((opt,i)=>{
-      const el=document.createElement('div');
-      el.className='option'+(ans===i?' selected':'');
-      el.innerHTML=`<span class="option-marker">${ans===i?'■':'□'}</span><span class="option-text">${md(opt.text)}</span>`;
-      el.onclick=()=>{state.answers[state.current]=i;playS('click');saveState();renderQ();};
-      rMath(el.querySelector('.option-text'));
-      box.appendChild(el);
-    });
+    q.options.forEach((opt,i)=>{const el=document.createElement('div');el.className='option'+(ans===i?' selected':'');el.innerHTML=`<span class="option-marker">${ans===i?'■':'□'}</span><span class="option-text">${md(opt.text)}</span>`;el.onclick=()=>{state.answers[state.current]=i;playS('click');saveState();renderQ();};rMath(el.querySelector('.option-text'));box.appendChild(el);});
   }
   $('uncertainCheck').checked=!!state.uncertain[state.current];
   $('streakBadge').textContent=`🔥 ${state.streak}`;
@@ -1092,7 +1128,6 @@ function updateNav(){
 function moveSort(idx,dir){const raw=state.questions[state.current];const j=idx+dir;if(j<0||j>=raw._userOrder.length)return;[raw._userOrder[idx],raw._userOrder[j]]=[raw._userOrder[j],raw._userOrder[idx]];state.answers[state.current]=raw._userOrder.map(it=>it._orig);saveState();renderQ();}
 function toggleUncertain(c){state.uncertain[state.current]=c;saveState();}
 function prevQuestion(){if(state.strict)return;if(state.current>0){state.current--;saveState();renderQ();}}
-
 function nextQuestion(){
   if(!hasAnswer(state.answers[state.current],state.questions[state.current]))return;
   const wasHot=state.streak>=3;
@@ -1119,7 +1154,6 @@ function renderFC(){
     else if(q.type==='matching')txt=q.pairs.map(p=>`${p.left} → ${p.right}`).join('; ');
     else if(q.type==='sort')txt=q.items.join(' → ');
     else if(q.type==='fill')txt=q.blanks.join(', ');
-    else if(q.type==='image')txt=q.options.filter(o=>o.correct).map(o=>o.text).join(', ');
     else txt=q.options.filter(o=>o.correct).map(o=>o.text).join(', ');
     ans.innerHTML=md(txt);rMath(ans);ans.classList.remove('hidden');
     $('fcActions').innerHTML=`<button class="btn-ghost" onclick="fcRate(false)" style="border:2px solid #ef4444;color:#ef4444">✗ Не знал</button><button class="btn-primary" onclick="fcRate(true)" style="background:#10b981">✓ Знаю</button>`;
@@ -1165,6 +1199,7 @@ function isCorrect(q,ans){
 function finish(byTimeout){
   if(timerId)clearInterval(timerId);timerId=null;
   if(window._acHandler){document.removeEventListener('visibilitychange',window._acHandler);window._acHandler=null;}
+  if(!state||state.multiplayer)return;
   localStorage.removeItem(K.ATT);pendingSaved=null;
   const total=state.questions.length;
   const correct=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
@@ -1197,23 +1232,14 @@ function renderReview(){
       if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${esc(nq.blanks.join(', '))}</span></div>`;
     } else if(nq.type==='matching'){
       const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));
-      nq.pairs.forEach((p,j)=>{
-        const ci=Array.isArray(ua)?ua[j]:null;
-        const ct=(ci!==null&&ci!==undefined&&raw[ci])?raw[ci].right:'—';
-        const oi=ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===j;
-        body+=`<div class="review-opt ${oi?'correct':'wrong'}"><span>${oi?'✓':'✗'}</span><span>${esc(p.left)} → ${esc(ct)}${!oi?' (нужно: '+esc(p.right)+')':''}</span></div>`;
-      });
+      nq.pairs.forEach((p,j)=>{const ci=Array.isArray(ua)?ua[j]:null;const ct=(ci!==null&&ci!==undefined&&raw[ci])?raw[ci].right:'—';const oi=ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===j;body+=`<div class="review-opt ${oi?'correct':'wrong'}"><span>${oi?'✓':'✗'}</span><span>${esc(p.left)} → ${esc(ct)}${!oi?' (нужно: '+esc(p.right)+')':''}</span></div>`;});
     } else if(nq.type==='sort'){
       const uo=Array.isArray(ua)?ua.map(idx=>nq.items[idx]):[];
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${uo.map(esc).join(' → ')}</span></div>`;
     } else if(nq.type==='file'){
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Файл: ${esc(ua&&ua.name||'—')}</span></div>`;
     } else {
-      nq.options.forEach((o,j)=>{
-        const isC=o.correct;const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;
-        const m=isC?'✓':(isCh?'✗':'○');const cls=isC?'correct':(isCh?'wrong':'');
-        body+=`<div class="review-opt ${cls}"><span>${m}</span><span>${md(o.text||o.image)}</span></div>`;
-      });
+      nq.options.forEach((o,j)=>{const isC=o.correct;const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;const m=isC?'✓':(isCh?'✗':'○');const cls=isC?'correct':(isCh?'wrong':'');body+=`<div class="review-opt ${cls}"><span>${m}</span><span>${md(o.text||o.image)}</span></div>`;});
     }
     if(nq.explanation)body+=`<div style="margin-top:8px;padding:10px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;font-size:13px">💡 ${md(nq.explanation)}</div>`;
     return `<div class="review-item"><div class="review-q">${pad(i+1)}. ${md(nq.question)}</div>${body}</div>`;
@@ -1326,13 +1352,13 @@ function renderEditor(){
     const nq=normQ(q);let inner='';
     if(nq.type==='text')inner=`<div class="field"><label>Ответ</label><input type="text" class="q-answer" data-i="${i}" value="${esc(nq.answer||'')}"></div>`;
     else if(nq.type==='truefalse')inner=`<div class="row" style="margin-bottom:10px"><button class="set-btn ${nq.answer?'active':''}" onclick="setTF(${i},true)">✓ Правда</button><button class="set-btn ${!nq.answer?'active':''}" onclick="setTF(${i},false)">✗ Ложь</button></div>`;
-    else if(nq.type==='fill')inner=`<div class="field"><label>Текст (___ для пропусков)</label><textarea class="fill-text" data-i="${i}" rows="3">${esc(nq.text||'')}</textarea></div><div class="field"><label>Ответы (через запятую)</label><input type="text" class="fill-answers" data-i="${i}" value="${esc((nq.blanks||[]).join(', '))}"></div>`;
+    else if(nq.type==='fill')inner=`<div class="field"><label>Текст (___ для пропусков)</label><textarea class="fill-text" data-i="${i}" rows="3">${esc(nq.text||'')}</textarea></div><div class="field"><label>Ответы через запятую</label><input type="text" class="fill-answers" data-i="${i}" value="${esc((nq.blanks||[]).join(', '))}"></div>`;
     else if(nq.type==='image')inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="radio" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" placeholder="Подпись" value="${esc(opt.text||'')}"><input type="url" class="opt-img" data-i="${i}" data-j="${j}" placeholder="URL картинки" value="${esc(opt.image||'')}" style="flex:1;padding:8px"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;
     else if(nq.type==='matching')inner=nq.pairs.map((p,j)=>`<div class="opt-row"><input type="text" class="pair-left" data-i="${i}" data-j="${j}" value="${esc(p.left)}" placeholder="Левая"><span>→</span><input type="text" class="pair-right" data-i="${i}" data-j="${j}" value="${esc(p.right)}" placeholder="Правая"><button class="icon-btn danger" onclick="deletePair(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addPair(${i})">+ Пара</button>`;
     else if(nq.type==='sort')inner=nq.items.map((it,j)=>`<div class="opt-row"><span style="width:20px;text-align:center">${j+1}</span><input type="text" class="sort-input" data-i="${i}" data-j="${j}" value="${esc(it)}"><button class="icon-btn danger" onclick="deleteSortItem(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addSortItem(${i})">+ Элемент</button>`;
     else if(nq.type==='file')inner=`<div class="field"><label>Тип файла</label><input type="text" class="file-type" data-i="${i}" value="${esc(nq.fileType||'any')}"></div>`;
     else{const t=nq.type==='multi'?'checkbox':'radio';inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="${t}" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" value="${esc(opt.text)}"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;}
-    return `<div class="q-card" data-qi="${i}" style="--i:${i}"><div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div><select class="q-type-select" onchange="changeType(${i},this.value)"><option value="single" ${nq.type==='single'?'selected':''}>Один</option><option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option><option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option><option value="text" ${nq.type==='text'?'selected':''}>Текст</option><option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option><option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option><option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option><option value="image" ${nq.type==='image'?'selected':''}>Картинки</option><option value="file" ${nq.type==='file'?'selected':''}>Файл</option></select><div class="spacer"></div><button class="icon-btn danger" onclick="deleteQ(${i})">✕</button></div><div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div><div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение (опционально)">${esc(nq.explanation||'')}</textarea></div>${inner}</div>`;
+    return `<div class="q-card" data-qi="${i}" style="--i:${i}"><div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div><select class="q-type-select" onchange="changeType(${i},this.value)"><option value="single" ${nq.type==='single'?'selected':''}>Один</option><option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option><option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option><option value="text" ${nq.type==='text'?'selected':''}>Текст</option><option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option><option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option><option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option><option value="image" ${nq.type==='image'?'selected':''}>Картинки</option><option value="file" ${nq.type==='file'?'selected':''}>Файл</option></select><div class="spacer"></div><button class="icon-btn danger" onclick="deleteQ(${i})">✕</button></div><div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div><div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение">${esc(nq.explanation||'')}</textarea></div>${inner}</div>`;
   }).join('');
   setupDnD();
 }
@@ -1360,7 +1386,6 @@ function addQuestion(){pushHist();editing.questions.push(blankQ());renderEditor(
 function pushHist(){if(!editing)return;editHistory.push(deep(editing));if(editHistory.length>30)editHistory.shift();editFuture=[];}
 function undoEdit(){if(!editHistory.length){toast('Нечего');return;}editFuture.push(deep(editing));editing=editHistory.pop();renderEditor();}
 function redoEdit(){if(!editFuture.length){toast('Нечего');return;}editHistory.push(deep(editing));editing=editFuture.pop();renderEditor();}
-
 function setupDnD(){
   document.querySelectorAll('#edQuestions .q-card').forEach(card=>{
     const h=card.querySelector('.drag-handle');if(!h)return;
@@ -1371,10 +1396,8 @@ function setupDnD(){
     card.addEventListener('drop',e=>{if(dragSrc&&dragSrc.type==='q'){e.preventDefault();const from=dragSrc.i,to=parseInt(card.dataset.qi);if(from!==to){pushHist();const [q]=editing.questions.splice(from,1);editing.questions.splice(to,0,q);renderEditor();}}});
   });
 }
-
 $('edQuestions').addEventListener('input',e=>{
-  const el=e.target;
-  if(!editing||el.dataset.i===undefined)return;
+  const el=e.target;if(!editing||el.dataset.i===undefined)return;
   const i=+el.dataset.i,q=editing.questions[i];
   if(el.classList.contains('q-text'))q.question=el.value;
   else if(el.classList.contains('opt-text'))q.options[+el.dataset.j].text=el.value;
@@ -1390,16 +1413,14 @@ $('edQuestions').addEventListener('input',e=>{
   scheduleDraft();
 });
 $('edQuestions').addEventListener('change',e=>{
-  const el=e.target;
-  if(!editing||!el.classList.contains('opt-correct'))return;
+  const el=e.target;if(!editing||!el.classList.contains('opt-correct'))return;
   const i=+el.dataset.i,j=+el.dataset.j;const q=editing.questions[i];pushHist();
   if(q.type==='multi'||q.type==='image')q.options[j].correct=el.checked;
   else q.options.forEach((o,k)=>{o.correct=(k===j);});
   scheduleDraft();
 });
 ['edTitle','edDesc','edTags','edTheory','edTime'].forEach(id=>{
-  const el=$(id);
-  if(el)el.addEventListener('input',()=>{
+  const el=$(id);if(el)el.addEventListener('input',()=>{
     if(!editing)return;
     if(id==='edTitle')editing.title=el.value;
     else if(id==='edDesc')editing.description=el.value;
@@ -1411,7 +1432,6 @@ $('edQuestions').addEventListener('change',e=>{
 });
 let draftT=null;
 function scheduleDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{if(editing)try{localStorage.setItem(K.DRAFT,JSON.stringify(editing));}catch(e){}},1500);}
-
 function saveTest(){
   if(!editing)return;
   editing.title=$('edTitle').value.trim();
@@ -1469,7 +1489,7 @@ function showCertificate(){
 async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
 function confetti(opts){if(window.confetti)window.confetti({particleCount:150,spread:70,origin:{y:0.6},...opts});}
 
-/* ============ SETTINGS ============ */
+/* ============ SETTINGS MODAL ============ */
 function openSettings(){renderSettingsButtons();$('settingsModal').classList.remove('hidden');}
 function closeSettings(){$('settingsModal').classList.add('hidden');}
 function renderSettingsButtons(){
@@ -1490,13 +1510,13 @@ function resetProgress(){if(!confirm('Сбросить прогресс?'))retur
 
 /* ============ ONBOARDING ============ */
 const ONBOARD=[
-  {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов. Создавайте свои или генерируйте через AI.'},
-  {title:'🎯 Проходите тесты',text:'6 режимов: обычный, карточки, survival, reverse, speedrun, тренировка.'},
-  {title:'🏆 Зарабатывайте XP',text:'+10 XP за правильный ответ. Стрики, достижения, уровни. Тратьте уровни на новые темы.'},
+  {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов с AI и геймификацией.'},
+  {title:'🎯 Проходите тесты',text:'6 режимов + мультиплеер с PIN-комнатами для класса.'},
+  {title:'🏆 Зарабатывайте XP',text:'+10 XP за правильный ответ. Стрики, достижения, уровни.'},
 ];
-function startOnboard(){if(localStorage.getItem('aq_onboarded_v6'))return;onboardStep=0;renderOnboard();$('onboardModal').classList.remove('hidden');}
+function startOnboard(){if(localStorage.getItem('aq_onboarded_v7'))return;onboardStep=0;renderOnboard();$('onboardModal').classList.remove('hidden');}
 function renderOnboard(){$('onboardTitle').textContent=ONBOARD[onboardStep].title;$('onboardText').textContent=ONBOARD[onboardStep].text;document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));}
-function nextOnboard(){onboardStep++;if(onboardStep>=ONBOARD.length){$('onboardModal').classList.add('hidden');localStorage.setItem('aq_onboarded_v6','1');return;}renderOnboard();}
+function nextOnboard(){onboardStep++;if(onboardStep>=ONBOARD.length){$('onboardModal').classList.add('hidden');localStorage.setItem('aq_onboarded_v7','1');return;}renderOnboard();}
 
 /* ============ DAILY ============ */
 function startDailyChallenge(){
@@ -1508,6 +1528,374 @@ function startDailyChallenge(){
   $('startTitle').textContent=TEST.title;$('startDesc').textContent=TEST.description;$('startTags').innerHTML='';
   $('theoryBox').classList.add('hidden');$('resumeBanner').classList.add('hidden');$('optTime').value=0;
   selectMode('normal');show('startScreen');
+}
+
+/* ==========================================================
+   MULTIPLAYER (PIN-ROOMS)
+   ========================================================== */
+function generatePin(){return Math.floor(100000+Math.random()*900000).toString();}
+
+function openMultiplayerMenu(){
+  const urlPin = new URLSearchParams(location.search).get('pin');
+  show('multiplayerMenuScreen');
+  if(urlPin){
+    setTimeout(()=>{$('joinPinInput').value=urlPin;},100);
+  }
+}
+
+// === ХОСТ: Создать комнату ===
+async function hostCreateRoom(){
+  if(!initSupabase())return;
+  if(!TEST){toast('Сначала выберите тест');return;}
+  const pin = generatePin();
+  const channelName = 'aq-room-'+pin;
+  if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
+  currentChannel = sbClient.channel(channelName,{
+    config:{broadcast:{self:false},presence:{key:'host-'+Date.now()}}
+  });
+  multiplayerState = {pin,players:[],scores:{},testId:TEST.id,testTitle:TEST.title,questions:TEST.questions,currentQ:0,answers:{}};
+  // Presence: список игроков
+  currentChannel.on('presence',{event:'sync'},()=>{
+    const state = currentChannel.presenceState();
+    const players = [];
+    Object.values(state).flat().forEach(p=>{if(p.role==='player'&&p.name)players.push(p.name);});
+    multiplayerState.players = players;
+    updateLobbyUI();
+  });
+  // Приём ответов
+  currentChannel.on('broadcast',{event:'player-answer'},(msg)=>{
+    handleIncomingAnswer(msg.payload.player,msg.payload.answer,msg.payload.questionIndex);
+  });
+  currentChannel.on('broadcast',{event:'player-ready'},(msg)=>{
+    toast('✅ '+msg.payload.name+' готов');
+  });
+  await currentChannel.subscribe(async(status)=>{
+    if(status==='SUBSCRIBED'){
+      await currentChannel.track({role:'host',name:'Учитель',online_at:new Date().toISOString()});
+      isHost=true;
+      currentUser={role:'host',name:'Учитель'};
+      $('roomPinDisplay').textContent = pin;
+      $('roomTestName').textContent = TEST.title;
+      $('lobbyPlayerList').innerHTML = '<div style="color:var(--text-muted);padding:20px">Ждём учеников…</div>';
+      show('multiplayerLobbyScreen');
+      toast('✓ Комната создана: '+pin);
+    } else if(status==='CHANNEL_ERROR' || status==='TIMED_OUT'){
+      toast('❌ Ошибка подключения Supabase');
+    }
+  });
+}
+
+function updateLobbyUI(){
+  const list = $('lobbyPlayerList'); if(!list||!multiplayerState)return;
+  const players = multiplayerState.players;
+  $('playerCount').textContent = players.length;
+  if(!players.length){list.innerHTML='<div style="color:var(--text-muted);padding:20px">Ждём учеников…</div>';return;}
+  list.innerHTML = players.map(n=>`<div style="padding:10px 16px;background:rgba(255,255,255,0.5);border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:6px">👤 ${esc(n)}</div>`).join('');
+}
+
+// === ИГРОК: Войти ===
+async function playerJoinRoom(){
+  if(!initSupabase())return;
+  const pin = ($('joinPinInput').value||'').trim();
+  const name = ($('joinNameInput').value||'').trim();
+  if(!pin||pin.length!==6){toast('Введите 6-значный PIN');return;}
+  if(!name){toast('Введите имя');return;}
+  const channelName = 'aq-room-'+pin;
+  if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
+  currentChannel = sbClient.channel(channelName,{
+    config:{broadcast:{self:false},presence:{key:'player-'+name+'-'+Date.now()}}
+  });
+  currentChannel.on('broadcast',{event:'game-started'},(msg)=>{
+    toast('🎮 Игра началась!');
+    startMultiplayerQuiz(msg.payload);
+  });
+  currentChannel.on('broadcast',{event:'new-question'},(msg)=>{
+    renderMultiplayerQuestion(msg.payload);
+  });
+  currentChannel.on('broadcast',{event:'score-update'},(msg)=>{
+    if(multiplayerState){multiplayerState.scores = msg.payload.scores;renderMultiplayerScore();}
+  });
+  currentChannel.on('broadcast',{event:'game-ended'},()=>{
+    finishMultiplayer();
+  });
+  await currentChannel.subscribe(async(status)=>{
+    if(status==='SUBSCRIBED'){
+      await currentChannel.track({role:'player',name:name,online_at:new Date().toISOString()});
+      isHost=false;
+      currentUser={role:'player',name:name};
+      $('waitRoomPin').textContent = pin;
+      $('waitPlayerName').textContent = name;
+      show('multiplayerWaitScreen');
+      toast('✓ Вы в комнате. Ждём учителя…');
+      setTimeout(()=>{
+        currentChannel.send({type:'broadcast',event:'player-ready',payload:{name}});
+      },300);
+    } else if(status==='CHANNEL_ERROR' || status==='TIMED_OUT'){
+      toast('❌ Не удалось подключиться к комнате');
+    }
+  });
+}
+
+// === ХОСТ: Начать игру ===
+async function hostStartGame(){
+  if(!isHost||!currentChannel||!multiplayerState)return;
+  if(multiplayerState.players.length===0){
+    if(!confirm('Нет игроков. Начать в одиночку?'))return;
+  }
+  await currentChannel.send({
+    type:'broadcast',
+    event:'game-started',
+    payload:{
+      testTitle: TEST?TEST.title:'Тест',
+      questions: multiplayerState.questions,
+      pin: multiplayerState.pin
+    }
+  });
+  startMultiplayerQuiz({
+    testTitle: TEST?TEST.title:'Тест',
+    questions: multiplayerState.questions,
+    pin: multiplayerState.pin
+  });
+}
+
+// === ЗАПУСК ИГРЫ (у всех) ===
+function startMultiplayerQuiz(data){
+  document.body.classList.add('multiplayer-active');
+  multiplayerState = multiplayerState || {};
+  multiplayerState.questions = data.questions.map(normQ);
+  multiplayerState.currentQ = 0;
+  multiplayerState.answers = {};
+  if(!multiplayerState.scores)multiplayerState.scores = {};
+  multiplayerState.pin = data.pin;
+  // Создаём минимальный state для совместимости
+  state = {
+    testId:'multiplayer',
+    questions:multiplayerState.questions,
+    answers:new Array(multiplayerState.questions.length).fill(null),
+    uncertain:new Array(multiplayerState.questions.length).fill(false),
+    current:0,totalTime:0,timeLeft:0,
+    strict:true,antiCheat:false,streak:0,maxStreak:0,multiplayer:true
+  };
+  show('quizScreen');
+  renderMultiplayerQuestion({
+    question:multiplayerState.questions[0],
+    index:0,
+    total:multiplayerState.questions.length
+  });
+}
+
+// === ОТРИСОВКА ВОПРОСА В МУЛЬТИПЛЕЕРЕ ===
+function renderMultiplayerQuestion(data){
+  if(!multiplayerState)return;
+  multiplayerState.currentQ = data.index;
+  state.current = data.index;
+  const q = normQ(data.question);
+  $('questionText').innerHTML = md(q.question);
+  rMath($('questionText'));
+  $('counterBig').textContent = pad(data.index+1);
+  $('counterSmall').textContent = '/ '+pad(data.total);
+  $('hintBox').classList.add('hidden');
+  $('questionImage').style.display = 'none';
+  $('timer').textContent = '';
+  $('qActions').innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding:6px 12px;background:rgba(255,255,255,0.3);border-radius:8px">🎮 МУЛЬТИПЛЕЕР · PIN: ${multiplayerState.pin} · ${esc(currentUser?currentUser.name:'')}</span>`;
+  const box = $('options');
+  box.innerHTML = '';
+  // Поддерживаемые типы: single, multi, truefalse
+  if(!['single','multi','truefalse'].includes(q.type)){
+    box.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);background:rgba(255,255,255,0.4);border-radius:12px">Этот тип вопроса не поддерживается в мультиплеере. Хост может нажать «Дальше».</div>';
+    setupMultiplayerNav(data);
+    renderMultiplayerScore();
+    return;
+  }
+  if(q.type === 'truefalse'){
+    const trueLabel = q.answer ? '✓ Правда' : '✗ Ложь';
+    // Для truefalse - два варианта: Правда / Ложь
+    const opts = [
+      {text:'Правда', val:true},
+      {text:'Ложь', val:false}
+    ];
+    opts.forEach((opt,i)=>{
+      const el = document.createElement('div');
+      el.className = 'option';
+      el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${opt.text}</span>`;
+      el.onclick = () => {
+        if(el.dataset.picked)return;
+        el.dataset.picked='1';
+        el.classList.add('selected');
+        el.querySelector('.option-marker').textContent = '■';
+        Array.from(box.children).forEach(c=>c.style.pointerEvents='none');
+        sendMultiplayerAnswer(data.index, opt.val);
+      };
+      box.appendChild(el);
+    });
+  } else if(q.type === 'multi'){
+    const selected = new Set();
+    q.options.forEach((opt,i)=>{
+      const el = document.createElement('div');
+      el.className = 'option';
+      el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${md(opt.text)}</span>`;
+      renderMath(el.querySelector('.option-text'));
+      el.onclick = () => {
+        if(el.dataset.locked)return;
+        if(selected.has(i)){selected.delete(i);el.classList.remove('selected');el.querySelector('.option-marker').textContent='□';}
+        else{selected.add(i);el.classList.add('selected');el.querySelector('.option-marker').textContent='■';}
+      };
+      box.appendChild(el);
+    });
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'btn-primary';
+    submitBtn.style.cssText = 'margin-top:12px;width:100%';
+    submitBtn.textContent = '✓ Отправить';
+    submitBtn.onclick = () => {
+      if(selected.size===0){toast('Выберите хотя бы один');return;}
+      const arr = Array.from(selected).sort((a,b)=>a-b);
+      Array.from(box.children).forEach(c=>{if(c.classList.contains('option')){c.dataset.locked='1';c.style.pointerEvents='none';}});
+      submitBtn.disabled = true;submitBtn.textContent = '✓ Отправлено';
+      sendMultiplayerAnswer(data.index, arr);
+    };
+    box.appendChild(submitBtn);
+  } else {
+    q.options.forEach((opt,i)=>{
+      const el = document.createElement('div');
+      el.className = 'option';
+      el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${md(opt.text)}</span>`;
+      renderMath(el.querySelector('.option-text'));
+      el.onclick = () => {
+        if(el.dataset.picked)return;
+        el.dataset.picked='1';
+        el.classList.add('selected');
+        el.querySelector('.option-marker').textContent = '■';
+        Array.from(box.children).forEach(c=>c.style.pointerEvents='none');
+        sendMultiplayerAnswer(data.index, i);
+      };
+      box.appendChild(el);
+    });
+  }
+  setupMultiplayerNav(data);
+  renderMultiplayerScore();
+}
+
+function sendMultiplayerAnswer(questionIndex, answer){
+  if(!currentChannel||!currentUser)return;
+  const q = multiplayerState.questions[questionIndex];
+  const ok = isCorrect(q, answer);
+  currentChannel.send({
+    type:'broadcast',
+    event:'player-answer',
+    payload:{player:currentUser.name,answer,questionIndex,isCorrect:ok}
+  });
+  if(isHost){
+    handleIncomingAnswer(currentUser.name, answer, questionIndex);
+  } else {
+    toast(ok ? '✓ Ответ отправлен' : 'Ответ отправлен');
+  }
+}
+
+function setupMultiplayerNav(data){
+  $('prevBtn').style.display = 'none';
+  if(isHost){
+    $('nextBtn').style.display = 'inline-flex';
+    $('nextBtn').disabled = false;
+    $('nextBtn').textContent = data.index+1 < data.total ? 'Следующий →' : 'Завершить';
+    $('nextBtn').onclick = () => {
+      if(data.index+1 < data.total){
+        const next = data.index+1;
+        currentChannel.send({
+          type:'broadcast',
+          event:'new-question',
+          payload:{question:multiplayerState.questions[next],index:next,total:data.total}
+        });
+        renderMultiplayerQuestion({question:multiplayerState.questions[next],index:next,total:data.total});
+      } else {
+        currentChannel.send({type:'broadcast',event:'game-ended'});
+        finishMultiplayer();
+      }
+    };
+  } else {
+    $('nextBtn').style.display = 'none';
+  }
+}
+
+function handleIncomingAnswer(player, answer, questionIndex){
+  if(!isHost||!multiplayerState)return;
+  if(!multiplayerState.answers)multiplayerState.answers = {};
+  if(!multiplayerState.answers[questionIndex])multiplayerState.answers[questionIndex] = {};
+  if(multiplayerState.answers[questionIndex][player])return; // уже отвечал
+  const q = multiplayerState.questions[questionIndex];
+  const ok = isCorrect(q, answer);
+  multiplayerState.answers[questionIndex][player] = {answer, isCorrect:ok};
+  if(ok){
+    multiplayerState.scores[player] = (multiplayerState.scores[player]||0) + 100;
+  }
+  if(currentChannel){
+    currentChannel.send({
+      type:'broadcast',
+      event:'score-update',
+      payload:{scores:multiplayerState.scores}
+    });
+  }
+  renderMultiplayerScore();
+}
+
+function renderMultiplayerScore(){
+  const scores = (multiplayerState && multiplayerState.scores) || {};
+  let el = document.getElementById('multiplayerScore');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'multiplayerScore';
+    const q = document.querySelector('#questionText');
+    if(q) q.after(el);
+  }
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  el.innerHTML = '<div style="font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">🏆 Счёт</div>' +
+    (sorted.length
+      ? sorted.map(([name,score],i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:14px"><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(name)}</span><span style="font-family:var(--mono);font-weight:700">${score}</span></div>`).join('')
+      : '<div style="color:var(--text-muted);font-size:12px">Пока никто не ответил</div>');
+}
+
+function finishMultiplayer(){
+  document.body.classList.remove('multiplayer-active');
+  const scores = (multiplayerState&&multiplayerState.scores) || {};
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const scoreEl = document.getElementById('multiplayerScore');
+  if(scoreEl) scoreEl.remove();
+  show('resultScreen');
+  $('scoreText').textContent = '🏁';
+  $('scoreMsg').textContent = 'Игра завершена!';
+  $('scoreStats').innerHTML = sorted.length
+    ? sorted.map(([name,score],i)=>`<div>${['🥇','🥈','🥉'][i]||(i+1)+'.'} <b>${esc(name)}</b> — ${score} XP</div>`).join('')
+    : 'Никто не играл';
+  $('btnCert').classList.add('hidden');
+  $('reviewList').innerHTML = '';
+  if(currentUser&&scores[currentUser.name]){
+    addXP(scores[currentUser.name]);
+  }
+  game.multiplayerGames = (game.multiplayerGames||0)+1;
+  saveGame();checkAchievements();
+  if(sorted.length&&sorted[0][1]>0)confetti();
+}
+
+async function leaveMultiplayer(){
+  if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}currentChannel=null;}
+  isHost=false;currentUser=null;multiplayerState=null;
+  state=null;
+  document.body.classList.remove('multiplayer-active');
+  const scoreEl = document.getElementById('multiplayerScore');
+  if(scoreEl) scoreEl.remove();
+  show('welcomeScreen');
+  toast('Вы вышли');
+}
+
+function selectTestForHost(){
+  if(!tests.length){toast('Сначала создайте тест');return;}
+  const list = tests.map((t,i)=>`${i+1}. ${t.title} (${t.questions.length} вопр.)`).join('\n');
+  const idx = prompt('Выберите номер теста:\n\n'+list);
+  if(!idx)return;
+  const n = parseInt(idx)-1;
+  if(n>=0 && n<tests.length){
+    TEST = tests[n];
+    hostCreateRoom();
+  }
 }
 
 /* ============ KEYBOARD ============ */
@@ -1523,15 +1911,16 @@ document.addEventListener('keydown',e=>{
     if(e.key==='z'){e.preventDefault();if(e.shiftKey)redoEdit();else undoEdit();}
     else if(e.key==='y'){e.preventDefault();redoEdit();}
   }
-  if(e.key==='/'&&!$('welcomeScreen').classList.contains('hidden')===false){
+  if(e.key==='/'&&!$('welcomeScreen').classList.contains('hidden')){
     const t=(e.target.tagName||'').toLowerCase();
     if(t!=='input'&&t!=='textarea'){e.preventDefault();$('searchInput').focus();}
   }
-  if(!$('quizScreen').classList.contains('hidden')&&state){
+  if(!$('quizScreen').classList.contains('hidden')&&state&&!state.multiplayer){
     if(e.key==='ArrowLeft'&&!state.strict){e.preventDefault();prevQuestion();}
     else if(e.key==='ArrowRight'){e.preventDefault();nextQuestion();}
     else if(/^[1-9]$/.test(e.key)){
-      const i=parseInt(e.key)-1;const q=normQ(state.questions[state.current]);
+      const i=parseInt(e.key)-1;
+      const q=normQ(state.questions[state.current]);
       if(['text','matching','sort','fill','file'].includes(q.type))return;
       if(q.type==='truefalse'){const flip=state.questions[state.current]._flip;state.answers[state.current]=i===0?!flip:flip;saveState();renderQ();}
       else if(i<(q.options||[]).length){
@@ -1563,30 +1952,6 @@ $('welcomeCreate').innerHTML=ic('plus')+' Новый тест';
 $('btnSaveTest').innerHTML=ic('edit')+' Сохранить';
 $('startBtn').innerHTML='Начать →';
 renderLib();show('welcomeScreen');startOnboard();checkHash();autoThemeCheck();addXP(0);
-const SUPABASE_URL = 'https://xxx.supabase.co';
-const SUPABASE_KEY = 'eyJ...';
-async function syncToCloud(){
-  const key = prompt('Ваш ключ синхронизации (придумайте)');
-  if(!key)return;
-  localStorage.setItem('aq_sync_key', key);
-  await fetch(`${SUPABASE_URL}/rest/v1/user_data`, {
-    method:'POST',
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-    body:JSON.stringify({user_key:key,data:{tests,attempts,game}})
-  });
-  toast('✓ Синхронизировано');
-}
-async function syncFromCloud(){
-  const key = localStorage.getItem('aq_sync_key');
-  if(!key)return toast('Нет ключа');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/user_data?user_key=eq.${key}`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
-  const data = await res.json();
-  if(data[0]){
-    tests=data[0].data.tests; attempts=data[0].data.attempts; game=data[0].data.game;
-    saveTests();saveAttempts();saveGame();renderLib();
-    toast('✓ Загружено');
-  }
-}
 </script>
 </body>
 </html>
