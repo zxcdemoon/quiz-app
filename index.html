@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AuraQuiz v6</title>
+<title>AuraQuiz v6.1</title>
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,18 +27,82 @@
   --font-current:var(--f-manrope);
   --r-sm:10px;--r-md:16px;--r-lg:24px;--r-xl:32px;--blur:10px;
 }
-body.dark{--text:#f8f9fa;--text-muted:#a0a0a0;--bg:#0a0a0a;--glass-bg:rgba(20,20,20,0.7);--glass-border:rgba(255,255,255,0.15);--glass-hover:rgba(35,35,35,0.9);--accent:#fff;--accent-hover:#ccc;}
+body.dark{
+  --text:#f8f9fa;--text-muted:#a0a0a0;--bg:#0a0a0a;
+  --glass-bg:rgba(20,20,20,0.7);--glass-border:rgba(255,255,255,0.15);--glass-hover:rgba(35,35,35,0.9);
+  --accent:#fff;--accent-hover:#ccc;
+}
+
+/* ==========================================================
+   ИКОНКИ В ТЁМНОЙ ТЕМЕ — все белые
+   ========================================================== */
+body.dark svg {
+  color: #ffffff !important;
+}
+
+/* Исключения: элементы с белым/светлым фоном — иконки чёрные */
+body.dark .btn-primary svg,
+body.dark .btn-primary,
+body.dark .btn-accent svg,
+body.dark .btn-accent,
+body.dark .set-btn.active svg,
+body.dark .set-btn.active,
+body.dark .tag-chip.active svg,
+body.dark .tag-chip.active,
+body.dark .option.selected svg,
+body.dark .option.selected .option-marker,
+body.dark .q-num,
+body.dark .q-num svg,
+body.dark .brand-mark svg,
+body.dark .brand-mark,
+body.dark .review-opt.correct svg,
+body.dark .review-opt.correct .mark,
+body.dark .streak-badge.hot,
+body.dark .ai-status.ok,
+body.dark .flashcard-answer,
+body.dark .flashcard-actions .btn-primary svg,
+body.dark .btn-ai,
+body.dark .btn-ai svg,
+body.dark .ai-status.ok svg {
+  color: #0a0a0a !important;
+}
+
+/* Icon-btn — всегда белый контур в тёмной теме */
+body.dark .icon-btn,
+body.dark .icon-btn svg {
+  color: #ffffff;
+}
+
+/* Hover: остаётся белым (кроме danger) */
+body.dark .icon-btn:hover,
+body.dark .icon-btn:hover svg {
+  color: #ffffff;
+}
+body.dark .icon-btn.danger:hover,
+body.dark .icon-btn.danger:hover svg {
+  color: #dc2626 !important;
+}
+
+/* Звезда избранного остаётся жёлтой */
+body.dark .ti-fav,
+body.dark .ti-fav svg {
+  color: #fbbf24 !important;
+}
+
+/* ========================================================== */
+
 /* ТЕМЫ */
 body.theme-light{background:#fafafa;}
 body.theme-academic{background:linear-gradient(#fefefe 0%,#fefefe 100%);background-image:repeating-linear-gradient(0deg,transparent 0,transparent 31px,rgba(0,0,0,0.05) 31px,rgba(0,0,0,0.05) 32px);}
 body.theme-academic .option{background:rgba(255,255,180,0.4)!important;}
 body.theme-terminal{background:#0a0a0a;--text:#0f0;--text-muted:#0a0;--accent:#0f0;--glass-bg:rgba(0,20,0,0.8);--glass-border:rgba(0,255,0,0.3);}
 body.theme-terminal *{font-family:var(--mono)!important;}
+body.theme-terminal svg{color:#0f0!important;}
 body.theme-terminal button{border-color:#0f0!important;}
 body.theme-notion{background:#fff;--text:#191919;--text-muted:#6b6b6b;}
-body.theme-notion .card{box-shadow:none!important;border:1px solid #e5e5e5!important;}
 body.theme-neon{background:#0a0014;--text:#e0e0ff;--text-muted:#a080ff;--accent:#ff00ff;--glass-bg:rgba(20,0,40,0.7);--glass-border:rgba(255,0,255,0.3);}
-body.theme-neon button{box-shadow:0 0 20px rgba(255,0,255,0.5)!important;}
+body.theme-neon svg{color:#ff00ff!important;}
+body.theme-neon .btn-primary svg{color:#fff!important;}
 body.theme-retro{background:#1a1a2e;--text:#eee;--accent:#f39c12;}
 body.theme-retro *{font-family:var(--f-retro)!important;letter-spacing:0!important;}
 body.theme-retro button{padding:8px 12px!important;font-size:10px!important;}
@@ -61,6 +125,7 @@ body.font-large h1{font-size:30px;}
 .xp-bar{display:flex;align-items:center;gap:8px;background:var(--glass-hover);padding:6px 12px;border-radius:20px;font-family:var(--mono);font-size:11px;}
 .xp-fill{width:80px;height:6px;background:rgba(0,0,0,0.2);border-radius:3px;overflow:hidden;}
 .xp-fill>div{height:100%;background:var(--accent);transition:width .3s;}
+body.dark .xp-fill{background:rgba(255,255,255,0.2);}
 
 .layout{display:flex;flex:1;overflow:hidden;min-height:0;gap:16px;}
 .sidebar{width:340px;flex-shrink:0;padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;border-radius:var(--r-lg);background:var(--glass-bg);backdrop-filter:blur(var(--blur));border:1px solid var(--glass-border);box-shadow:var(--shadow-md);}
@@ -76,13 +141,16 @@ body.dark .search-bar{background:rgba(0,0,0,0.4);}
 .sidebar-label{font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
 .test-list{display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto;}
 .test-item{display:flex;align-items:flex-start;gap:10px;padding:14px;border-radius:var(--r-md);cursor:pointer;background:rgba(255,255,255,0.4);border:1px solid transparent;transition:all .2s;}
+body.dark .test-item{background:rgba(255,255,255,0.05);}
 .test-item:hover{background:var(--glass-hover);transform:translateY(-1px);border-color:var(--glass-border);}
 .test-item.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
 .ti-title{font-size:14px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
-.ti-fav{color:#fbbf24;font-size:12px;}
+.ti-fav{color:#fbbf24;font-size:12px;display:inline-flex;}
+.ti-fav svg{width:12px;height:12px;}
 .ti-meta{font-family:var(--mono);font-size:10px;color:var(--text-muted);text-transform:uppercase;}
 .ti-actions{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
 .ti-actions .icon-btn{width:28px;height:28px;}
+.ti-actions .icon-btn svg{width:12px;height:12px;}
 .sidebar-footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-top:12px;}
 .sidebar-footer button{font-size:11px;padding:8px 4px;}
 
@@ -98,10 +166,15 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .btn-ghost{background:transparent;color:var(--text-muted);border-color:transparent;}
 .btn-small{padding:6px 12px;font-size:12px;font-family:var(--mono);}
 .btn-danger{background:rgba(239,68,68,0.15);color:#ef4444;border-color:rgba(239,68,68,0.3);}
+.btn-ai{background:linear-gradient(135deg,#555,#111);color:#fff;border:none;}
+body.dark .btn-ai{background:linear-gradient(135deg,#eee,#aaa);color:#000;}
+.btn-accent{background:#10b981;color:#fff;border:none;}
 .icon-btn{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.4);color:var(--text);border:1px solid var(--glass-border);border-radius:var(--r-sm);transition:all .2s;}
-.icon-btn svg{width:16px;height:16px;}
+body.dark .icon-btn{background:rgba(255,255,255,0.06);}
+.icon-btn svg{width:16px;height:16px;transition:transform .2s;}
 .icon-btn:hover:not(:disabled){background:var(--glass-hover);transform:translateY(-1px);}
-.icon-btn.danger:hover{background:#fee2e2;color:#dc2626;border-color:#fca5a5;}
+.icon-btn:hover svg{transform:scale(1.1);}
+.icon-btn.danger:hover{background:#fee2e2;border-color:#fca5a5;}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .spacer{flex:1;}
 .hidden{display:none!important;}
@@ -118,13 +191,11 @@ body.dark .field input,body.dark .field textarea,body.dark .field select{backgro
 .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 200px);text-align:center;gap:20px;}
 .welcome h1{font-size:44px;}
 
-/* Tabs */
 .tabs{display:flex;gap:4px;margin-bottom:24px;background:rgba(0,0,0,0.05);padding:4px;border-radius:var(--r-md);overflow-x:auto;}
 body.dark .tabs{background:rgba(255,255,255,0.05);}
 .tab{flex:1;padding:10px 16px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;border-radius:var(--r-sm);color:var(--text-muted);font-family:var(--font-current);white-space:nowrap;min-width:100px;}
 .tab.active{background:var(--glass-bg);color:var(--text);box-shadow:var(--shadow-sm);}
 
-/* Cards */
 .stat-card{padding:20px;border-radius:var(--r-md);background:rgba(255,255,255,0.4);border:1px solid var(--glass-border);text-align:center;transition:all .2s;}
 body.dark .stat-card{background:rgba(255,255,255,0.05);}
 .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}
@@ -136,15 +207,12 @@ body.dark .stat-card{background:rgba(255,255,255,0.05);}
 body.dark .q-card{background:rgba(255,255,255,0.03);}
 .q-card:hover{background:rgba(255,255,255,0.55);border-color:var(--glass-border);}
 .q-card.dragging{opacity:.4;}
-.q-card.drop-before{border-top:4px solid var(--accent);}
-.q-card.drop-after{border-bottom:4px solid var(--accent);}
 .q-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
 .drag-handle{cursor:grab;padding:3px 5px;color:var(--text-muted);font-size:15px;line-height:1;user-select:none;border-radius:4px;letter-spacing:-2px;}
 .drag-handle:hover{background:rgba(0,0,0,0.08);color:var(--accent);}
 .q-num{width:32px;height:32px;background:var(--accent);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:700;border-radius:var(--r-sm);}
 .q-type-select{padding:6px 12px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.4);color:var(--text);font-family:var(--mono);font-size:11px;text-transform:uppercase;cursor:pointer;border-radius:var(--r-sm);}
 .opt-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:4px;border-radius:var(--r-sm);position:relative;}
-.opt-row.dragging{opacity:.4;}
 .opt-row input[type="text"]{flex:1;padding:10px 14px;border:1px solid var(--glass-border);font-family:var(--font-current);font-size:14px;background:rgba(255,255,255,0.4);color:var(--text);border-radius:var(--r-md);}
 .opt-row input[type="radio"],.opt-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
 .upload-btn,.add-opt-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;color:var(--text-muted);font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;margin-top:6px;text-transform:uppercase;}
@@ -163,29 +231,35 @@ body.dark .q-card{background:rgba(255,255,255,0.03);}
 .q-image{max-width:240px;max-height:140px;border:1px solid var(--glass-border);object-fit:contain;border-radius:var(--r-md);}
 .q-image-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
 
-/* Quiz */
 .quiz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
 .quiz-counter{font-family:var(--mono);font-size:14px;font-weight:700;}
 .quiz-counter .big{font-size:28px;margin-right:6px;}
 .streak-badge{font-family:var(--mono);font-size:12px;padding:6px 12px;background:rgba(255,255,255,0.4);border-radius:var(--r-md);border:1px solid var(--glass-border);}
+body.dark .streak-badge{background:rgba(255,255,255,0.06);}
 .streak-badge.hot{background:#ef4444;color:#fff;}
 .timer{font-family:var(--mono);font-size:14px;font-weight:700;padding:6px 12px;background:rgba(255,255,255,0.4);border-radius:var(--r-md);border:1px solid var(--glass-border);}
+body.dark .timer{background:rgba(255,255,255,0.06);}
 .timer.warning{background:#ef4444;color:#fff;animation:blink 1s infinite;}
 @keyframes blink{50%{opacity:.5;}}
 .progress-segments{display:flex;gap:6px;margin-bottom:24px;height:8px;}
 .seg{flex:1;background:rgba(0,0,0,0.1);border-radius:6px;transition:background .3s;}
+body.dark .seg{background:rgba(255,255,255,0.1);}
 .seg.done{background:var(--accent);}
 .seg.current{background:var(--text-muted);}
 .question{font-size:22px;font-weight:700;line-height:1.4;margin-bottom:24px;}
 .question-actions{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
 .q-action-btn{padding:6px 12px;font-size:11px;font-family:var(--mono);background:rgba(255,255,255,0.4);border-radius:var(--r-md);border:1px solid var(--glass-border);color:var(--text);cursor:pointer;text-transform:uppercase;}
+body.dark .q-action-btn{background:rgba(255,255,255,0.06);}
 .hint-box{padding:14px;border-radius:var(--r-md);background:rgba(255,255,255,0.5);border-left:4px solid var(--accent);margin-bottom:16px;font-size:14px;line-height:1.5;}
+body.dark .hint-box{background:rgba(255,255,255,0.08);}
 
 .option{display:flex;align-items:center;gap:14px;padding:16px 20px;background:rgba(255,255,255,0.4);margin-bottom:10px;cursor:pointer;border-radius:var(--r-md);transition:all .2s;border:1px solid var(--glass-border);}
 body.dark .option{background:rgba(255,255,255,0.05);}
 .option:hover{background:rgba(255,255,255,0.7);transform:translateY(-1px);}
+body.dark .option:hover{background:rgba(255,255,255,0.12);}
 .option.selected{background:var(--accent);color:var(--bg);border-color:var(--accent);}
-.option-marker{font-family:var(--mono);font-size:14px;font-weight:700;width:24px;flex-shrink:0;text-align:center;}
+.option-marker{font-family:var(--mono);font-size:14px;font-weight:700;width:24px;flex-shrink:0;text-align:center;display:inline-flex;align-items:center;justify-content:center;}
+.option-marker svg{width:18px;height:18px;}
 .option-text{flex:1;font-size:16px;}
 .option-img{max-width:150px;max-height:100px;border-radius:var(--r-sm);object-fit:cover;}
 
@@ -194,10 +268,11 @@ body.dark .option{background:rgba(255,255,255,0.05);}
 .fill-blank-input{display:inline-block;min-width:80px;padding:2px 8px;border:none;border-bottom:2px solid var(--accent);background:transparent;color:var(--text);font-family:var(--font-current);font-size:inherit;font-weight:700;text-align:center;}
 
 .uncertain-row{display:flex;align-items:center;gap:10px;margin:18px 0;padding:12px;background:rgba(255,255,255,0.3);border-radius:var(--r-md);border:1px solid var(--glass-border);}
+body.dark .uncertain-row{background:rgba(255,255,255,0.06);}
+.uncertain-row input{width:18px;height:18px;accent-color:var(--accent);}
 
 .nav{display:flex;gap:12px;margin-top:32px;justify-content:center;align-items:center;flex-wrap:wrap;}
 
-/* Flashcard */
 .flashcard-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 280px);gap:24px;}
 .flashcard{width:100%;max-width:600px;min-height:240px;padding:40px 32px;background:rgba(255,255,255,0.6);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--glass-border);backdrop-filter:blur(var(--blur));}
 body.dark .flashcard{background:rgba(255,255,255,0.05);}
@@ -207,19 +282,22 @@ body.dark .flashcard-answer{color:#34d399;}
 .flashcard-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
 .flashcard-actions button{min-width:120px;padding:14px 20px;font-size:14px;font-weight:700;border-radius:999px;}
 
-/* Result */
 .result-hero{text-align:center;padding:32px 0;}
 .result-hero .score{font-size:96px;font-weight:900;letter-spacing:-.05em;line-height:1;margin-bottom:16px;background:linear-gradient(135deg,var(--accent),var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+body.dark .result-hero .score{background:linear-gradient(135deg,#fff,#a0a0a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .result-hero .msg{font-size:16px;color:var(--text-muted);}
 .result-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;}
 .review-item{padding:20px;margin-bottom:12px;border-radius:var(--r-md);background:rgba(255,255,255,0.35);border:1px solid var(--glass-border);}
+body.dark .review-item{background:rgba(255,255,255,0.05);}
 .review-q{font-weight:700;font-size:16px;margin-bottom:14px;}
 .review-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;font-size:14px;margin-bottom:6px;border-radius:var(--r-sm);background:rgba(255,255,255,0.4);}
+body.dark .review-opt{background:rgba(255,255,255,0.06);}
 .review-opt.correct{background:rgba(16,185,129,0.15);color:#065f46;font-weight:600;}
+body.dark .review-opt.correct{color:#34d399;background:rgba(16,185,129,0.2);}
 .review-opt.wrong{background:rgba(239,68,68,0.1);color:#991b1b;text-decoration:line-through;}
+body.dark .review-opt.wrong{color:#f87171;background:rgba(239,68,68,0.15);}
 .notes-box{margin-top:10px;padding:10px 14px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;font-size:13px;}
 
-/* Modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200;}
 .modal-content{background:rgba(255,255,255,0.97);color:var(--text);padding:32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:var(--r-xl);box-shadow:var(--shadow-lg);border:1px solid var(--glass-border);}
 body.dark .modal-content{background:rgba(20,20,20,0.97);}
@@ -229,50 +307,41 @@ body.dark .modal-content{background:rgba(20,20,20,0.97);}
 .set-group h3{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px;}
 .set-row{display:flex;gap:6px;flex-wrap:wrap;}
 .set-btn{padding:8px 14px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.4);color:var(--text);font-size:13px;cursor:pointer;border-radius:var(--r-sm);}
-body.dark .set-btn{background:rgba(255,255,255,0.05);}
+body.dark .set-btn{background:rgba(255,255,255,0.06);}
 .set-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
 .set-btn.locked{opacity:.4;cursor:not-allowed;position:relative;}
 .set-btn.locked::after{content:'🔒';position:absolute;top:-6px;right:-6px;font-size:12px;}
 
-/* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:rgba(20,20,20,0.95);color:#fff;padding:14px 24px;font-family:var(--mono);font-size:13px;border-radius:var(--r-md);z-index:500;transition:transform .3s;box-shadow:var(--shadow-lg);max-width:calc(100% - 40px);text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
-/* Confetti canvas */
 #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:999;}
 
-/* Onboarding */
 .onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:800;display:flex;align-items:center;justify-content:center;padding:20px;}
 .onboarding-card{background:var(--glass-bg);padding:40px;border-radius:var(--r-xl);max-width:480px;text-align:center;color:var(--text);backdrop-filter:blur(20px);border:1px solid var(--glass-border);}
 .onboarding-card h2{font-size:28px;margin-bottom:16px;}
 .onboarding-card p{font-size:15px;color:var(--text-muted);margin-bottom:24px;line-height:1.6;}
 .onboarding-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
 .onboarding-dots span{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.2);}
+body.dark .onboarding-dots span{background:rgba(255,255,255,0.2);}
 .onboarding-dots span.active{background:var(--accent);}
 
-/* Achievements */
 .ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
 .ach-card{padding:16px;border-radius:var(--r-md);background:rgba(255,255,255,0.3);text-align:center;border:1px solid var(--glass-border);}
+body.dark .ach-card{background:rgba(255,255,255,0.05);}
 .ach-card.locked{opacity:.35;filter:grayscale(1);}
 .ach-card .ach-icon{font-size:32px;margin-bottom:8px;}
 .ach-card .ach-title{font-size:12px;font-weight:700;}
 .ach-card .ach-desc{font-size:10px;color:var(--text-muted);margin-top:4px;}
 
-/* Certificate */
 .certificate-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;z-index:400;}
 .certificate-content{max-width:900px;width:100%;max-height:95vh;overflow-y:auto;}
-#certRender{background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:50px 40px;border-radius:24px;text-align:center;position:relative;}
+#certRender{background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:50px 40px;border-radius:24px;text-align:center;position:relative;color:#111;}
 .cert-label{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#333;margin-bottom:14px;}
 .cert-title{font-size:38px;font-weight:900;margin-bottom:12px;}
 .cert-score{font-size:84px;font-weight:900;margin:20px 0;}
 .cert-testname{font-size:20px;font-weight:700;margin-bottom:28px;}
 .cert-footer{display:flex;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:2px solid rgba(0,0,0,0.1);font-family:var(--mono);font-size:11px;color:#444;}
-
-/* Btn animation correct/wrong */
-@keyframes pulse-correct{0%{transform:scale(1);}50%{transform:scale(1.15);color:#10b981;}100%{transform:scale(1);}}
-@keyframes pulse-wrong{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
-.option.correct-anim{animation:pulse-correct .4s ease;}
-.option.wrong-anim{animation:pulse-wrong .4s ease;}
 
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.2);border-radius:3px;}
@@ -306,7 +375,8 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div class="xp-fill"><div id="xpFill" style="width:0%"></div></div>
         <span id="xpText">0 XP</span>
       </div>
-      <div class="header-meta" id="headerMeta">v6.0</div>
+      <div class="header-meta" id="headerMeta">v6.1</div>
+      <button class="icon-btn" title="Достижения" onclick="openAchievements()" id="achBtn">🏆</button>
       <button class="icon-btn" title="Настройки" onclick="openSettings()" id="settingsBtn"></button>
     </div>
   </header>
@@ -462,29 +532,27 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- AI Modal -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
-    <h2 id="aiModalTitle">🤖 AI Генератор</h2>
+    <h2>🤖 AI Генератор</h2>
     <div class="tabs" style="margin-bottom:16px">
       <button class="tab active" data-tab="topic" onclick="aiSetTab('topic')">По теме</button>
       <button class="tab" data-tab="text" onclick="aiSetTab('text')">Из текста</button>
       <button class="tab" data-tab="batch" onclick="aiSetTab('batch')">Батч</button>
     </div>
     <div id="aiTopicTab"><div class="field"><label>Тема</label><input type="text" id="aiTopic" placeholder="Python, История, CSS"></div></div>
-    <div id="aiTextTab" class="hidden"><div class="field"><label>Текст</label><textarea id="aiText" rows="6" placeholder="Вставьте статью/конспект (PDF тоже работает — скопируйте текст)"></textarea></div></div>
+    <div id="aiTextTab" class="hidden"><div class="field"><label>Текст</label><textarea id="aiText" rows="6" placeholder="Вставьте статью/конспект"></textarea></div></div>
     <div id="aiBatchTab" class="hidden"><div class="field"><label>Темы (через запятую)</label><textarea id="aiBatchTopics" rows="3" placeholder="Python, HTML, CSS, JS, SQL"></textarea></div></div>
     <div class="row" style="gap:12px;align-items:flex-start">
       <div class="field" style="flex:1;margin:0"><label>Вопросов</label><input type="number" id="aiCount" value="5" min="1" max="20"></div>
       <div class="field" style="flex:2;margin:0"><label>Сложность</label><select id="aiDiff"><option value="easy">Лёгкая</option><option value="medium" selected>Средняя</option><option value="hard">Сложная</option><option value="mixed">Смешанная</option></select></div>
     </div>
-    <div class="field" style="margin-top:12px"><label>Стиль (опционально)</label><input type="text" id="aiCustom" placeholder="'как для детей', 'с юмором', 'академично'"></div>
+    <div class="field" style="margin-top:12px"><label>Стиль (опционально)</label><input type="text" id="aiCustom" placeholder="'как для детей', 'с юмором'"></div>
     <div id="aiStatus" style="font-family:var(--mono);font-size:12px;padding:12px;margin-top:12px;border-radius:8px;display:none"></div>
     <div class="row" style="justify-content:flex-end;margin-top:20px"><button class="btn-ghost" onclick="closeAiModal()">Отмена</button><button class="btn-primary" id="aiGenBtn" onclick="generateWithAi()">✨ Сгенерировать</button></div>
   </div>
 </div>
 
-<!-- Settings Modal -->
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
@@ -515,7 +583,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Trash Modal -->
 <div id="trashModal" class="modal hidden">
   <div class="modal-content">
     <h2>🗑 Корзина</h2>
@@ -525,7 +592,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Achievements Modal -->
 <div id="achModal" class="modal hidden">
   <div class="modal-content">
     <h2>🏆 Достижения</h2>
@@ -535,7 +601,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Certificate Modal -->
 <div id="certModal" class="certificate-modal hidden">
   <div class="certificate-content">
     <div id="certRender"></div>
@@ -543,7 +608,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Onboarding -->
 <div id="onboardModal" class="onboarding-overlay hidden">
   <div class="onboarding-card">
     <div class="onboarding-dots"><span class="active"></span><span></span><span></span></div>
@@ -561,7 +625,6 @@ const ICONS={
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
-  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
   settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
@@ -569,14 +632,13 @@ const ICONS={
   redo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>',
   star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
   starOutline:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-  trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
 };
 const ic=n=>ICONS[n]||'';
 
 /* ============ STATE ============ */
 const K={
   TESTS:'aq_tests_v6',TRASH:'aq_trash_v6',SET:'aq_settings_v6',DRAFT:'aq_draft_v6',
-  ATT:'aq_attempts_v6',PROXY:'aq_proxy_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',NOTES:'aq_notes_v6',CACHE:'aq_aicache_v6',HISTORY:'aq_history_v6'
+  ATT:'aq_attempts_v6',PROXY:'aq_proxy_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',NOTES:'aq_notes_v6',CACHE:'aq_aicache_v6'
 };
 
 const $=id=>document.getElementById(id);
@@ -592,7 +654,7 @@ function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math
 function fmtTime(s){s=Math.max(0,Math.ceil(s));return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;}
 
 let settings={theme:'light',fontFamily:'manrope',fontSize:'normal',sound:true,aiProvider:'pollinations',autoTheme:false};
-let tests=[],trash=[],attempts=[],notes={},game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0};
+let tests=[],trash=[],attempts=[],notes={},game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0};
 let proxyUrl='',aiCache={};
 let TEST=null,editing=null,state=null,timerId=null,pendingSaved=null;
 let aiMode='test',aiResult=null,aiTab='topic';
@@ -609,9 +671,7 @@ function loadAll(){
   try{const g=localStorage.getItem(K.GAME);if(g)game={...game,...JSON.parse(g)};}catch(e){}
   try{const n=localStorage.getItem(K.NOTES);if(n)notes=JSON.parse(n);}catch(e){}
   try{const c=localStorage.getItem(K.CACHE);if(c)aiCache=JSON.parse(c);}catch(e){}
-  checkStreak();
-  applySettings();
-  renderXP();
+  checkStreak();applySettings();renderXP();
 }
 function saveSettings(){try{localStorage.setItem(K.SET,JSON.stringify(settings));}catch(e){}applySettings();}
 function saveGame(){try{localStorage.setItem(K.GAME,JSON.stringify(game));}catch(e){}renderXP();}
@@ -628,9 +688,7 @@ function checkStreak(){
   const today=new Date().toDateString();
   if(game.lastDay!==today){
     const yesterday=new Date(Date.now()-86400000).toDateString();
-    if(game.lastDay!==yesterday&&game.lastDay!==null){
-      game.streak=0;
-    }
+    if(game.lastDay!==yesterday&&game.lastDay!==null)game.streak=0;
   }
 }
 function renderXP(){
@@ -639,18 +697,14 @@ function renderXP(){
   $('xpFill').style.width=pct+'%';
   $('lvlText').textContent='Lv.'+game.level;
   $('xpText').textContent=game.xp+' XP';
-  $('statStreak').textContent=game.streak;
-  $('statXP').textContent=game.xp;
-  $('statAch').textContent=game.achievements.length;
+  if($('statStreak'))$('statStreak').textContent=game.streak;
+  if($('statXP'))$('statXP').textContent=game.xp;
+  if($('statAch'))$('statAch').textContent=game.achievements.length;
 }
 function addXP(n){
   game.xp+=n;
   const newLevel=Math.floor(game.xp/100)+1;
-  if(newLevel>game.level){
-    game.level=newLevel;
-    toast('🎉 Новый уровень: Lv.'+newLevel);
-    checkAchievements();
-  }
+  if(newLevel>game.level){game.level=newLevel;toast('🎉 Новый уровень: Lv.'+newLevel);checkAchievements();}
   saveGame();
 }
 function touchDay(){
@@ -669,30 +723,23 @@ function touchDay(){
 const ACHIEVEMENTS=[
   {id:'first_test',icon:'🎯',title:'Первый тест',desc:'Пройди 1 тест',check:()=>attempts.length>=1},
   {id:'ten_tests',icon:'🔥',title:'10 тестов',desc:'Пройди 10 тестов',check:()=>attempts.length>=10},
-  {id:'fifty_q',icon:'💯',title:'50 вопросов',desc:'Ответь на 50 вопросов',check:()=>game.totalQuestions>=50},
-  {id:'hundred_q',icon:'🧠',title:'100 вопросов',desc:'Ответь на 100 вопросов',check:()=>game.totalQuestions>=100},
+  {id:'fifty_q',icon:'💯',title:'50 вопросов',desc:'Ответь на 50',check:()=>game.totalQuestions>=50},
+  {id:'hundred_q',icon:'🧠',title:'100 вопросов',desc:'Ответь на 100',check:()=>game.totalQuestions>=100},
   {id:'perfect',icon:'⭐',title:'Идеально',desc:'100% в тесте',check:()=>attempts.some(a=>a.percent===100)},
-  {id:'streak_10',icon:'🔥',title:'Серия 10',desc:'10 правильных подряд',check:()=>attempts.some(a=>a.maxStreak>=10)},
-  {id:'streak_3days',icon:'📅',title:'3 дня подряд',desc:'Занимайся 3 дня подряд',check:()=>game.streak>=3},
-  {id:'lvl_5',icon:'🏅',title:'Уровень 5',desc:'Достигни Lv.5',check:()=>game.level>=5},
-  {id:'creator',icon:'✏️',title:'Создатель',desc:'Создай 5 тестов',check:()=>tests.length>=5},
-  {id:'ai_master',icon:'🤖',title:'AI Мастер',desc:'Сгенерируй 10 тестов AI',check:()=>game.aiGenerated>=10},
+  {id:'streak_10',icon:'🔥',title:'Серия 10',desc:'10 подряд',check:()=>attempts.some(a=>a.maxStreak>=10)},
+  {id:'streak_3days',icon:'📅',title:'3 дня',desc:'3 дня подряд',check:()=>game.streak>=3},
+  {id:'lvl_5',icon:'🏅',title:'Уровень 5',desc:'Lv.5',check:()=>game.level>=5},
+  {id:'creator',icon:'✏️',title:'Создатель',desc:'5 тестов',check:()=>tests.length>=5},
+  {id:'ai_master',icon:'🤖',title:'AI Мастер',desc:'10 AI-генераций',check:()=>game.aiGenerated>=10},
 ];
 function checkAchievements(){
   ACHIEVEMENTS.forEach(a=>{
-    if(!game.achievements.includes(a.id)&&a.check()){
-      game.achievements.push(a.id);
-      toast('🏆 '+a.title);
-    }
+    if(!game.achievements.includes(a.id)&&a.check()){game.achievements.push(a.id);toast('🏆 '+a.title);}
   });
   saveGame();
 }
 function openAchievements(){
-  const html=ACHIEVEMENTS.map(a=>{
-    const has=game.achievements.includes(a.id);
-    return `<div class="ach-card ${has?'':'locked'}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div></div>`;
-  }).join('');
-  $('achList').innerHTML=html;
+  $('achList').innerHTML=ACHIEVEMENTS.map(a=>`<div class="ach-card ${game.achievements.includes(a.id)?'':'locked'}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div></div>`).join('');
   $('achCount').textContent=game.achievements.length;
   $('achTotal').textContent=ACHIEVEMENTS.length;
   $('achModal').classList.remove('hidden');
@@ -701,38 +748,21 @@ function openAchievements(){
 /* ============ STORAGE ============ */
 async function loadTests(){
   try{const r=localStorage.getItem(K.TESTS);if(r){const a=JSON.parse(r);if(Array.isArray(a)&&a.length){tests=a.map(norm);return;}}}catch(e){}
-  tests=[defaultTest()];
-  saveTests();
+  tests=[defaultTest()];saveTests();
 }
-function norm(t){
-  if(!Array.isArray(t.tags))t.tags=[];
-  if(!t.questions)t.questions=[];
-  t.questions=t.questions.map(normQ);
-  if(!t.history)t.history=[];
-  if(!t.fav)t.fav=false;
-  return t;
-}
+function norm(t){if(!Array.isArray(t.tags))t.tags=[];if(!t.questions)t.questions=[];t.questions=t.questions.map(normQ);if(!t.history)t.history=[];if(!t.fav)t.fav=false;return t;}
 function normQ(q){
   if(!q.type)q.type='single';
   if(q.type==='single'||q.type==='multi'){
-    if(Array.isArray(q.options)&&q.options.length&&typeof q.options[0]==='string'){
-      const idx=q.correct||0;
-      q.options=q.options.map((text,i)=>({text,correct:i===idx}));
-      delete q.correct;
-    }
+    if(Array.isArray(q.options)&&q.options.length&&typeof q.options[0]==='string'){const idx=q.correct||0;q.options=q.options.map((text,i)=>({text,correct:i===idx}));delete q.correct;}
     if(!Array.isArray(q.options))q.options=[];
   } else if(q.type==='text'){if(typeof q.answer!=='string')q.answer='';}
   else if(q.type==='matching'){if(!Array.isArray(q.pairs))q.pairs=[{left:'',right:''},{left:'',right:''}];}
   else if(q.type==='sort'){if(!Array.isArray(q.items))q.items=['','',''];}
   else if(q.type==='truefalse'){if(typeof q.answer!=='boolean')q.answer=true;}
-  else if(q.type==='fill'){
-    if(typeof q.text!=='string')q.text='';
-    if(!Array.isArray(q.blanks))q.blanks=[];
-  } else if(q.type==='image'){
-    if(!Array.isArray(q.options))q.options=[];
-  } else if(q.type==='file'){
-    if(typeof q.fileType!=='string')q.fileType='any';
-  }
+  else if(q.type==='fill'){if(typeof q.text!=='string')q.text='';if(!Array.isArray(q.blanks))q.blanks=[];}
+  else if(q.type==='image'){if(!Array.isArray(q.options))q.options=[];}
+  else if(q.type==='file'){if(typeof q.fileType!=='string')q.fileType='any';}
   return q;
 }
 function saveTests(){try{localStorage.setItem(K.TESTS,JSON.stringify(tests));}catch(e){toast('⚠ Хранилище переполнено');}}
@@ -740,8 +770,6 @@ function loadTrash(){try{const r=localStorage.getItem(K.TRASH);if(r)trash=JSON.p
 function saveTrash(){try{localStorage.setItem(K.TRASH,JSON.stringify(trash));}catch(e){}}
 function loadAttempts(){try{const r=localStorage.getItem(K.ATT);if(r)attempts=JSON.parse(r);}catch(e){attempts=[];}}
 function saveAttempts(){try{localStorage.setItem(K.ATT,JSON.stringify(attempts));}catch(e){}}
-function loadNotes(){try{const r=localStorage.getItem(K.NOTES);if(r)notes=JSON.parse(r);}catch(e){notes={};}}
-function saveNotes(){try{localStorage.setItem(K.NOTES,JSON.stringify(notes));}catch(e){}}
 
 function defaultTest(){
   return {id:uid(),title:'Основы веб-разработки',description:'Проверьте знания HTML, CSS и JavaScript.',tags:['html','css','js'],timeLimit:300,theory:'',questions:[
@@ -751,7 +779,7 @@ function defaultTest(){
   ],history:[],fav:false};
 }
 
-/* ============ NAVIGATION ============ */
+/* ============ NAV ============ */
 function show(id){
   ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen'].forEach(s=>$(s).classList.toggle('hidden',s!==id));
   document.querySelector('.main').scrollTop=0;
@@ -760,10 +788,7 @@ function show(id){
 /* ============ LIBRARY ============ */
 function filterTests(){
   return tests.filter(t=>{
-    if(searchQuery){
-      const q=searchQuery.toLowerCase();
-      if(!(t.title||'').toLowerCase().includes(q)&&!(t.description||'').toLowerCase().includes(q)&&!(t.tags||[]).some(tag=>tag.toLowerCase().includes(q)))return false;
-    }
+    if(searchQuery){const q=searchQuery.toLowerCase();if(!(t.title||'').toLowerCase().includes(q)&&!(t.description||'').toLowerCase().includes(q)&&!(t.tags||[]).some(tag=>tag.toLowerCase().includes(q)))return false;}
     if(activeTag&&!(t.tags||[]).includes(activeTag))return false;
     return true;
   });
@@ -794,66 +819,48 @@ function onSearch(v){searchQuery=v.trim();renderLib();}
 function toggleFav(id){const t=tests.find(x=>x.id===id);if(t){t.fav=!t.fav;saveTests();renderLib();}}
 function deleteTest(id){
   if(!confirm('Удалить в корзину?'))return;
-  const t=tests.find(x=>x.id===id);
-  if(!t)return;
+  const t=tests.find(x=>x.id===id);if(!t)return;
   tests=tests.filter(x=>x.id!==id);
-  t.deletedAt=Date.now();
-  trash.push(t);
+  t.deletedAt=Date.now();trash.push(t);
   saveTests();saveTrash();
   if(TEST&&TEST.id===id){TEST=null;show('welcomeScreen');}
-  renderLib();toast('Перемещено в корзину');
+  renderLib();toast('В корзине');
 }
 function openTrash(){
-  if(!trash.length){$('trashList').innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">Пусто</div>';}
-  else{$('trashList').innerHTML=trash.map(t=>`<div style="padding:12px;background:rgba(255,255,255,0.3);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div><b>${esc(t.title)}</b><div style="font-size:11px;color:var(--text-muted)">${t.questions.length} вопр.</div></div><div class="row"><button class="btn-primary btn-small" onclick="restoreTest('${t.id}')">Восстановить</button><button class="btn-danger btn-small" onclick="permanentDelete('${t.id}')">✕</button></div></div>`).join('');}
+  if(!trash.length)$('trashList').innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">Пусто</div>';
+  else $('trashList').innerHTML=trash.map(t=>`<div style="padding:12px;background:rgba(255,255,255,0.3);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div><b>${esc(t.title)}</b><div style="font-size:11px;color:var(--text-muted)">${t.questions.length} вопр.</div></div><div class="row"><button class="btn-primary btn-small" onclick="restoreTest('${t.id}')">Восстановить</button><button class="btn-danger btn-small" onclick="permanentDelete('${t.id}')">✕</button></div></div>`).join('');
   $('trashModal').classList.remove('hidden');
 }
 function closeTrash(){$('trashModal').classList.add('hidden');}
-function restoreTest(id){
-  const t=trash.find(x=>x.id===id);
-  if(!t)return;
-  delete t.deletedAt;
-  tests.push(t);
-  trash=trash.filter(x=>x.id!==id);
-  saveTests();saveTrash();openTrash();renderLib();
-  toast('✓ Восстановлен');
-}
+function restoreTest(id){const t=trash.find(x=>x.id===id);if(!t)return;delete t.deletedAt;tests.push(t);trash=trash.filter(x=>x.id!==id);saveTests();saveTrash();openTrash();renderLib();toast('✓ Восстановлен');}
 function permanentDelete(id){trash=trash.filter(x=>x.id!==id);saveTrash();openTrash();}
 
 /* ============ SHARE ============ */
 function shareTest(id){
-  const t=tests.find(x=>x.id===id);
-  if(!t)return;
+  const t=tests.find(x=>x.id===id);if(!t)return;
   const url=location.origin+location.pathname+'#test='+btoa(unescape(encodeURIComponent(JSON.stringify(t))));
-  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка на тест скопирована')).catch(()=>prompt('Скопируйте:',url));
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка скопирована')).catch(()=>prompt('Скопируйте:',url));
 }
 function shareQuestion(qi){
   const q=state.questions[qi];
   const data={q:q,t:TEST?TEST.title:''};
   const url=location.origin+location.pathname+'#q='+btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка на вопрос скопирована')).catch(()=>prompt('Скопируйте:',url));
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка на вопрос')).catch(()=>prompt('Скопируйте:',url));
 }
 function checkHash(){
   const h=location.hash;
   if(h.startsWith('#test=')){
-    try{
-      const t=JSON.parse(decodeURIComponent(escape(atob(h.slice(6)))));
-      if(t.questions){t.id=uid();t.questions=t.questions.map(normQ);if(confirm('Импортировать тест?')){tests.push(t);saveTests();renderLib();toast('✓ Импортирован');}}
-    }catch(e){toast('Ошибка ссылки');}
+    try{const t=JSON.parse(decodeURIComponent(escape(atob(h.slice(6)))));if(t.questions){t.id=uid();t.questions=t.questions.map(normQ);if(confirm('Импортировать?')){tests.push(t);saveTests();renderLib();toast('✓ Импортирован');}}}catch(e){toast('Ошибка');}
     history.replaceState(null,'',location.pathname);
   } else if(h.startsWith('#q=')){
-    try{
-      const d=JSON.parse(decodeURIComponent(escape(atob(h.slice(3)))));
-      alert('Вопрос: '+d.q.question+'\n\n(от '+d.t+')');
-    }catch(e){}
+    try{const d=JSON.parse(decodeURIComponent(escape(atob(h.slice(3)))));alert('Вопрос: '+d.q.question+'\n\n(от '+d.t+')');}catch(e){}
     history.replaceState(null,'',location.pathname);
   }
 }
 
 /* ============ START ============ */
 function openStart(id){
-  TEST=tests.find(t=>t.id===id);
-  if(!TEST)return;
+  TEST=tests.find(t=>t.id===id);if(!TEST)return;
   $('startTitle').textContent=TEST.title;
   $('startDesc').textContent=TEST.description||'';
   $('startTags').innerHTML=(TEST.tags||[]).map(tag=>`<span class="tag-chip">${esc(tag)}</span>`).join('');
@@ -866,8 +873,7 @@ function openStart(id){
   if(pendingSaved)$('resumeInfo').textContent=`Незавершено: вопрос ${pendingSaved.current+1}`;
   $('optTime').value=TEST.timeLimit?Math.round(TEST.timeLimit/60):0;
   selectMode('normal');
-  renderLib();
-  show('startScreen');
+  renderLib();show('startScreen');
 }
 function backToWelcome(){TEST=null;renderLib();show('welcomeScreen');}
 function selectMode(m){
@@ -877,23 +883,22 @@ function selectMode(m){
     c.style.background=c.dataset.mode===m?'rgba(255,255,255,0.7)':'rgba(255,255,255,0.4)';
   });
 }
-function discardSaved(){localStorage.removeItem(K.ATT);pendingSaved=null;openStart(TEST.id);toast('Сохранение удалено');}
+function discardSaved(){localStorage.removeItem(K.ATT);pendingSaved=null;openStart(TEST.id);toast('Удалено');}
 function resumeTest(){
-  state=pendingSaved||loadSaved();
-  if(!state){toast('Не найдено');return;}
+  state=pendingSaved||loadSaved();if(!state){toast('Не найдено');return;}
   TEST=tests.find(t=>t.id===state.testId)||TEST;
   if(state.mode==='flashcards'){show('flashcardScreen');renderFC();}
   else{show('quizScreen');renderQ();if(state.totalTime===0||state.timeLeft>0)startTimer();else finish(true);}
 }
 
-/* ============ TEST START ============ */
+/* ============ START TEST ============ */
 function prepareQuestions(qs,shufQ,shufA,sample){
   let arr=qs.slice();
   if(sample&&sample<arr.length)arr=shuffle(arr).slice(0,sample);
   else if(shufQ)arr=shuffle(arr);
   return arr.map(q=>{
     const nq=deep(normQ(q));
-    if((nq.type==='single'||nq.type==='multi'||nq.type==='image')&&shufA){nq.options=shuffle(nq.options);}
+    if((nq.type==='single'||nq.type==='multi'||nq.type==='image')&&shufA)nq.options=shuffle(nq.options);
     else if(nq.type==='truefalse'&&shufA)nq._flip=Math.random()<.5;
     else if(nq.type==='matching')nq._rightShuffled=shuffle(nq.pairs.map((p,i)=>({...p,_orig:i})));
     else if(nq.type==='sort')nq._userOrder=shuffle(nq.items.map((it,i)=>({...it,_orig:i})));
@@ -910,20 +915,16 @@ function startTest(){
   let qs=prepareQuestions(TEST.questions,shufQ,shufA,0);
   if(startMode==='training'){
     const weak=attempts.filter(a=>a.testId===TEST.id).flatMap(a=>a.perQuestion.filter(p=>!p.correct).map(p=>p.question));
-    if(weak.length){
-      qs=qs.filter(q=>weak.includes(q.question));
-      if(!qs.length)qs=prepareQuestions(TEST.questions,shufQ,shufA,0);
-    }
+    if(weak.length){qs=qs.filter(q=>weak.includes(q.question));if(!qs.length)qs=prepareQuestions(TEST.questions,shufQ,shufA,0);}
   }
   state={testId:TEST.id,mode:startMode,questions:qs,answers:new Array(qs.length).fill(null),uncertain:new Array(qs.length).fill(false),current:0,totalTime,timeLeft:totalTime,strict,antiCheat,streak:0,maxStreak:0,flashKnown:0,flashUnknown:0,flashRevealed:false,survival:startMode==='survival',reverse:startMode==='reverse',speedrun:startMode==='speedrun',speedStart:startMode==='speedrun'?Date.now():0};
   localStorage.removeItem(K.ATT);
-  if(antiCheat&&antiCheat!==undefined){
+  if(antiCheat){
     antiCheatWarnings=0;
-    window._acHandler=()=>{if(document.hidden&&state){antiCheatWarnings++;toast('⚠ Переключение вкладки #'+antiCheatWarnings);if(antiCheatWarnings>=3){toast('Слишком много нарушений');finish(true);}}};
+    window._acHandler=()=>{if(document.hidden&&state){antiCheatWarnings++;toast('⚠ Переключение #'+antiCheatWarnings);if(antiCheatWarnings>=3){toast('Слишком много');finish(true);}}};
     document.addEventListener('visibilitychange',window._acHandler);
   }
-  saveState();
-  touchDay();
+  saveState();touchDay();
   if(startMode==='flashcards'){show('flashcardScreen');renderFC();}
   else{show('quizScreen');renderQ();if(totalTime>0)startTimer();}
 }
@@ -938,9 +939,8 @@ function startTimer(){
   let last=Date.now();
   timerId=setInterval(()=>{
     const now=Date.now();
-    state.timeLeft=Math.max(0,state.timeLeft-(now-last)/1000);
-    last=now;
-    if(state.timeLeft<=0){clearInterval(timerId);timerId=null;toast('⏰ Время вышло');finish(true);return;}
+    state.timeLeft=Math.max(0,state.timeLeft-(now-last)/1000);last=now;
+    if(state.timeLeft<=0){clearInterval(timerId);timerId=null;toast('⏰ Время');finish(true);return;}
     updateTimer();saveState();
   },1000);
 }
@@ -951,7 +951,7 @@ function updateTimer(){
   el.classList.toggle('warning',state.timeLeft<=30);
 }
 
-/* ============ QUIZ RENDER ============ */
+/* ============ QUIZ ============ */
 function hasAnswer(ans,q){
   const nq=normQ(q);
   if(nq.type==='text')return typeof ans==='string'&&ans.trim()!=='';
@@ -973,56 +973,41 @@ function renderQ(){
   $('counterBig').textContent=pad(state.current+1);
   $('counterSmall').textContent='/ '+pad(total);
   const segs=[];
-  for(let i=0;i<total;i++){
-    let c='seg';
-    if(hasAnswer(state.answers[i],state.questions[i]))c+=' done';
-    if(i===state.current)c+=' current';
-    segs.push(`<div class="${c}"></div>`);
-  }
+  for(let i=0;i<total;i++){let c='seg';if(hasAnswer(state.answers[i],state.questions[i]))c+=' done';if(i===state.current)c+=' current';segs.push(`<div class="${c}"></div>`);}
   $('progressSegments').innerHTML=segs.join('');
   const imgWrap=$('questionImage');
   if(q.image){imgWrap.innerHTML=`<img src="${q.image}" style="max-width:100%;max-height:280px;border-radius:12px">`;imgWrap.style.display='block';}
   else{imgWrap.style.display='none';imgWrap.innerHTML='';}
   let actions=`<button class="q-action-btn" onclick="speak()">🔊 Озвучить</button>`;
-  if(!state.strict){actions+=`<button class="q-action-btn" onclick="getHint()">💡 Подсказка</button><button class="q-action-btn" onclick="shareQuestion(${state.current})">🔗 Поделиться</button>`;}
+  if(!state.strict)actions+=`<button class="q-action-btn" onclick="getHint()">💡 Подсказка</button><button class="q-action-btn" onclick="shareQuestion(${state.current})">🔗 Поделиться</button>`;
   $('qActions').innerHTML=actions;
   $('hintBox').classList.add('hidden');$('hintBox').textContent='';
   const box=$('options');box.innerHTML='';
   if(q.type==='text'){
     const inp=document.createElement('input');
-    inp.type='text';inp.className='text-answer-input';inp.placeholder='Ваш ответ…';
-    inp.value=typeof ans==='string'?ans:'';
+    inp.type='text';inp.className='text-answer-input';inp.placeholder='Ваш ответ…';inp.value=typeof ans==='string'?ans:'';
     inp.oninput=()=>{state.answers[state.current]=inp.value;saveState();updateNav();};
     box.appendChild(inp);setTimeout(()=>inp.focus(),50);
   } else if(q.type==='fill'){
-    // Replace ___ with inputs
     const parts=(q.text||'').split('___');
     const ua=Array.isArray(ans)?ans:[];
     const div=document.createElement('div');
-    div.style.padding='16px';div.style.background='rgba(255,255,255,0.4)';div.style.borderRadius='12px';div.style.fontSize='16px';div.style.lineHeight='2';
+    div.style.cssText='padding:16px;background:rgba(255,255,255,0.4);border-radius:12px;font-size:16px;line-height:2';
     parts.forEach((part,i)=>{
       div.appendChild(document.createTextNode(part));
       if(i<parts.length-1){
         const inp=document.createElement('input');
-        inp.type='text';inp.className='fill-blank-input';inp.placeholder='___';
-        inp.value=ua[i]||'';
-        inp.oninput=()=>{
-          const arr=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:[];
-          while(arr.length<q.blanks.length)arr.push('');
-          arr[i]=inp.value;
-          state.answers[state.current]=arr;
-          saveState();updateNav();
-        };
+        inp.type='text';inp.className='fill-blank-input';inp.placeholder='___';inp.value=ua[i]||'';
+        inp.oninput=()=>{const arr=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:[];while(arr.length<q.blanks.length)arr.push('');arr[i]=inp.value;state.answers[state.current]=arr;saveState();updateNav();};
         div.appendChild(inp);
       }
     });
     box.appendChild(div);
   } else if(q.type==='image'){
-    const grid=document.createElement('div');grid.style.display='grid';grid.style.gridTemplateColumns='repeat(auto-fill,minmax(150px,1fr))';grid.style.gap='10px';
+    const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px';
     q.options.forEach((opt,i)=>{
       const el=document.createElement('div');
-      el.className='option'+(ans===i?' selected':'');
-      el.style.flexDirection='column';el.style.padding='10px';
+      el.className='option'+(ans===i?' selected':'');el.style.cssText='flex-direction:column;padding:10px';
       el.innerHTML=`<img src="${esc(opt.image||'')}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-bottom:8px"><div style="font-size:13px;text-align:center">${esc(opt.text||'')}</div>`;
       el.onclick=()=>{state.answers[state.current]=i;playS('click');saveState();renderQ();};
       grid.appendChild(el);
@@ -1030,26 +1015,16 @@ function renderQ(){
     box.appendChild(grid);
   } else if(q.type==='file'){
     const div=document.createElement('div');
-    div.style.padding='20px';div.style.background='rgba(255,255,255,0.4)';div.style.borderRadius='12px';div.style.textAlign='center';
-    const inp=document.createElement('input');
-    inp.type='file';
+    div.style.cssText='padding:20px;background:rgba(255,255,255,0.4);border-radius:12px;text-align:center';
     const label=document.createElement('div');
-    label.style.fontSize='14px';label.style.marginBottom='10px';
-    label.textContent=ans&&ans.name?'✓ Загружено: '+ans.name:'Загрузите файл с кодом/ответом';
-    inp.onchange=()=>{
-      const f=inp.files[0];
-      if(!f)return;
-      if(f.size>500000){toast('Файл слишком большой');return;}
-      const reader=new FileReader();
-      reader.onload=e=>{state.answers[state.current]={name:f.name,data:e.target.result};saveState();renderQ();};
-      reader.readAsText(f);
-    };
+    label.style.cssText='font-size:14px;margin-bottom:10px';
+    label.textContent=ans&&ans.name?'✓ Загружено: '+ans.name:'Загрузите файл';
+    const inp=document.createElement('input');inp.type='file';
+    inp.onchange=()=>{const f=inp.files[0];if(!f)return;if(f.size>500000){toast('Файл большой');return;}const r=new FileReader();r.onload=e=>{state.answers[state.current]={name:f.name,data:e.target.result};saveState();renderQ();};r.readAsText(f);};
     div.appendChild(label);div.appendChild(inp);
     box.appendChild(div);
   } else if(q.type==='truefalse'){
-    const flip=raw._flip;
-    const tLabel=flip?'Ложь':'Правда',fLabel=flip?'Правда':'Ложь';
-    const tVal=!flip;
+    const flip=raw._flip;const tLabel=flip?'Ложь':'Правда',fLabel=flip?'Правда':'Ложь';const tVal=!flip;
     [tVal,!tVal].forEach((v,i)=>{
       const el=document.createElement('div');
       el.className='option'+(ans===v?' selected':'');
@@ -1063,32 +1038,22 @@ function renderQ(){
       const el=document.createElement('div');
       el.className='option'+(arr.includes(i)?' selected':'');
       el.innerHTML=`<span class="option-marker">${arr.includes(i)?'■':'□'}</span><span class="option-text">${md(opt.text)}</span>`;
-      el.onclick=()=>{
-        let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];
-        const idx=a.indexOf(i);
-        state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];
-        playS('click');saveState();renderQ();
-      };
+      el.onclick=()=>{let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];const idx=a.indexOf(i);state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];playS('click');saveState();renderQ();};
       rMath(el.querySelector('.option-text'));
       box.appendChild(el);
     });
   } else if(q.type==='matching'){
     const rights=raw._rightShuffled||q.pairs.map((p,i)=>({...p,_orig:i}));
     const ua=Array.isArray(ans)?ans:new Array(q.pairs.length).fill(null);
-    const grid=document.createElement('div');grid.style.display='grid';grid.style.gridTemplateColumns='1fr 1fr';grid.style.gap='8px';
+    const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px';
     q.pairs.forEach((pair,i)=>{
-      const left=document.createElement('div');left.style.padding='12px';left.style.background='rgba(255,255,255,0.4)';left.style.borderRadius='8px';left.style.fontWeight='600';left.textContent=pair.left;
-      const right=document.createElement('div');right.style.padding='4px';right.style.background='rgba(255,255,255,0.4)';right.style.borderRadius='8px';
+      const left=document.createElement('div');left.style.cssText='padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;font-weight:600';left.textContent=pair.left;
+      const right=document.createElement('div');right.style.cssText='padding:4px;background:rgba(255,255,255,0.4);border-radius:8px';
       const sel=document.createElement('select');
-      sel.style.width='100%';sel.style.padding='8px';sel.style.border='none';sel.style.background='rgba(255,255,255,0.6)';sel.style.borderRadius='6px';
+      sel.style.cssText='width:100%;padding:8px;border:none;background:rgba(255,255,255,0.6);border-radius:6px';
       sel.innerHTML='<option value="">—</option>'+rights.map((r,j)=>`<option value="${j}" ${ua[i]===j?'selected':''}>${esc(r.right)}</option>`).join('');
-      sel.onchange=()=>{
-        const ua2=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:new Array(q.pairs.length).fill(null);
-        ua2[i]=sel.value===''?null:parseInt(sel.value);
-        state.answers[state.current]=ua2;saveState();updateNav();
-      };
-      right.appendChild(sel);
-      grid.appendChild(left);grid.appendChild(right);
+      sel.onchange=()=>{const ua2=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:new Array(q.pairs.length).fill(null);ua2[i]=sel.value===''?null:parseInt(sel.value);state.answers[state.current]=ua2;saveState();updateNav();};
+      right.appendChild(sel);grid.appendChild(left);grid.appendChild(right);
     });
     box.appendChild(grid);
   } else if(q.type==='sort'){
@@ -1115,8 +1080,7 @@ function renderQ(){
   $('uncertainCheck').checked=!!state.uncertain[state.current];
   $('streakBadge').textContent=`🔥 ${state.streak}`;
   $('streakBadge').classList.toggle('hot',state.streak>=3);
-  updateNav();
-  updateTimer();
+  updateNav();updateTimer();
 }
 function updateNav(){
   $('prevBtn').disabled=state.current===0||state.strict;
@@ -1125,14 +1089,7 @@ function updateNav(){
   $('nextBtn').textContent=state.current===total-1?'Завершить ✓':'Далее →';
   $('nextBtn').disabled=!hasAnswer(state.answers[state.current],state.questions[state.current]);
 }
-function moveSort(idx,dir){
-  const raw=state.questions[state.current];
-  const j=idx+dir;
-  if(j<0||j>=raw._userOrder.length)return;
-  [raw._userOrder[idx],raw._userOrder[j]]=[raw._userOrder[j],raw._userOrder[idx]];
-  state.answers[state.current]=raw._userOrder.map(it=>it._orig);
-  saveState();renderQ();
-}
+function moveSort(idx,dir){const raw=state.questions[state.current];const j=idx+dir;if(j<0||j>=raw._userOrder.length)return;[raw._userOrder[idx],raw._userOrder[j]]=[raw._userOrder[j],raw._userOrder[idx]];state.answers[state.current]=raw._userOrder.map(it=>it._orig);saveState();renderQ();}
 function toggleUncertain(c){state.uncertain[state.current]=c;saveState();}
 function prevQuestion(){if(state.strict)return;if(state.current>0){state.current--;saveState();renderQ();}}
 
@@ -1140,17 +1097,8 @@ function nextQuestion(){
   if(!hasAnswer(state.answers[state.current],state.questions[state.current]))return;
   const wasHot=state.streak>=3;
   const ok=isCorrect(state.questions[state.current],state.answers[state.current]);
-  if(ok){
-    state.streak++;
-    if(state.streak>state.maxStreak)state.maxStreak=state.streak;
-    addXP(10);
-    playS('correct');
-    if(state.survival)addXP(5);
-  } else {
-    state.streak=0;
-    playS('wrong');
-    if(state.survival){toast('💀 Survival: конец');finish(true);return;}
-  }
+  if(ok){state.streak++;if(state.streak>state.maxStreak)state.maxStreak=state.streak;addXP(10);playS('correct');if(state.survival)addXP(5);}
+  else{state.streak=0;playS('wrong');if(state.survival){toast('💀 Конец');finish(true);return;}}
   if(state.current<state.questions.length-1){
     state.current++;saveState();renderQ();
     if(!wasHot&&state.streak>=3){const b=$('streakBadge');b.classList.remove('hot');void b.offsetWidth;b.classList.add('hot');}
@@ -1159,12 +1107,10 @@ function nextQuestion(){
 
 /* ============ FLASHCARDS ============ */
 function renderFC(){
-  const raw=state.questions[state.current];
-  const q=normQ(raw);
+  const raw=state.questions[state.current];const q=normQ(raw);
   $('fcCounterBig').textContent=pad(state.current+1);
   $('fcCounterSmall').textContent='/ '+pad(state.questions.length);
-  $('fcQuestion').innerHTML=md(q.question);
-  rMath($('fcQuestion'));
+  $('fcQuestion').innerHTML=md(q.question);rMath($('fcQuestion'));
   const ans=$('fcAnswer');
   if(state.flashRevealed){
     let txt='';
@@ -1175,9 +1121,7 @@ function renderFC(){
     else if(q.type==='fill')txt=q.blanks.join(', ');
     else if(q.type==='image')txt=q.options.filter(o=>o.correct).map(o=>o.text).join(', ');
     else txt=q.options.filter(o=>o.correct).map(o=>o.text).join(', ');
-    ans.innerHTML=md(txt);
-    rMath(ans);
-    ans.classList.remove('hidden');
+    ans.innerHTML=md(txt);rMath(ans);ans.classList.remove('hidden');
     $('fcActions').innerHTML=`<button class="btn-ghost" onclick="fcRate(false)" style="border:2px solid #ef4444;color:#ef4444">✗ Не знал</button><button class="btn-primary" onclick="fcRate(true)" style="background:#10b981">✓ Знаю</button>`;
   } else {
     ans.classList.add('hidden');
@@ -1186,49 +1130,32 @@ function renderFC(){
 }
 function fcReveal(){state.flashRevealed=true;playS('click');renderFC();}
 function fcRate(knew){
-  if(knew){state.flashKnown++;addXP(5);playS('correct');}
-  else{state.flashUnknown++;playS('wrong');}
-  if(state.current<state.questions.length-1){
-    state.current++;state.flashRevealed=false;saveState();renderFC();
-  } else finishFC();
+  if(knew){state.flashKnown++;addXP(5);playS('correct');}else{state.flashUnknown++;playS('wrong');}
+  if(state.current<state.questions.length-1){state.current++;state.flashRevealed=false;saveState();renderFC();}
+  else finishFC();
 }
 function finishFC(){
-  const total=state.questions.length;
-  const pct=Math.round((state.flashKnown/total)*100);
-  playS('complete');
-  show('resultScreen');
+  const total=state.questions.length;const pct=Math.round((state.flashKnown/total)*100);
+  playS('complete');show('resultScreen');
   $('scoreText').textContent=pct+'%';
   $('scoreMsg').textContent=`Знаю: ${state.flashKnown} из ${total}`;
   $('scoreStats').textContent='';
   $('btnCert').classList.add('hidden');
   $('reviewList').innerHTML=`<div style="text-align:center;padding:32px;font-size:18px">${pct>=80?'🎉 Отлично!':pct>=50?'💪 Хорошо!':'📚 Повтори'}</div>`;
-  if(pct>=90)confetti();else if(pct>=80)confetti({particleCount:50});
+  if(pct>=90)confetti();
 }
 
 /* ============ CORRECT ============ */
 function isCorrect(q,ans){
   const nq=normQ(q);
   if(ans===null||ans===undefined)return false;
-  if(nq.type==='text'){
-    const u=String(ans).trim().toLowerCase();
-    const c=String(nq.answer||'').trim().toLowerCase();
-    return u===c||u.split(/\s+/).every(w=>c.includes(w));
-  }
-  if(nq.type==='multi'){
-    const cs=new Set();nq.options.forEach((o,i)=>{if(o.correct)cs.add(i);});
-    const ch=Array.isArray(ans)?ans:[];
-    return cs.size===ch.length&&ch.every(i=>cs.has(i));
-  }
+  if(nq.type==='text'){const u=String(ans).trim().toLowerCase();const c=String(nq.answer||'').trim().toLowerCase();return u===c||u.split(/\s+/).every(w=>c.includes(w));}
+  if(nq.type==='multi'){const cs=new Set();nq.options.forEach((o,i)=>{if(o.correct)cs.add(i);});const ch=Array.isArray(ans)?ans:[];return cs.size===ch.length&&ch.every(i=>cs.has(i));}
   if(nq.type==='truefalse'){let exp=nq.answer;if(q._flip)exp=!exp;return ans===exp;}
-  if(nq.type==='matching'){
-    const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));
-    return nq.pairs.every((p,i)=>{const ci=ans[i];return ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===i;});
-  }
-  if(nq.type==='sort'){return nq.items.every((_,i)=>ans[i]===i);}
-  if(nq.type==='fill'){
-    return nq.blanks.every((b,i)=>String(ans[i]||'').trim().toLowerCase()===String(b).trim().toLowerCase());
-  }
-  if(nq.type==='file'){return ans&&ans.data;} // Любой файл = правильно (не проверяем содержимое)
+  if(nq.type==='matching'){const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));return nq.pairs.every((p,i)=>{const ci=ans[i];return ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===i;});}
+  if(nq.type==='sort')return nq.items.every((_,i)=>ans[i]===i);
+  if(nq.type==='fill')return nq.blanks.every((b,i)=>String(ans[i]||'').trim().toLowerCase()===String(b).trim().toLowerCase());
+  if(nq.type==='file')return ans&&ans.data;
   if(nq.type==='image'){const idx=nq.options.findIndex(o=>o.correct);return ans===idx;}
   const idx=nq.options.findIndex(o=>o.correct);
   return ans===idx;
@@ -1244,23 +1171,18 @@ function finish(byTimeout){
   const pct=Math.round(correct/total*100);
   game.totalQuestions+=total;
   const att={testId:state.testId,ts:Date.now(),percent:pct,correctCount:correct,total,maxStreak:state.maxStreak,perQuestion:state.questions.map((q,i)=>({question:q.question,correct:isCorrect(q,state.answers[i])}))};
-  attempts.push(att);saveAttempts();saveGame();
-  checkAchievements();
-  playS('complete');
-  show('resultScreen');
+  attempts.push(att);saveAttempts();saveGame();checkAchievements();
+  playS('complete');show('resultScreen');
   $('scoreText').textContent=pct+'%';
   $('scoreMsg').textContent=`Правильно: ${correct} из ${total}`;
   $('scoreStats').textContent=state.maxStreak>0?`🔥 Серия: ${state.maxStreak}`:'';
   $('btnCert').classList.toggle('hidden',pct<80);
-  if(pct>=90){confetti();addXP(50);}
-  else if(pct>=80){confetti({particleCount:80});addXP(20);}
+  if(pct>=90){confetti();addXP(50);}else if(pct>=80){confetti({particleCount:80});addXP(20);}
   renderReview();
 }
 function renderReview(){
   const html=state.questions.map((q,i)=>{
-    const nq=normQ(q);
-    const ua=state.answers[i];
-    const ok=isCorrect(q,ua);
+    const nq=normQ(q);const ua=state.answers[i];const ok=isCorrect(q,ua);
     let body='';
     if(nq.type==='text'){
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(ua||'<пусто>')}</span></div>`;
@@ -1270,8 +1192,8 @@ function renderReview(){
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${ua===true?'Правда':ua===false?'Ложь':'—'}</span></div>`;
       if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${exp?'Правда':'Ложь'}</span></div>`;
     } else if(nq.type==='fill'){
-      const userStr=(Array.isArray(ua)?ua:[]).join(', ');
-      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(userStr||'—')}</span></div>`;
+      const us=(Array.isArray(ua)?ua:[]).join(', ');
+      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(us||'—')}</span></div>`;
       if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${esc(nq.blanks.join(', '))}</span></div>`;
     } else if(nq.type==='matching'){
       const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));
@@ -1288,25 +1210,20 @@ function renderReview(){
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Файл: ${esc(ua&&ua.name||'—')}</span></div>`;
     } else {
       nq.options.forEach((o,j)=>{
-        const isC=o.correct;
-        const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;
-        const m=isC?'✓':(isCh?'✗':'○');
-        const cls=isC?'correct':(isCh?'wrong':'');
+        const isC=o.correct;const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;
+        const m=isC?'✓':(isCh?'✗':'○');const cls=isC?'correct':(isCh?'wrong':'');
         body+=`<div class="review-opt ${cls}"><span>${m}</span><span>${md(o.text||o.image)}</span></div>`;
       });
     }
     if(nq.explanation)body+=`<div style="margin-top:8px;padding:10px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;font-size:13px">💡 ${md(nq.explanation)}</div>`;
     return `<div class="review-item"><div class="review-q">${pad(i+1)}. ${md(nq.question)}</div>${body}</div>`;
   }).join('');
-  $('reviewList').innerHTML=html;
-  rMath($('reviewList'));
+  $('reviewList').innerHTML=html;rMath($('reviewList'));
 }
 
 /* ============ AI ============ */
-function playS(n){if(!settings.sound)return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const freqs={click:[600,.06],correct:[880,.1],wrong:[300,.15],complete:[523,.15]}[n]||[500,.1];const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=freqs[0];g.gain.setValueAtTime(.05,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+freqs[1]);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+freqs[1]);}catch(e){}}
-
-function speech(q){if(!('speechSynthesis'in window)){toast('TTS недоступно');return;}const u=new SpeechSynthesisUtterance(q.replace(/[*_`$]/g,''));u.lang='ru-RU';speechSynthesis.cancel();speechSynthesis.speak(u);toast('🔊 Озвучено');}
-function speak(){speech(normQ(state.questions[state.current]).question);}
+function playS(n){if(!settings.sound)return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const f={click:[600,.06],correct:[880,.1],wrong:[300,.15],complete:[523,.15]}[n]||[500,.1];const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f[0];g.gain.setValueAtTime(.05,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+f[1]);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+f[1]);}catch(e){}}
+function speak(){const q=normQ(state.questions[state.current]);if(!('speechSynthesis'in window)){toast('TTS нет');return;}const u=new SpeechSynthesisUtterance(q.question.replace(/[*_`$]/g,''));u.lang='ru-RU';speechSynthesis.cancel();speechSynthesis.speak(u);toast('🔊');}
 async function callAI(msgs){
   const p=settings.aiProvider||'pollinations';
   let url='https://text.pollinations.ai/openai';
@@ -1314,33 +1231,21 @@ async function callAI(msgs){
   if(p==='ovhcloud'){url='https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions';body=JSON.stringify({model:'mistral-small-latest',messages:msgs,temperature:0.8,max_tokens:4096});}
   else if(p==='hackclub'){url='https://ai.hackclub.com/proxy/v1/chat/completions';body=JSON.stringify({model:'deepseek-chat',messages:msgs,temperature:0.8,max_tokens:4096});}
   if(proxyUrl)url=proxyUrl;
-  // Кеш
   const cacheKey=JSON.stringify(msgs).slice(0,200);
-  if(aiCache[cacheKey]){
-    const age=Date.now()-aiCache[cacheKey].ts;
-    if(age<86400000){return aiCache[cacheKey].content;}
-  }
-  const ctl=new AbortController();
-  const tid=setTimeout(()=>ctl.abort(),90000);
+  if(aiCache[cacheKey]&&Date.now()-aiCache[cacheKey].ts<86400000)return aiCache[cacheKey].content;
+  const ctl=new AbortController();const tid=setTimeout(()=>ctl.abort(),90000);
   try{
     const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body,signal:ctl.signal});
     clearTimeout(tid);
-    if(!res.ok){
-      if(res.status===429)throw new Error('Слишком много запросов');
-      throw new Error('Ошибка AI '+res.status);
-    }
+    if(!res.ok){if(res.status===429)throw new Error('Слишком много');throw new Error('Ошибка '+res.status);}
     const data=await res.json();
     const content=data.choices[0].message.content;
     aiCache[cacheKey]={content,ts:Date.now()};
     try{localStorage.setItem(K.CACHE,JSON.stringify(aiCache));}catch(e){}
     return content;
-  }catch(err){
-    clearTimeout(tid);
-    if(err.name==='AbortError')throw new Error('Таймаут 90с');
-    throw err;
-  }
+  }catch(err){clearTimeout(tid);if(err.name==='AbortError')throw new Error('Таймаут');throw err;}
 }
-function parseJSON(t){if(!t)throw new Error('пусто');try{return JSON.parse(t);}catch(e){}const f=t.match(/```(?:json)?\s*([\s\S]*?)```/i);if(f){try{return JSON.parse(f[1]);}catch(e){}}const s=t.indexOf('{'),e=t.lastIndexOf('}');if(s>=0&&e>s){try{return JSON.parse(t.slice(s,e+1));}catch(e){}}throw new Error('JSON не найден');}
+function parseJSON(t){if(!t)throw new Error('пусто');try{return JSON.parse(t);}catch(e){}const f=t.match(/```(?:json)?\s*([\s\S]*?)```/i);if(f){try{return JSON.parse(f[1]);}catch(e){}}const s=t.indexOf('{'),e=t.lastIndexOf('}');if(s>=0&&e>s){try{return JSON.parse(t.slice(s,e+1));}catch(e){}}throw new Error('JSON');}
 function aiSetTab(t){aiTab=t;document.querySelectorAll('#aiModal .tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));$('aiTopicTab').classList.toggle('hidden',t!=='topic');$('aiTextTab').classList.toggle('hidden',t!=='text');$('aiBatchTab').classList.toggle('hidden',t!=='batch');}
 function openAiModal(mode){aiMode=mode;aiResult=null;$('aiTopic').value='';$('aiText').value='';$('aiBatchTopics').value='';$('aiCustom').value='';$('aiCount').value=5;$('aiDiff').value='medium';$('aiStatus').style.display='none';$('aiGenBtn').textContent='✨ Сгенерировать';$('aiGenBtn').onclick=generateWithAi;$('aiGenBtn').disabled=false;aiSetTab('topic');$('aiModal').classList.remove('hidden');}
 function closeAiModal(){$('aiModal').classList.add('hidden');aiResult=null;}
@@ -1348,11 +1253,9 @@ function aiStatus(m,k){const el=$('aiStatus');el.style.display='block';el.style.
 async function generateWithAi(){
   if(aiResult){applyAiResult();return;}
   const count=Math.min(20,Math.max(1,parseInt($('aiCount').value)||5));
-  const diff=$('aiDiff').value;
-  const custom=$('aiCustom').value.trim();
+  const diff=$('aiDiff').value;const custom=$('aiCustom').value.trim();
   const diffLabel={easy:'лёгкий',medium:'средний',hard:'сложный',mixed:'смешанный'}[diff];
-  const btn=$('aiGenBtn');
-  btn.disabled=true;btn.textContent='⏳ Генерирую…';
+  const btn=$('aiGenBtn');btn.disabled=true;btn.textContent='⏳ Генерирую…';
   try{
     if(aiTab==='batch'){
       const topics=$('aiBatchTopics').value.split(',').map(s=>s.trim()).filter(Boolean);
@@ -1360,28 +1263,16 @@ async function generateWithAi(){
       aiStatus('Генерирую '+topics.length+' тестов…','info');
       const results=[];
       for(const topic of topics){
-        const content=await callAI([
-          {role:'system',content:'Отвечай только валидным JSON.'},
-          {role:'user',content:`Создай ${Math.min(5,count)} вопросов по "${topic}". JSON: {"title":"${topic}","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}. correct=0..3`}
-        ]);
+        const content=await callAI([{role:'system',content:'Отвечай только валидным JSON.'},{role:'user',content:`Создай ${Math.min(5,count)} вопросов по "${topic}". JSON: {"title":"${topic}","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}. correct=0..3`}]);
         const p=parseJSON(content);
         if(p.questions)results.push({title:p.title||topic,description:'AI',tags:[topic.toLowerCase()],timeLimit:0,questions:p.questions.map(q=>({type:'single',question:String(q.question),options:(q.options||[]).map((t,i)=>({text:String(t),correct:i===q.correct})),explanation:''}))});
       }
-      aiResult=results;
-      aiStatus('✓ Готово: '+results.length+' тестов','ok');
-      btn.textContent='✓ Применить все';btn.disabled=false;btn.onclick=applyAiResult;
-      return;
+      aiResult=results;aiStatus('✓ Готово: '+results.length,'ok');
+      btn.textContent='✓ Применить все';btn.disabled=false;btn.onclick=applyAiResult;return;
     }
     let prompt='';
-    if(aiTab==='topic'){
-      const topic=$('aiTopic').value.trim();
-      if(!topic)throw new Error('Введите тему');
-      prompt=`Создай ${count} тестовых вопросов по "${topic}". Уровень: ${diffLabel}.`;
-    } else {
-      const text=$('aiText').value.trim();
-      if(text.length<50)throw new Error('Текст слишком короткий');
-      prompt=`Создай ${count} вопросов по тексту:\n\n${text.slice(0,4000)}`;
-    }
+    if(aiTab==='topic'){const topic=$('aiTopic').value.trim();if(!topic)throw new Error('Введите тему');prompt=`Создай ${count} тестовых вопросов по "${topic}". Уровень: ${diffLabel}.`;}
+    else{const text=$('aiText').value.trim();if(text.length<50)throw new Error('Текст короткий');prompt=`Создай ${count} вопросов по тексту:\n\n${text.slice(0,4000)}`;}
     if(custom)prompt+='\nСтиль: '+custom;
     prompt+=`\nОтвет ТОЛЬКО JSON: {"title":"Название","questions":[{"question":"","options":["A","B","C","D"],"correct":0,"explanation":""}]}. 4 варианта, correct=0..3, на русском.`;
     aiStatus('Запрос к AI. 10-40 сек…','info');
@@ -1389,46 +1280,26 @@ async function generateWithAi(){
     const parsed=parseJSON(content);
     if(!parsed.questions)throw new Error('Нет questions');
     aiResult={title:parsed.title||'AI Тест',description:'',tags:[],timeLimit:0,questions:parsed.questions.map(q=>({type:'single',question:String(q.question),options:(q.options||[]).map((t,i)=>({text:String(t),correct:i===q.correct})),explanation:String(q.explanation||'')}))};
-    aiStatus('✓ Готово: '+aiResult.questions.length+' вопросов','ok');
-    btn.textContent='✓ Применить';btn.disabled=false;btn.onclick=applyAiResult;
-    playS('correct');
-  }catch(err){
-    aiStatus('❌ '+err.message,'err');
-    btn.disabled=false;btn.textContent='✨ Сгенерировать';btn.onclick=generateWithAi;
-  }
+    aiStatus('✓ Готово: '+aiResult.questions.length,'ok');
+    btn.textContent='✓ Применить';btn.disabled=false;btn.onclick=applyAiResult;playS('correct');
+  }catch(err){aiStatus('❌ '+err.message,'err');btn.disabled=false;btn.textContent='✨ Сгенерировать';btn.onclick=generateWithAi;}
 }
 function applyAiResult(){
   if(!aiResult)return;
   if(Array.isArray(aiResult)){
     aiResult.forEach(t=>{t.id=uid();tests.push(norm(t));});
     game.aiGenerated=(game.aiGenerated||0)+aiResult.length;
-    toast('✓ Добавлено: '+aiResult.length+' тестов');
-    closeAiModal();renderLib();saveTests();saveGame();
-    return;
+    toast('✓ +'+aiResult.length+' тестов');closeAiModal();renderLib();saveTests();saveGame();return;
   }
-  if(aiMode==='questions'&&editing){
-    pushHist();
-    editing.questions.push(...deep(aiResult.questions));
-    renderEditor();
-  } else {
-    const t={id:uid(),...deep(aiResult)};
-    game.aiGenerated=(game.aiGenerated||0)+1;
-    tests.push(norm(t));
-    saveTests();renderLib();
-  }
-  game.aiGenerated=(game.aiGenerated||0)+1;
-  saveGame();
-  closeAiModal();
-  toast('✓ Готово');
+  if(aiMode==='questions'&&editing){pushHist();editing.questions.push(...deep(aiResult.questions));renderEditor();}
+  else{const t={id:uid(),...deep(aiResult)};tests.push(norm(t));saveTests();renderLib();}
+  game.aiGenerated=(game.aiGenerated||0)+1;saveGame();closeAiModal();toast('✓ Готово');
 }
 async function getHint(){
   const q=normQ(state.questions[state.current]);
-  const box=$('hintBox');
-  box.classList.remove('hidden');box.textContent='⏳…';
-  try{
-    const content=await callAI([{role:'system',content:'Краткая подсказка. Не выдавай ответ.'},{role:'user',content:`Вопрос: "${q.question}". Подсказка 1-2 предложения.`}]);
-    box.textContent=content.trim();
-  }catch(err){box.textContent='❌ '+err.message;}
+  const box=$('hintBox');box.classList.remove('hidden');box.textContent='⏳…';
+  try{const content=await callAI([{role:'system',content:'Краткая подсказка. Не выдавай ответ.'},{role:'user',content:`Вопрос: "${q.question}". Подсказка 1-2 предложения.`}]);box.textContent=content.trim();}
+  catch(err){box.textContent='❌ '+err.message;}
 }
 
 /* ============ EDITOR ============ */
@@ -1436,88 +1307,37 @@ function openEditor(idOrTest){
   let existing=null;
   if(typeof idOrTest==='string')existing=tests.find(t=>t.id===idOrTest);
   else if(idOrTest&&typeof idOrTest==='object')existing=idOrTest;
-  if(!existing){
-    try{
-      const d=localStorage.getItem(K.DRAFT);
-      if(d&&confirm('Восстановить черновик?'))existing=JSON.parse(d);
-    }catch(e){}
-  }
+  if(!existing){try{const d=localStorage.getItem(K.DRAFT);if(d&&confirm('Восстановить черновик?'))existing=JSON.parse(d);}catch(e){}}
   editing=existing?deep(existing):{id:uid(),title:'',description:'',tags:[],timeLimit:0,theory:'',questions:[blankQ()],history:[],fav:false};
   editing.questions=editing.questions.map(normQ);
   editHistory=[];editFuture=[];
   $('editorTitle').textContent=existing&&tests.find(t=>t.id===existing.id)?'Редактирование':'Новый тест';
-  $('edTitle').value=editing.title;
-  $('edDesc').value=editing.description||'';
-  $('edTags').value=(editing.tags||[]).join(', ');
-  $('edTheory').value=editing.theory||'';
-  $('edTime').value=editing.timeLimit?Math.round(editing.timeLimit/60):0;
+  $('edTitle').value=editing.title;$('edDesc').value=editing.description||'';$('edTags').value=(editing.tags||[]).join(', ');$('edTheory').value=editing.theory||'';$('edTime').value=editing.timeLimit?Math.round(editing.timeLimit/60):0;
   renderEditor();show('editorScreen');
 }
 function closeEditor(){
-  if(editing&&(editing.title||editing.questions.some(q=>q.question&&q.question.trim()))){
-    if(!confirm('Выйти без сохранения?'))return;
-    try{localStorage.setItem(K.DRAFT,JSON.stringify(editing));}catch(e){}
-  }
+  if(editing&&(editing.title||editing.questions.some(q=>q.question&&q.question.trim()))){if(!confirm('Выйти без сохранения?'))return;try{localStorage.setItem(K.DRAFT,JSON.stringify(editing));}catch(e){}}
   editing=null;renderLib();show('welcomeScreen');
 }
 function blankQ(){return {type:'single',question:'',options:[{text:'',correct:true},{text:'',correct:false}],explanation:'',image:null};}
 function renderEditor(){
   $('qCount').textContent='('+editing.questions.length+')';
   $('edQuestions').innerHTML=editing.questions.map((q,i)=>{
-    const nq=normQ(q);
-    let inner='';
-    if(nq.type==='text'){
-      inner=`<div class="field"><label>Ответ</label><input type="text" class="q-answer" data-i="${i}" value="${esc(nq.answer||'')}"></div>`;
-    } else if(nq.type==='truefalse'){
-      inner=`<div class="row" style="margin-bottom:10px"><button class="set-btn ${nq.answer?'active':''}" onclick="setTF(${i},true)">✓ Правда</button><button class="set-btn ${!nq.answer?'active':''}" onclick="setTF(${i},false)">✗ Ложь</button></div>`;
-    } else if(nq.type==='fill'){
-      inner=`<div class="field"><label>Текст (используйте ___ для пропусков)</label><textarea class="fill-text" data-i="${i}" rows="3">${esc(nq.text||'')}</textarea></div>
-             <div class="field"><label>Ответы (через запятую)</label><input type="text" class="fill-answers" data-i="${i}" value="${esc((nq.blanks||[]).join(', '))}"></div>`;
-    } else if(nq.type==='image'){
-      inner=nq.options.map((opt,j)=>`
-        <div class="opt-row">
-          <input type="radio" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}>
-          <input type="text" class="opt-text" data-i="${i}" data-j="${j}" placeholder="Подпись" value="${esc(opt.text||'')}">
-          <input type="url" class="opt-img" data-i="${i}" data-j="${j}" placeholder="URL картинки" value="${esc(opt.image||'')}" style="flex:1;padding:8px">
-          <button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button>
-        </div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;
-    } else if(nq.type==='matching'){
-      inner=nq.pairs.map((p,j)=>`<div class="opt-row"><input type="text" class="pair-left" data-i="${i}" data-j="${j}" value="${esc(p.left)}" placeholder="Левая"><span>→</span><input type="text" class="pair-right" data-i="${i}" data-j="${j}" value="${esc(p.right)}" placeholder="Правая"><button class="icon-btn danger" onclick="deletePair(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addPair(${i})">+ Пара</button>`;
-    } else if(nq.type==='sort'){
-      inner=nq.items.map((it,j)=>`<div class="opt-row"><span style="width:20px;text-align:center">${j+1}</span><input type="text" class="sort-input" data-i="${i}" data-j="${j}" value="${esc(it)}"><button class="icon-btn danger" onclick="deleteSortItem(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addSortItem(${i})">+ Элемент</button>`;
-    } else if(nq.type==='file'){
-      inner=`<div class="field"><label>Тип файла</label><input type="text" class="file-type" data-i="${i}" value="${esc(nq.fileType||'any')}"></div>`;
-    } else {
-      const t=nq.type==='multi'?'checkbox':'radio';
-      inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="${t}" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" value="${esc(opt.text)}"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;
-    }
-    return `<div class="q-card" data-qi="${i}" style="--i:${i}">
-      <div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div>
-        <select class="q-type-select" onchange="changeType(${i},this.value)">
-          <option value="single" ${nq.type==='single'?'selected':''}>Один</option>
-          <option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option>
-          <option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option>
-          <option value="text" ${nq.type==='text'?'selected':''}>Текст</option>
-          <option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option>
-          <option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option>
-          <option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option>
-          <option value="image" ${nq.type==='image'?'selected':''}>Картинки</option>
-          <option value="file" ${nq.type==='file'?'selected':''}>Файл</option>
-        </select>
-        <div class="spacer"></div><button class="icon-btn danger" onclick="deleteQ(${i})">✕</button>
-      </div>
-      <div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div>
-      <div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение (опционально)">${esc(nq.explanation||'')}</textarea></div>
-      ${inner}
-    </div>`;
+    const nq=normQ(q);let inner='';
+    if(nq.type==='text')inner=`<div class="field"><label>Ответ</label><input type="text" class="q-answer" data-i="${i}" value="${esc(nq.answer||'')}"></div>`;
+    else if(nq.type==='truefalse')inner=`<div class="row" style="margin-bottom:10px"><button class="set-btn ${nq.answer?'active':''}" onclick="setTF(${i},true)">✓ Правда</button><button class="set-btn ${!nq.answer?'active':''}" onclick="setTF(${i},false)">✗ Ложь</button></div>`;
+    else if(nq.type==='fill')inner=`<div class="field"><label>Текст (___ для пропусков)</label><textarea class="fill-text" data-i="${i}" rows="3">${esc(nq.text||'')}</textarea></div><div class="field"><label>Ответы (через запятую)</label><input type="text" class="fill-answers" data-i="${i}" value="${esc((nq.blanks||[]).join(', '))}"></div>`;
+    else if(nq.type==='image')inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="radio" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" placeholder="Подпись" value="${esc(opt.text||'')}"><input type="url" class="opt-img" data-i="${i}" data-j="${j}" placeholder="URL картинки" value="${esc(opt.image||'')}" style="flex:1;padding:8px"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;
+    else if(nq.type==='matching')inner=nq.pairs.map((p,j)=>`<div class="opt-row"><input type="text" class="pair-left" data-i="${i}" data-j="${j}" value="${esc(p.left)}" placeholder="Левая"><span>→</span><input type="text" class="pair-right" data-i="${i}" data-j="${j}" value="${esc(p.right)}" placeholder="Правая"><button class="icon-btn danger" onclick="deletePair(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addPair(${i})">+ Пара</button>`;
+    else if(nq.type==='sort')inner=nq.items.map((it,j)=>`<div class="opt-row"><span style="width:20px;text-align:center">${j+1}</span><input type="text" class="sort-input" data-i="${i}" data-j="${j}" value="${esc(it)}"><button class="icon-btn danger" onclick="deleteSortItem(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addSortItem(${i})">+ Элемент</button>`;
+    else if(nq.type==='file')inner=`<div class="field"><label>Тип файла</label><input type="text" class="file-type" data-i="${i}" value="${esc(nq.fileType||'any')}"></div>`;
+    else{const t=nq.type==='multi'?'checkbox':'radio';inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="${t}" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" value="${esc(opt.text)}"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;}
+    return `<div class="q-card" data-qi="${i}" style="--i:${i}"><div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div><select class="q-type-select" onchange="changeType(${i},this.value)"><option value="single" ${nq.type==='single'?'selected':''}>Один</option><option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option><option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option><option value="text" ${nq.type==='text'?'selected':''}>Текст</option><option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option><option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option><option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option><option value="image" ${nq.type==='image'?'selected':''}>Картинки</option><option value="file" ${nq.type==='file'?'selected':''}>Файл</option></select><div class="spacer"></div><button class="icon-btn danger" onclick="deleteQ(${i})">✕</button></div><div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div><div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение (опционально)">${esc(nq.explanation||'')}</textarea></div>${inner}</div>`;
   }).join('');
   setupDnD();
 }
 function changeType(i,nt){
-  const q=editing.questions[i];
-  const old=q.type;
-  if(old===nt)return;
-  pushHist();
+  const q=editing.questions[i];const old=q.type;if(old===nt)return;pushHist();
   if(nt==='text'){q.options=[];q.answer='';}
   else if(nt==='truefalse'){q.answer=true;delete q.options;}
   else if(nt==='fill'){q.text='';q.blanks=[];delete q.options;}
@@ -1525,9 +1345,8 @@ function changeType(i,nt){
   else if(nt==='sort'){q.items=['','',''];delete q.options;}
   else if(nt==='image'){q.options=[{text:'',image:'',correct:true},{text:'',image:'',correct:false}];}
   else if(nt==='file'){q.fileType='any';delete q.options;}
-  else {q.options=[{text:'',correct:true},{text:'',correct:false}];}
-  q.type=nt;
-  renderEditor();
+  else{q.options=[{text:'',correct:true},{text:'',correct:false}];}
+  q.type=nt;renderEditor();
 }
 function setTF(i,v){pushHist();editing.questions[i].answer=v;renderEditor();}
 function addOption(i){pushHist();const q=editing.questions[i];if(!q.options)q.options=[];q.options.push({text:'',image:'',correct:false});renderEditor();}
@@ -1544,8 +1363,7 @@ function redoEdit(){if(!editFuture.length){toast('Нечего');return;}editHis
 
 function setupDnD(){
   document.querySelectorAll('#edQuestions .q-card').forEach(card=>{
-    const h=card.querySelector('.drag-handle');
-    if(!h)return;
+    const h=card.querySelector('.drag-handle');if(!h)return;
     h.addEventListener('dragstart',e=>{dragSrc={type:'q',i:parseInt(card.dataset.qi)};e.dataTransfer.effectAllowed='move';card.style.opacity='.4';});
     h.addEventListener('dragend',()=>{card.style.opacity='';document.querySelectorAll('.q-card').forEach(c=>c.style.borderColor='transparent');dragSrc=null;});
     card.addEventListener('dragover',e=>{if(dragSrc&&dragSrc.type==='q'){e.preventDefault();card.style.borderColor='var(--accent)';}});
@@ -1574,9 +1392,7 @@ $('edQuestions').addEventListener('input',e=>{
 $('edQuestions').addEventListener('change',e=>{
   const el=e.target;
   if(!editing||!el.classList.contains('opt-correct'))return;
-  const i=+el.dataset.i,j=+el.dataset.j;
-  const q=editing.questions[i];
-  pushHist();
+  const i=+el.dataset.i,j=+el.dataset.j;const q=editing.questions[i];pushHist();
   if(q.type==='multi'||q.type==='image')q.options[j].correct=el.checked;
   else q.options.forEach((o,k)=>{o.correct=(k===j);});
   scheduleDraft();
@@ -1604,43 +1420,26 @@ function saveTest(){
   editing.theory=$('edTheory').value.trim();
   editing.timeLimit=Math.max(0,parseInt($('edTime').value)||0)*60;
   if(!editing.title){toast('Введите название');shake($('edTitle'));return;}
-  for(let i=0;i<editing.questions.length;i++){
-    const q=editing.questions[i];
-    if(!q.question.trim()){toast('Вопрос '+(i+1)+' пуст');return;}
-  }
+  for(let i=0;i<editing.questions.length;i++)if(!editing.questions[i].question.trim()){toast('Вопрос '+(i+1)+' пуст');return;}
   const idx=tests.findIndex(t=>t.id===editing.id);
   editing.history=editing.history||[];
   editing.history.push({ts:Date.now(),action:idx>=0?'edited':'created'});
   if(editing.history.length>20)editing.history.shift();
   if(idx>=0)tests[idx]=editing;else tests.push(editing);
-  saveTests();
-  localStorage.removeItem(K.DRAFT);
-  game.totalTests=(game.totalTests||0)+1;
-  saveGame();checkAchievements();
+  saveTests();localStorage.removeItem(K.DRAFT);
+  game.totalTests=(game.totalTests||0)+1;saveGame();checkAchievements();
   editing=null;renderLib();show('welcomeScreen');toast('✓ Сохранено');
 }
 
 /* ============ MISC ============ */
 function exportAll(){
   const blob=new Blob([JSON.stringify(tests,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aq-tests.json';a.click();
-  toast('Экспортировано');
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aq-tests.json';a.click();toast('Экспорт');
 }
 function importJSON(event){
   const f=event.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      const arr=Array.isArray(data)?data:[data];
-      let added=0;
-      for(const raw of arr){
-        if(!raw.title||!Array.isArray(raw.questions))continue;
-        tests.push(norm({...raw,id:uid()}));added++;
-      }
-      saveTests();renderLib();toast('Импорт: '+added);
-    }catch(err){alert('Ошибка: '+err.message);}
-  };
+  r.onload=e=>{try{const data=JSON.parse(e.target.result);const arr=Array.isArray(data)?data:[data];let added=0;for(const raw of arr){if(!raw.title||!Array.isArray(raw.questions))continue;tests.push(norm({...raw,id:uid()}));added++;}saveTests();renderLib();toast('Импорт: '+added);}catch(err){alert(err.message);}};
   r.readAsText(f);event.target.value='';
 }
 function copyResult(){
@@ -1650,12 +1449,9 @@ function copyResult(){
   navigator.clipboard.writeText(txt).then(()=>toast('✓ Скопировано')).catch(()=>prompt('',txt));
 }
 function exportResultCsv(){
-  const rows=[['Вопрос','OK']];
-  state.questions.forEach((q,i)=>rows.push([q.question,isCorrect(q,state.answers[i])?'✓':'✗']));
+  const rows=[['Вопрос','OK']];state.questions.forEach((q,i)=>rows.push([q.question,isCorrect(q,state.answers[i])?'✓':'✗']));
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='result.csv';a.click();
-  toast('CSV скачан');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='result.csv';a.click();toast('CSV');
 }
 function printResult(){
   const w=window.open('','_blank');
@@ -1666,100 +1462,53 @@ function printResult(){
 }
 function showCertificate(){
   const c=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
-  const pct=Math.round(c/state.questions.length*100);
-  const date=new Date().toLocaleDateString('ru-RU');
+  const pct=Math.round(c/state.questions.length*100);const date=new Date().toLocaleDateString('ru-RU');
   $('certRender').innerHTML=`<div class="cert-label">Certificate of Achievement</div><div class="cert-title">AuraQuiz</div><div style="font-size:16px;margin-bottom:8px">Подтверждается прохождение</div><div class="cert-testname">«${esc(TEST?TEST.title:'Тест')}»</div><div class="cert-score">${pct}%</div><div>${c} из ${state.questions.length} правильных</div><div class="cert-footer"><div><b>AuraQuiz</b></div><div>${date}</div></div>`;
   $('certModal').classList.remove('hidden');
 }
-async function downloadCert(){
-  try{
-    const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});
-    const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();
-    toast('Скачано');
-  }catch(e){toast('Ошибка');}
-}
+async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
 function confetti(opts){if(window.confetti)window.confetti({particleCount:150,spread:70,origin:{y:0.6},...opts});}
 
-/* ============ SETTINGS MODAL ============ */
+/* ============ SETTINGS ============ */
 function openSettings(){renderSettingsButtons();$('settingsModal').classList.remove('hidden');}
 function closeSettings(){$('settingsModal').classList.add('hidden');}
 function renderSettingsButtons(){
-  document.querySelectorAll('#setTheme .set-btn').forEach(b=>{
-    const need=parseInt(b.dataset.lvl)||0;
-    b.classList.toggle('locked',game.level<need);
-    b.classList.toggle('active',b.dataset.v===settings.theme);
-  });
+  document.querySelectorAll('#setTheme .set-btn').forEach(b=>{const need=parseInt(b.dataset.lvl)||0;b.classList.toggle('locked',game.level<need);b.classList.toggle('active',b.dataset.v===settings.theme);});
   document.querySelectorAll('#setFontFamily .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.fontFamily));
   document.querySelectorAll('#setFont .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.fontSize));
   document.querySelectorAll('#setSound .set-btn').forEach(b=>b.classList.toggle('active',(settings.sound?'on':'off')===b.dataset.v));
   document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.classList.toggle('active',(settings.autoTheme?'on':'off')===b.dataset.v));
   document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.aiProvider));
 }
-document.querySelectorAll('#setTheme .set-btn').forEach(b=>b.onclick=()=>{
-  const need=parseInt(b.dataset.lvl)||0;
-  if(game.level<need){toast('🔒 Нужен Lv.'+need);return;}
-  settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();
-});
+document.querySelectorAll('#setTheme .set-btn').forEach(b=>b.onclick=()=>{const need=parseInt(b.dataset.lvl)||0;if(game.level<need){toast('🔒 Lv.'+need);return;}settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setFontFamily .set-btn').forEach(b=>b.onclick=()=>{settings.fontFamily=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setFont .set-btn').forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setSound .set-btn').forEach(b=>b.onclick=()=>{settings.sound=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.onclick=()=>{settings.autoTheme=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.onclick=()=>{settings.aiProvider=b.dataset.v;localStorage.setItem(K.AI,settings.aiProvider);saveSettings();renderSettingsButtons();});
-function resetProgress(){
-  if(!confirm('Сбросить XP, достижения, стрики?'))return;
-  game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0};
-  saveGame();toast('Прогресс сброшен');
-}
+function resetProgress(){if(!confirm('Сбросить прогресс?'))return;game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0};saveGame();toast('Сброшено');}
 
 /* ============ ONBOARDING ============ */
 const ONBOARD=[
-  {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов. Создавайте свои тесты или генерируйте через AI.'},
-  {title:'🎯 Проходите тесты',text:'6 режимов: обычный, карточки, survival, reverse, speedrun, тренировка. Выбирайте в меню перед стартом.'},
-  {title:'🏆 Зарабатывайте XP',text:'+10 XP за правильный ответ. Стрики, достижения, уровни — всё для мотивации. Тратьте уровни на новые темы.'},
+  {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов. Создавайте свои или генерируйте через AI.'},
+  {title:'🎯 Проходите тесты',text:'6 режимов: обычный, карточки, survival, reverse, speedrun, тренировка.'},
+  {title:'🏆 Зарабатывайте XP',text:'+10 XP за правильный ответ. Стрики, достижения, уровни. Тратьте уровни на новые темы.'},
 ];
-function startOnboard(){
-  if(localStorage.getItem('aq_onboarded_v6'))return;
-  onboardStep=0;
-  renderOnboard();
-  $('onboardModal').classList.remove('hidden');
-}
-function renderOnboard(){
-  $('onboardTitle').textContent=ONBOARD[onboardStep].title;
-  $('onboardText').textContent=ONBOARD[onboardStep].text;
-  document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));
-}
-function nextOnboard(){
-  onboardStep++;
-  if(onboardStep>=ONBOARD.length){
-    $('onboardModal').classList.add('hidden');
-    localStorage.setItem('aq_onboarded_v6','1');
-    return;
-  }
-  renderOnboard();
-}
+function startOnboard(){if(localStorage.getItem('aq_onboarded_v6'))return;onboardStep=0;renderOnboard();$('onboardModal').classList.remove('hidden');}
+function renderOnboard(){$('onboardTitle').textContent=ONBOARD[onboardStep].title;$('onboardText').textContent=ONBOARD[onboardStep].text;document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));}
+function nextOnboard(){onboardStep++;if(onboardStep>=ONBOARD.length){$('onboardModal').classList.add('hidden');localStorage.setItem('aq_onboarded_v6','1');return;}renderOnboard();}
 
-/* ============ DAILY CHALLENGE ============ */
+/* ============ DAILY ============ */
 function startDailyChallenge(){
   if(tests.length<1){toast('Сначала создайте тесты');return;}
-  const seed=new Date().toDateString();
-  let hash=0;for(let i=0;i<seed.length;i++)hash=(hash*31+seed.charCodeAt(i))|0;
-  const allQ=[];
-  tests.forEach(t=>t.questions.forEach(q=>allQ.push({q,tid:t.id,tname:t.title})));
+  const allQ=[];tests.forEach(t=>t.questions.forEach(q=>allQ.push({q,tid:t.id})));
   const picked=shuffle(allQ).slice(0,5);
   if(!picked.length){toast('Нет вопросов');return;}
-  TEST={id:'daily',title:'🎯 Челлендж дня',description:seed,tags:[],questions:picked.map(p=>p.q)};
-  $('startTitle').textContent=TEST.title;
-  $('startDesc').textContent=TEST.description;
-  $('startTags').innerHTML='';
-  $('theoryBox').classList.add('hidden');
-  $('resumeBanner').classList.add('hidden');
-  $('optTime').value=0;
-  selectMode('normal');
-  show('startScreen');
+  TEST={id:'daily',title:'🎯 Челлендж дня',description:new Date().toDateString(),tags:[],questions:picked.map(p=>p.q)};
+  $('startTitle').textContent=TEST.title;$('startDesc').textContent=TEST.description;$('startTags').innerHTML='';
+  $('theoryBox').classList.add('hidden');$('resumeBanner').classList.add('hidden');$('optTime').value=0;
+  selectMode('normal');show('startScreen');
 }
-
-/* ============ ANTI-CHEAT ============ */
-// (обработчик уже установлен в startTest)
 
 /* ============ KEYBOARD ============ */
 document.addEventListener('keydown',e=>{
@@ -1774,7 +1523,7 @@ document.addEventListener('keydown',e=>{
     if(e.key==='z'){e.preventDefault();if(e.shiftKey)redoEdit();else undoEdit();}
     else if(e.key==='y'){e.preventDefault();redoEdit();}
   }
-  if(e.key==='/'&&!$('libraryScreen')&&$('welcomeScreen').classList.contains('hidden')===false){
+  if(e.key==='/'&&!$('welcomeScreen').classList.contains('hidden')===false){
     const t=(e.target.tagName||'').toLowerCase();
     if(t!=='input'&&t!=='textarea'){e.preventDefault();$('searchInput').focus();}
   }
@@ -1782,10 +1531,9 @@ document.addEventListener('keydown',e=>{
     if(e.key==='ArrowLeft'&&!state.strict){e.preventDefault();prevQuestion();}
     else if(e.key==='ArrowRight'){e.preventDefault();nextQuestion();}
     else if(/^[1-9]$/.test(e.key)){
-      const i=parseInt(e.key)-1;
-      const q=normQ(state.questions[state.current]);
+      const i=parseInt(e.key)-1;const q=normQ(state.questions[state.current]);
       if(['text','matching','sort','fill','file'].includes(q.type))return;
-      if(q.type==='truefalse'){const flip=state.questions[state.current]._flip;const val=i===0?!flip:flip;state.answers[state.current]=val;saveState();renderQ();}
+      if(q.type==='truefalse'){const flip=state.questions[state.current]._flip;state.answers[state.current]=i===0?!flip:flip;saveState();renderQ();}
       else if(i<(q.options||[]).length){
         if(q.type==='multi'){let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];const idx=a.indexOf(i);state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];}
         else state.answers[state.current]=i;
@@ -1800,14 +1548,12 @@ function autoThemeCheck(){
   if(!settings.autoTheme)return;
   const h=new Date().getHours();
   const want=(h>=20||h<7)?'dark':'light';
-  if(settings.theme!==want&&(want==='light'||want==='dark')){
-    settings.theme=want;applySettings();
-  }
+  if(settings.theme!==want&&(want==='light'||want==='dark')){settings.theme=want;applySettings();}
 }
 setInterval(autoThemeCheck,60000);
 
 /* ============ INIT ============ */
-loadAll();loadTests();loadTrash();loadAttempts();loadNotes();
+loadAll();loadTests();loadTrash();loadAttempts();
 $('settingsBtn').innerHTML=ic('settings');
 $('undoBtn').innerHTML=ic('undo');
 $('redoBtn').innerHTML=ic('redo');
@@ -1816,12 +1562,7 @@ $('btnAiNew').innerHTML='🤖 AI';
 $('welcomeCreate').innerHTML=ic('plus')+' Новый тест';
 $('btnSaveTest').innerHTML=ic('edit')+' Сохранить';
 $('startBtn').innerHTML='Начать →';
-renderLib();
-show('welcomeScreen');
-startOnboard();
-checkHash();
-autoThemeCheck();
-addXP(0); // render
+renderLib();show('welcomeScreen');startOnboard();checkHash();autoThemeCheck();addXP(0);
 </script>
 </body>
 </html>
