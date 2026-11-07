@@ -31,8 +31,8 @@
   .btn-primary:hover:not(:disabled) { background: #5568d3; }
   .btn-secondary { background: #f3f4f6; color: #374151; }
   .btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
-  .btn-danger { background: #fee2e2; color: #b91c1c; }
-  .btn-danger:hover:not(:disabled) { background: #fecaca; }
+  .btn-ai { background: linear-gradient(135deg,#8b5cf6,#6366f1); color: #fff; }
+  .btn-ai:hover:not(:disabled) { filter: brightness(1.08); }
   .btn-small { padding: 7px 12px; font-size: .85rem; }
   .icon-btn {
     width: 34px; height: 34px; padding: 0; border-radius: 8px;
@@ -43,17 +43,18 @@
   .icon-btn.danger { background: #fee2e2; color: #b91c1c; }
   .icon-btn.danger:hover:not(:disabled) { background: #fecaca; }
 
-  .row { display: flex; gap: 8px; align-items: center; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .spacer { flex: 1; }
 
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: .85rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
-  .field input[type="text"], .field input[type="number"], .field textarea, .field select {
+  .field input[type="text"], .field input[type="number"], .field input[type="password"],
+  .field textarea, .field select {
     width: 100%; padding: 9px 12px; border: 1.5px solid #d1d5db;
     border-radius: 8px; font-size: .95rem; font-family: inherit;
-    transition: border-color .15s;
+    transition: border-color .15s; background: #fff;
   }
-  .field input:focus, .field textarea:focus { outline: none; border-color: #667eea; }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: #667eea; }
   .field textarea { resize: vertical; min-height: 60px; }
 
   .test-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
@@ -163,19 +164,46 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .hidden { display: none !important; }
+
+  /* ===== Модальное окно ===== */
+  .modal {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, .55);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; z-index: 200; backdrop-filter: blur(4px);
+  }
+  .modal-content {
+    background: #fff; border-radius: 18px; padding: 24px;
+    width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    animation: pop .2s ease;
+  }
+  @keyframes pop { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-content h2 { font-size: 1.2rem; margin-bottom: 6px; }
+  .modal-sub { font-size: .85rem; color: #6b7280; margin-bottom: 18px; }
+  .modal-content .row { flex-wrap: wrap; }
+  .ai-status {
+    margin-top: 12px; padding: 10px 12px; border-radius: 8px;
+    font-size: .88rem; display: none;
+  }
+  .ai-status.info { background: #eef2ff; color: #3730a3; display: block; }
+  .ai-status.ok { background: #dcfce7; color: #166534; display: block; }
+  .ai-status.err { background: #fee2e2; color: #991b1b; display: block; }
+  .ai-key-hint { font-size: .78rem; color: #9ca3af; margin-top: 4px; }
+  .ai-key-hint a { color: #667eea; }
 </style>
 </head>
 <body>
 
 <div class="card" id="app">
 
+  <!-- ========== БИБЛИОТЕКА ========== -->
   <div id="libraryScreen">
-    <div class="row" style="margin-bottom:14px">
-      <div>
+    <div class="row" style="margin-bottom:14px; align-items:flex-start">
+      <div style="flex:1; min-width:180px">
         <h1>📚 Мои тесты</h1>
         <p class="subtitle" style="margin-bottom:0">Создавайте тесты, редактируйте вопросы и проходите их.</p>
       </div>
-      <div class="spacer"></div>
+      <button class="btn-ai" onclick="openAiModal('test')">🤖 AI Создать</button>
       <button class="btn-primary" onclick="openEditor(null)">＋ Создать</button>
     </div>
     <div class="test-list" id="testList"></div>
@@ -187,6 +215,7 @@
     <input type="file" id="fileInput" accept="application/json,.json" class="hidden" onchange="importJSON(event)">
   </div>
 
+  <!-- ========== СТАРТ ========== -->
   <div id="startScreen" class="hidden">
     <div class="row" style="margin-bottom:12px">
       <button class="icon-btn" onclick="show('libraryScreen')">←</button>
@@ -212,11 +241,13 @@
     <button class="btn-primary" style="width:100%" onclick="startTest()">Начать тест</button>
   </div>
 
+  <!-- ========== РЕДАКТОР ========== -->
   <div id="editorScreen" class="hidden">
     <div class="row" style="margin-bottom:14px">
       <button class="icon-btn" onclick="closeEditor()">←</button>
       <h1 id="editorTitle" style="margin:0; font-size:1.25rem">Новый тест</h1>
     </div>
+
     <div class="field">
       <label>Название теста *</label>
       <input type="text" id="edTitle" placeholder="Например: Основы веб-разработки">
@@ -229,11 +260,15 @@
       <label>Лимит времени, мин (0 = без лимита)</label>
       <input type="number" id="edTime" min="0" max="300" value="0">
     </div>
-    <h2 style="margin-top:20px; display:flex; align-items:center; gap:10px">
+
+    <h2 style="margin-top:20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap">
       Вопросы <span id="qCount" style="font-size:.85rem; color:#9ca3af; font-weight:400"></span>
+      <div class="spacer"></div>
+      <button class="btn-ai btn-small" onclick="openAiModal('questions')">🤖 AI Вопросы</button>
     </h2>
     <div id="edQuestions"></div>
     <button class="btn-secondary" style="width:100%; margin-bottom:20px" onclick="addQuestion()">＋ Добавить вопрос</button>
+
     <div class="row" style="gap:8px; padding-top:14px; border-top:1px solid #e5e7eb">
       <button class="btn-secondary" onclick="closeEditor()">Отмена</button>
       <div class="spacer"></div>
@@ -241,6 +276,7 @@
     </div>
   </div>
 
+  <!-- ========== ТЕСТ ========== -->
   <div id="quizScreen" class="hidden">
     <div class="quiz-header">
       <div id="counter"></div>
@@ -255,6 +291,7 @@
     </div>
   </div>
 
+  <!-- ========== РЕЗУЛЬТАТ ========== -->
   <div id="resultScreen" class="hidden">
     <div class="result">
       <h1>Результат</h1>
@@ -273,11 +310,60 @@
   </div>
 </div>
 
+<!-- ========== МОДАЛ AI ========== -->
+<div id="aiModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="aiModalTitle">🤖 Создать тест с DeepSeek</h2>
+    <p class="modal-sub" id="aiModalSub">AI сгенерирует тест с вариантами ответов по вашей теме.</p>
+
+    <div class="field">
+      <label>Тема *</label>
+      <input type="text" id="aiTopic" placeholder="Например: История России, Python, CSS-флексбоксы">
+    </div>
+
+    <div class="row" style="gap:10px">
+      <div class="field" style="flex:1; min-width:120px; margin:0">
+        <label>Вопросов</label>
+        <input type="number" id="aiCount" value="5" min="1" max="20">
+      </div>
+      <div class="field" style="flex:2; min-width:140px; margin:0">
+        <label>Сложность</label>
+        <select id="aiDiff">
+          <option value="easy">Лёгкая</option>
+          <option value="medium" selected>Средняя</option>
+          <option value="hard">Сложная</option>
+          <option value="mixed">Смешанная</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:14px">
+      <label>DeepSeek API-ключ *</label>
+      <input type="password" id="aiKey" placeholder="sk-...">
+      <div class="ai-key-hint">
+        Ключ хранится только в вашем браузере. Получить:
+        <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">platform.deepseek.com → API keys</a>
+      </div>
+    </div>
+
+    <div class="ai-status" id="aiStatus"></div>
+
+    <div class="row" style="gap:8px; justify-content:flex-end; margin-top:18px">
+      <button class="btn-secondary" onclick="closeAiModal()">Отмена</button>
+      <button class="btn-ai" id="aiGenBtn" onclick="generateWithAi()">✨ Сгенерировать</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
+/* ==========================================================
+   ХРАНИЛИЩЕ
+   ========================================================== */
 const TESTS_KEY = "quiz_tests_v2";
 const STATE_KEY = "quiz_state_v2";
+const AI_KEY    = "quiz_deepseek_key";
 
 const $ = id => document.getElementById(id);
 const deepCopy = x => JSON.parse(JSON.stringify(x));
@@ -307,6 +393,9 @@ function showToast(msg){
 }
 function uid(){ return "t" + Date.now() + Math.random().toString(36).slice(2, 6); }
 
+/* ==========================================================
+   ДЕМО-ТЕСТ
+   ========================================================== */
 function defaultTests(){
   return [{
     id: uid(),
@@ -330,13 +419,21 @@ function defaultTests(){
   }];
 }
 
+/* ==========================================================
+   ГЛОБАЛЬНОЕ СОСТОЯНИЕ
+   ========================================================== */
 let tests = [];
 let TEST = null;
 let editing = null;
 let state = null;
 let timerId = null;
 let pendingSaved = null;
+let aiMode = "test";
+let aiResult = null;
 
+/* ==========================================================
+   ЗАГРУЗКА / СОХРАНЕНИЕ
+   ========================================================== */
 async function loadTests(){
   try {
     const raw = localStorage.getItem(TESTS_KEY);
@@ -346,7 +443,6 @@ async function loadTests(){
     }
   } catch(e){}
 
-  // Первый заход: пробуем загрузить предустановленные тесты из репозитория
   try {
     const res = await fetch("default-tests.json", { cache: "no-store" });
     if (res.ok){
@@ -367,16 +463,22 @@ function saveTests(){
   catch(e){ showToast("⚠ Не удалось сохранить (хранилище переполнено)"); }
 }
 
+/* ==========================================================
+   НАВИГАЦИЯ
+   ========================================================== */
 function show(id){
   ["libraryScreen","startScreen","editorScreen","quizScreen","resultScreen"]
     .forEach(s => $(s).classList.toggle("hidden", s !== id));
   window.scrollTo({ top: 0 });
 }
 
+/* ==========================================================
+   БИБЛИОТЕКА
+   ========================================================== */
 function renderLibrary(){
   const box = $("testList");
   if (!tests.length){
-    box.innerHTML = `<div class="empty-state">Пока нет тестов.<br>Нажмите «Создать», чтобы добавить первый.</div>`;
+    box.innerHTML = `<div class="empty-state">Пока нет тестов.<br>Нажмите «Создать» или «🤖 AI Создать».</div>`;
     return;
   }
   box.innerHTML = tests.map(t => `
@@ -407,6 +509,9 @@ function deleteTest(id){
   showToast("Тест удалён");
 }
 
+/* ==========================================================
+   СТАРТ ТЕСТА
+   ========================================================== */
 function openStart(id){
   TEST = tests.find(t => t.id === id);
   if (!TEST) return;
@@ -450,24 +555,23 @@ function startTest(){
   const shufA = $("optShuffleA").checked;
   const mins = Math.max(0, parseInt($("optTime").value, 10) || 0);
   const totalTime = mins * 60;
-
   localStorage.removeItem(STATE_KEY);
 
   state = {
     testId: TEST.id,
     questions: prepareQuestions(TEST.questions, shufQ, shufA),
     answers: new Array(TEST.questions.length).fill(null),
-    current: 0,
-    totalTime,
-    timeLeft: totalTime
+    current: 0, totalTime, timeLeft: totalTime
   };
   saveState();
-
   show("quizScreen");
   renderQuestion();
   startTimer();
 }
 
+/* ==========================================================
+   СОХРАНЕНИЕ ПОПЫТКИ
+   ========================================================== */
 function saveState(){
   if (!state) return;
   try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e){}
@@ -499,6 +603,9 @@ function resumeTest(){
   else finish(true);
 }
 
+/* ==========================================================
+   ТАЙМЕР
+   ========================================================== */
 function startTimer(){
   if (timerId) clearInterval(timerId);
   updateTimer();
@@ -526,11 +633,15 @@ function updateTimer(){
   el.classList.toggle("warning", state.timeLeft <= 30);
 }
 
+/* ==========================================================
+   ПРОХОЖДЕНИЕ
+   ========================================================== */
 function renderQuestion(){
   const q = state.questions[state.current];
   $("questionText").textContent = q.question;
   $("counter").textContent = `Вопрос ${state.current + 1} из ${state.questions.length}`;
   $("progress").style.width = `${((state.current + 1) / state.questions.length) * 100}%`;
+
   const box = $("options");
   box.innerHTML = "";
   q.options.forEach((text, i) => {
@@ -541,6 +652,7 @@ function renderQuestion(){
     el.onclick = () => selectOption(i);
     box.appendChild(el);
   });
+
   $("prevBtn").disabled = state.current === 0;
   $("nextBtn").textContent = state.current === state.questions.length - 1
     ? "Завершить ✓" : "Далее →";
@@ -565,10 +677,12 @@ function finish(byTimeout){
   if (timerId){ clearInterval(timerId); timerId = null; }
   localStorage.removeItem(STATE_KEY);
   pendingSaved = null;
+
   const total = state.questions.length;
   const correctCount = state.answers.filter((a, i) => a === state.questions[i].correct).length;
   const answeredCount = state.answers.filter(a => a !== null).length;
   const percent = Math.round((correctCount / total) * 100);
+
   show("resultScreen");
   $("scoreText").textContent = `${percent}%`;
   $("scoreMsg").textContent =
@@ -599,17 +713,26 @@ function restart(){
   else show("libraryScreen");
 }
 
+/* ==========================================================
+   РЕДАКТОР
+   ========================================================== */
 function blankQuestion(){
   return { question: "", options: ["", "", "", ""], correct: 0 };
 }
 
-function openEditor(id){
-  const existing = id ? tests.find(t => t.id === id) : null;
+function openEditor(idOrTest){
+  let existing = null;
+  if (typeof idOrTest === "string"){
+    existing = tests.find(t => t.id === idOrTest);
+  } else if (idOrTest && typeof idOrTest === "object"){
+    existing = idOrTest; // пришёл объект напрямую (напр. от AI)
+  }
   editing = existing ? deepCopy(existing) : {
     id: uid(), title: "", description: "", timeLimit: 0,
     questions: [blankQuestion()]
   };
-  $("editorTitle").textContent = existing ? "Редактирование теста" : "Новый тест";
+  $("editorTitle").textContent = existing && existing.id && tests.find(t => t.id === existing.id)
+    ? "Редактирование теста" : "Новый тест";
   $("edTitle").value = editing.title;
   $("edDesc").value = editing.description || "";
   $("edTime").value = editing.timeLimit ? Math.round(editing.timeLimit / 60) : 0;
@@ -698,6 +821,7 @@ $("edQuestions").addEventListener("change", e => {
 });
 
 function saveTest(){
+  if (!editing){ showToast("Редактор закрыт"); return; }
   editing.title = $("edTitle").value.trim();
   editing.description = $("edDesc").value.trim();
   editing.timeLimit = Math.max(0, parseInt($("edTime").value, 10) || 0) * 60;
@@ -734,6 +858,9 @@ function saveTest(){
   showToast("✓ Тест сохранён");
 }
 
+/* ==========================================================
+   ИМПОРТ / ЭКСПОРТ
+   ========================================================== */
 function exportAll(){
   const data = JSON.stringify(tests, null, 2);
   const blob = new Blob([data], { type: "application/json" });
@@ -794,7 +921,243 @@ function isValidTest(t){
     );
 }
 
+/* ==========================================================
+   🤖 DEEPSEEK AI
+   ========================================================== */
+function getApiKey(){ return localStorage.getItem(AI_KEY) || ""; }
+function setApiKey(k){ try { localStorage.setItem(AI_KEY, k); } catch(e){} }
+
+function openAiModal(mode){
+  aiMode = mode;
+  aiResult = null;
+  $("aiKey").value = getApiKey();
+  $("aiTopic").value = "";
+  $("aiCount").value = 5;
+  $("aiDiff").value = "medium";
+  setStatus("", "");
+  $("aiGenBtn").textContent = "✨ Сгенерировать";
+  $("aiGenBtn").onclick = generateWithAi;
+  $("aiGenBtn").disabled = false;
+
+  if (mode === "questions" && editing){
+    $("aiModalTitle").textContent = "🤖 Сгенерировать вопросы";
+    $("aiModalSub").textContent = "AI допишет вопросы к текущему тесту. Потом можно отредактировать.";
+  } else {
+    $("aiModalTitle").textContent = "🤖 Создать тест с DeepSeek";
+    $("aiModalSub").textContent = "AI сгенерирует тест с вариантами ответов по вашей теме.";
+  }
+  $("aiModal").classList.remove("hidden");
+  setTimeout(() => $("aiTopic").focus(), 50);
+}
+
+function closeAiModal(){
+  $("aiModal").classList.add("hidden");
+  aiResult = null;
+}
+
+function setStatus(msg, kind){
+  const el = $("aiStatus");
+  el.className = "ai-status" + (kind ? " " + kind : "");
+  el.textContent = msg || "";
+}
+
+async function callDeepSeek(messages, apiKey){
+  let res;
+  try {
+    res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + apiKey
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages,
+        temperature: 0.8,
+        response_format: { type: "json_object" },
+        max_tokens: 4096
+      })
+    });
+  } catch (netErr){
+    throw new Error("Сеть/браузер заблокировал запрос к api.deepseek.com. " +
+      "Проверьте интернет, VPN или блокировщики. (" + netErr.message + ")");
+  }
+  if (!res.ok){
+    let body = "";
+    try { body = await res.text(); } catch(e){}
+    let msg;
+    if (res.status === 401) msg = "Неверный API-ключ DeepSeek (401)";
+    else if (res.status === 402) msg = "Недостаточно средств на балансе DeepSeek (402)";
+    else if (res.status === 429) msg = "Слишком много запросов — подождите (429)";
+    else if (res.status >= 500) msg = `Сервер DeepSeek временно недоступен (${res.status})`;
+    else msg = `Ошибка API ${res.status}: ${body.slice(0, 200)}`;
+    throw new Error(msg);
+  }
+  const data = await res.json();
+  if (!data.choices || !data.choices[0] || !data.choices[0].message){
+    throw new Error("Неожиданный ответ API: " + JSON.stringify(data).slice(0, 200));
+  }
+  return data.choices[0].message.content;
+}
+
+function parseJsonLoose(text){
+  if (!text) throw new Error("пустой ответ");
+  try { return JSON.parse(text); } catch(e){}
+  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence){
+    try { return JSON.parse(fence[1]); } catch(e){}
+  }
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start >= 0 && end > start){
+    try { return JSON.parse(text.slice(start, end + 1)); } catch(e){}
+  }
+  throw new Error("не удалось найти JSON в ответе AI");
+}
+
+function normalizeQuestions(raw){
+  if (!Array.isArray(raw)) return [];
+  return raw.map(q => {
+    const opts = Array.isArray(q.options) ? q.options.map(o => String(o).trim()) : [];
+    // Гарантируем минимум 2 варианта
+    while (opts.length < 2) opts.push("Вариант " + (opts.length + 1));
+    let correct = Number(q.correct);
+    if (!Number.isFinite(correct) || correct < 0 || correct >= opts.length) correct = 0;
+    return {
+      question: String(q.question || "").trim() || "Вопрос без текста",
+      options: opts,
+      correct
+    };
+  }).filter(q => q.question);
+}
+
+async function generateWithAi(){
+  if (aiResult){ // нажата кнопка "Применить"
+    applyAiResult();
+    return;
+  }
+  const topic = $("aiTopic").value.trim();
+  const count = Math.min(20, Math.max(1, parseInt($("aiCount").value, 10) || 5));
+  const diff = $("aiDiff").value;
+  const key = $("aiKey").value.trim();
+
+  if (!topic){ setStatus("Введите тему", "err"); $("aiTopic").focus(); return; }
+  if (!key){ setStatus("Введите API-ключ DeepSeek", "err"); $("aiKey").focus(); return; }
+  setApiKey(key);
+
+  const diffLabel = { easy: "лёгкий", medium: "средний", hard: "сложный",
+                      mixed: "смешанный (часть вопросов легче, часть сложнее)" }[diff];
+
+  const sys = "Ты — опытный методист. Генерируешь тестовые вопросы строго в формате JSON. " +
+              "Никогда не добавляй markdown-обёртки, комментарии и пояснения — только валидный JSON.";
+  const user =
+`Создай ${count} тестовых вопроса по теме "${topic}". Уровень: ${diffLabel}.
+Ответ должен быть ТОЛЬКО в формате JSON:
+{
+  "title": "Короткое название теста",
+  "description": "Одно предложение описания",
+  "timeLimit": ${count * 60},
+  "questions": [
+    {
+      "question": "Текст вопроса?",
+      "options": ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4"],
+      "correct": 0
+    }
+  ]
+}
+Правила:
+- Ровно ${count} вопросов.
+- Ровно 4 варианта в каждом.
+- "correct" — индекс правильного варианта (0..3).
+- Вопросы разные и осмысленные, без повторов.
+- В "options" только текст варианта, без букв A/B/C/D и без нумерации.
+- Правильный ответ не всегда первый, распределяй равномерно.
+- Всё на русском языке.`;
+
+  const btn = $("aiGenBtn");
+  btn.disabled = true;
+  btn.textContent = "⏳ Генерирую...";
+  setStatus("Это займёт 10–30 секунд…", "info");
+
+  try {
+    const content = await callDeepSeek([
+      { role: "system", content: sys },
+      { role: "user", content: user }
+    ], key);
+
+    let parsed;
+    try { parsed = parseJsonLoose(content); }
+    catch (e){
+      throw new Error("AI вернул не-JSON. Первые символы: " + content.slice(0, 120));
+    }
+    if (!parsed.questions || !Array.isArray(parsed.questions)){
+      throw new Error("AI вернул JSON без поля questions");
+    }
+    const questions = normalizeQuestions(parsed.questions);
+    if (!questions.length) throw new Error("AI не вернул ни одного валидного вопроса");
+
+    aiResult = {
+      title: String(parsed.title || `Тест по теме: ${topic}`).trim(),
+      description: String(parsed.description || `Сгенерировано AI по теме «${topic}»`).trim(),
+      timeLimit: Math.max(0, Number(parsed.timeLimit) || questions.length * 60),
+      questions
+    };
+
+    setStatus(`✓ Готово: ${questions.length} вопросов. Нажмите «Применить».`, "ok");
+    btn.textContent = "✓ Применить";
+    btn.disabled = false;
+    btn.onclick = applyAiResult;
+  } catch (err){
+    setStatus("❌ " + err.message, "err");
+    btn.disabled = false;
+    btn.textContent = "✨ Сгенерировать";
+    btn.onclick = generateWithAi;
+  }
+}
+
+function applyAiResult(){
+  if (!aiResult){ showToast("Сначала сгенерируйте"); return; }
+
+  if (aiMode === "questions" && editing){
+    // убрать пустой дефолтный вопрос, если он остался нетронутым
+    if (editing.questions.length === 1 && !editing.questions[0].question.trim()){
+      editing.questions = [];
+    }
+    editing.questions.push(...deepCopy(aiResult.questions));
+    renderEditor();
+    closeAiModal();
+    showToast(`✓ Добавлено ${aiResult.questions.length} вопросов`);
+    return;
+  }
+
+  // режим "создать тест" — открываем в редакторе на проверку
+  const draft = {
+    id: uid(),
+    title: aiResult.title,
+    description: aiResult.description,
+    timeLimit: aiResult.timeLimit,
+    questions: deepCopy(aiResult.questions)
+  };
+  closeAiModal();
+  openEditor(draft);
+  showToast("✓ Тест сгенерирован — проверьте и сохраните");
+}
+
+/* Enter в модалке = применить/сгенерировать */
+$("aiKey").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ e.preventDefault(); $("aiGenBtn").click(); }
+});
+$("aiTopic").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ e.preventDefault(); $("aiCount").focus(); }
+});
+
+/* ==========================================================
+   КЛАВИАТУРА
+   ========================================================== */
 document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !$("aiModal").classList.contains("hidden")){
+    closeAiModal(); return;
+  }
   if ($("quizScreen").classList.contains("hidden") || !state) return;
   if (e.key === "ArrowLeft"){ e.preventDefault(); prevQuestion(); }
   else if (e.key === "ArrowRight"){ e.preventDefault(); nextQuestion(); }
@@ -804,6 +1167,9 @@ document.addEventListener("keydown", e => {
   }
 });
 
+/* ==========================================================
+   ЗАПУСК
+   ========================================================== */
 loadTests().then(() => {
   renderLibrary();
   show("libraryScreen");
