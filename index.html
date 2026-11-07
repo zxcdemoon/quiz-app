@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AuraQuiz v7.0</title>
+<title>AuraQuiz v7.1</title>
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,7 +73,6 @@ body.dark{background-image:linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75)),ur
 body.font-large{font-size:17px;}
 body.font-large h1{font-size:30px;}
 
-/* MULTIPLAYER MODE: скрываем ненужное */
 body.multiplayer-active .timer,
 body.multiplayer-active #streakBadge,
 body.multiplayer-active .uncertain-row,
@@ -306,7 +305,6 @@ body.dark .ach-card{background:rgba(255,255,255,0.05);}
 .cert-testname{font-size:20px;font-weight:700;margin-bottom:28px;}
 .cert-footer{display:flex;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:2px solid rgba(0,0,0,0.1);font-family:var(--mono);font-size:11px;color:#444;}
 
-/* Multiplayer scoreboard */
 #multiplayerScore{padding:16px;background:rgba(255,255,255,0.4);border-radius:12px;margin:16px 0;border:1px solid var(--glass-border);}
 body.dark #multiplayerScore{background:rgba(255,255,255,0.06);}
 
@@ -343,7 +341,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div class="xp-fill"><div id="xpFill" style="width:0%"></div></div>
         <span id="xpText">0 XP</span>
       </div>
-      <div class="header-meta" id="headerMeta">v7.0</div>
+      <div class="header-meta" id="headerMeta">v7.1</div>
       <button class="icon-btn" title="Достижения" onclick="openAchievements()" id="achBtn">🏆</button>
       <button class="icon-btn" title="Настройки" onclick="openSettings()" id="settingsBtn"></button>
     </div>
@@ -370,7 +368,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
     </aside>
 
     <main class="main">
-      <!-- ========== WELCOME ========== -->
       <div id="welcomeScreen">
         <div class="welcome">
           <div style="font-size:80px">🎓</div>
@@ -389,7 +386,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
-      <!-- ========== START ========== -->
       <div id="startScreen" class="hidden">
         <div class="row" style="margin-bottom:16px"><button class="icon-btn" onclick="backToWelcome()">←</button></div>
         <h1 id="startTitle"></h1>
@@ -429,7 +425,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div style="text-align:center;margin-top:20px"><button class="start-test-btn" onclick="startTest()" id="startBtn"></button></div>
       </div>
 
-      <!-- ========== EDITOR ========== -->
       <div id="editorScreen" class="hidden">
         <div class="row" style="margin-bottom:16px">
           <button class="icon-btn" onclick="closeEditor()">←</button>
@@ -457,7 +452,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
-      <!-- ========== QUIZ ========== -->
       <div id="quizScreen" class="hidden">
         <div class="quiz-top">
           <div class="quiz-counter"><span class="big" id="counterBig">01</span><span id="counterSmall" style="color:var(--text-muted)">/ 10</span></div>
@@ -476,7 +470,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
-      <!-- ========== FLASHCARD ========== -->
       <div id="flashcardScreen" class="hidden">
         <div class="quiz-top">
           <div class="quiz-counter"><span class="big" id="fcCounterBig">01</span><span id="fcCounterSmall" style="color:var(--text-muted)">/ 10</span></div>
@@ -487,7 +480,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
-      <!-- ========== RESULT ========== -->
       <div id="resultScreen" class="hidden">
         <div class="result-hero">
           <div class="score" id="scoreText">—</div>
@@ -504,7 +496,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div id="reviewList"></div>
       </div>
 
-      <!-- ========== MULTIPLAYER: MENU ========== -->
       <div id="multiplayerMenuScreen" class="hidden">
         <div class="row" style="margin-bottom:16px">
           <button class="icon-btn" onclick="show('welcomeScreen')">←</button>
@@ -513,7 +504,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <p class="subtitle">Один экран — учитель, остальные — ученики. Учитель создаёт комнату, ученики входят по PIN.</p>
 
         <div class="mp-cols" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
-          <!-- Хост -->
           <div style="padding:24px;background:rgba(255,255,255,0.4);border-radius:16px;border:1px solid var(--glass-border)">
             <div style="font-size:40px;margin-bottom:12px">👨‍🏫</div>
             <h2 style="margin-bottom:8px">Я учитель</h2>
@@ -525,7 +515,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
             </button>
           </div>
 
-          <!-- Игрок -->
           <div style="padding:24px;background:rgba(255,255,255,0.4);border-radius:16px;border:1px solid var(--glass-border)">
             <div style="font-size:40px;margin-bottom:12px">🧑‍🎓</div>
             <h2 style="margin-bottom:8px">Я ученик</h2>
@@ -552,7 +541,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
-      <!-- ========== MULTIPLAYER: LOBBY (HOST) ========== -->
       <div id="multiplayerLobbyScreen" class="hidden">
         <div class="row" style="margin-bottom:16px">
           <button class="icon-btn" onclick="leaveMultiplayer()">←</button>
@@ -575,7 +563,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         </div>
       </div>
 
-      <!-- ========== MULTIPLAYER: WAIT (PLAYER) ========== -->
       <div id="multiplayerWaitScreen" class="hidden">
         <div style="text-align:center;padding:60px 20px">
           <div style="font-size:80px;animation:pulse 1.5s infinite">⏳</div>
@@ -593,7 +580,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- AI Modal -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2>🤖 AI Генератор</h2>
@@ -615,7 +601,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Settings Modal -->
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
@@ -645,7 +630,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Trash Modal -->
 <div id="trashModal" class="modal hidden">
   <div class="modal-content">
     <h2>🗑 Корзина</h2>
@@ -654,7 +638,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Achievements Modal -->
 <div id="achModal" class="modal hidden">
   <div class="modal-content">
     <h2>🏆 Достижения</h2>
@@ -664,7 +647,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Certificate Modal -->
 <div id="certModal" class="certificate-modal hidden">
   <div class="certificate-content">
     <div id="certRender"></div>
@@ -672,7 +654,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   </div>
 </div>
 
-<!-- Onboarding -->
 <div id="onboardModal" class="onboarding-overlay hidden">
   <div class="onboarding-card">
     <div class="onboarding-dots"><span class="active"></span><span></span><span></span></div>
@@ -713,7 +694,6 @@ function initSupabase() {
   return sbClient;
 }
 
-/* ============ ICONS ============ */
 const ICONS = {
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
@@ -728,7 +708,6 @@ const ICONS = {
 };
 const ic = n => ICONS[n] || '';
 
-/* ============ STORAGE KEYS ============ */
 const K = {
   TESTS:'aq_tests_v6',TRASH:'aq_trash_v6',SET:'aq_settings_v6',DRAFT:'aq_draft_v6',
   ATT:'aq_attempts_v6',PROXY:'aq_proxy_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',
@@ -748,7 +727,7 @@ function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math
 function fmtTime(s){s=Math.max(0,Math.ceil(s));return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;}
 
 let settings={theme:'light',fontFamily:'manrope',fontSize:'normal',sound:true,aiProvider:'pollinations',autoTheme:false};
-let tests=[],trash=[],attempts=[],game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0};
+let tests=[],trash=[],attempts=[],game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};
 let proxyUrl='',aiCache={};
 let TEST=null,editing=null,state=null,timerId=null,pendingSaved=null;
 let aiMode='test',aiResult=null,aiTab='topic';
@@ -757,7 +736,6 @@ let editHistory=[],editFuture=[],dragSrc=null;
 let onboardStep=0;
 let antiCheatWarnings=0;
 
-/* ============ SETTINGS ============ */
 function loadAll(){
   try{const raw=localStorage.getItem(K.SET);if(raw)settings={...settings,...JSON.parse(raw)};}catch(e){}
   try{proxyUrl=localStorage.getItem(K.PROXY)||'';}catch(e){}
@@ -813,7 +791,6 @@ function touchDay(){
   }
 }
 
-/* ============ ACHIEVEMENTS ============ */
 const ACHIEVEMENTS=[
   {id:'first_test',icon:'🎯',title:'Первый тест',desc:'Пройди 1 тест',check:()=>attempts.length>=1},
   {id:'ten_tests',icon:'🔥',title:'10 тестов',desc:'Пройди 10 тестов',check:()=>attempts.length>=10},
@@ -825,7 +802,7 @@ const ACHIEVEMENTS=[
   {id:'lvl_5',icon:'🏅',title:'Уровень 5',desc:'Lv.5',check:()=>game.level>=5},
   {id:'creator',icon:'✏️',title:'Создатель',desc:'5 тестов',check:()=>tests.length>=5},
   {id:'ai_master',icon:'🤖',title:'AI Мастер',desc:'10 AI-генераций',check:()=>game.aiGenerated>=10},
-  {id:'multiplayer',icon:'🎮',title:'Мультиплеер',desc:'Сыграй в комнате',check:()=>game.multiplayerGames>=1},
+  {id:'multiplayer',icon:'🎮',title:'Мультиплеер',desc:'Сыграй в комнате',check:()=>(game.multiplayerGames||0)>=1},
 ];
 function checkAchievements(){
   ACHIEVEMENTS.forEach(a=>{
@@ -840,7 +817,6 @@ function openAchievements(){
   $('achModal').classList.remove('hidden');
 }
 
-/* ============ STORAGE ============ */
 async function loadTests(){
   try{const r=localStorage.getItem(K.TESTS);if(r){const a=JSON.parse(r);if(Array.isArray(a)&&a.length){tests=a.map(norm);return;}}}catch(e){}
   tests=[defaultTest()];saveTests();
@@ -874,7 +850,6 @@ function defaultTest(){
   ],history:[],fav:false};
 }
 
-/* ============ NAV ============ */
 function show(id){
   ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen',
    'multiplayerMenuScreen','multiplayerLobbyScreen','multiplayerWaitScreen'].forEach(s=>{
@@ -884,7 +859,6 @@ function show(id){
   document.querySelector('.main').scrollTop=0;
 }
 
-/* ============ LIBRARY ============ */
 function filterTests(){
   return tests.filter(t=>{
     if(searchQuery){const q=searchQuery.toLowerCase();if(!(t.title||'').toLowerCase().includes(q)&&!(t.description||'').toLowerCase().includes(q)&&!(t.tags||[]).some(tag=>tag.toLowerCase().includes(q)))return false;}
@@ -934,11 +908,10 @@ function closeTrash(){$('trashModal').classList.add('hidden');}
 function restoreTest(id){const t=trash.find(x=>x.id===id);if(!t)return;delete t.deletedAt;tests.push(t);trash=trash.filter(x=>x.id!==id);saveTests();saveTrash();openTrash();renderLib();toast('✓ Восстановлен');}
 function permanentDelete(id){trash=trash.filter(x=>x.id!==id);saveTrash();openTrash();}
 
-/* ============ SHARE ============ */
 function shareTest(id){
   const t=tests.find(x=>x.id===id);if(!t)return;
   const url=location.origin+location.pathname+'#test='+btoa(unescape(encodeURIComponent(JSON.stringify(t))));
-  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка на тест скопирована')).catch(()=>prompt('Скопируйте:',url));
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка скопирована')).catch(()=>prompt('Скопируйте:',url));
 }
 function checkHash(){
   const h=location.hash;
@@ -948,7 +921,6 @@ function checkHash(){
   }
 }
 
-/* ============ START ============ */
 function openStart(id){
   TEST=tests.find(t=>t.id===id);if(!TEST)return;
   $('startTitle').textContent=TEST.title;
@@ -981,7 +953,6 @@ function resumeTest(){
   else{show('quizScreen');renderQ();if(state.totalTime===0||state.timeLeft>0)startTimer();else finish(true);}
 }
 
-/* ============ START TEST ============ */
 function prepareQuestions(qs,shufQ,shufA,sample){
   let arr=qs.slice();
   if(sample&&sample<arr.length)arr=shuffle(arr).slice(0,sample);
@@ -1022,7 +993,6 @@ function startTest(){
 function saveState(){if(!state||state.multiplayer)return;try{localStorage.setItem(K.ATT,JSON.stringify(state));}catch(e){}}
 function loadSaved(){try{const r=localStorage.getItem(K.ATT);if(!r)return null;const d=JSON.parse(r);if(!d||!Array.isArray(d.questions))return null;return d;}catch(e){return null;}}
 
-/* ============ TIMER ============ */
 function startTimer(){
   if(timerId)clearInterval(timerId);
   updateTimer();
@@ -1042,7 +1012,6 @@ function updateTimer(){
   el.classList.toggle('warning',state.timeLeft<=30);
 }
 
-/* ============ QUIZ ============ */
 function hasAnswer(ans,q){
   const nq=normQ(q);
   if(nq.type==='text')return typeof ans==='string'&&ans.trim()!=='';
@@ -1140,7 +1109,6 @@ function nextQuestion(){
   } else finish(false);
 }
 
-/* ============ FLASHCARDS ============ */
 function renderFC(){
   const raw=state.questions[state.current];const q=normQ(raw);
   $('fcCounterBig').textContent=pad(state.current+1);
@@ -1179,7 +1147,6 @@ function finishFC(){
   if(pct>=90)confetti();
 }
 
-/* ============ CORRECT ============ */
 function isCorrect(q,ans){
   const nq=normQ(q);
   if(ans===null||ans===undefined)return false;
@@ -1195,7 +1162,6 @@ function isCorrect(q,ans){
   return ans===idx;
 }
 
-/* ============ FINISH ============ */
 function finish(byTimeout){
   if(timerId)clearInterval(timerId);timerId=null;
   if(window._acHandler){document.removeEventListener('visibilitychange',window._acHandler);window._acHandler=null;}
@@ -1247,7 +1213,6 @@ function renderReview(){
   $('reviewList').innerHTML=html;rMath($('reviewList'));
 }
 
-/* ============ AI ============ */
 function playS(n){if(!settings.sound)return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const f={click:[600,.06],correct:[880,.1],wrong:[300,.15],complete:[523,.15]}[n]||[500,.1];const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f[0];g.gain.setValueAtTime(.05,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+f[1]);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+f[1]);}catch(e){}}
 function speak(){const q=normQ(state.questions[state.current]);if(!('speechSynthesis'in window)){toast('TTS нет');return;}const u=new SpeechSynthesisUtterance(q.question.replace(/[*_`$]/g,''));u.lang='ru-RU';speechSynthesis.cancel();speechSynthesis.speak(u);toast('🔊');}
 async function callAI(msgs){
@@ -1328,7 +1293,6 @@ async function getHint(){
   catch(err){box.textContent='❌ '+err.message;}
 }
 
-/* ============ EDITOR ============ */
 function openEditor(idOrTest){
   let existing=null;
   if(typeof idOrTest==='string')existing=tests.find(t=>t.id===idOrTest);
@@ -1451,7 +1415,6 @@ function saveTest(){
   editing=null;renderLib();show('welcomeScreen');toast('✓ Сохранено');
 }
 
-/* ============ MISC ============ */
 function exportAll(){
   const blob=new Blob([JSON.stringify(tests,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aq-tests.json';a.click();toast('Экспорт');
@@ -1489,7 +1452,6 @@ function showCertificate(){
 async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
 function confetti(opts){if(window.confetti)window.confetti({particleCount:150,spread:70,origin:{y:0.6},...opts});}
 
-/* ============ SETTINGS MODAL ============ */
 function openSettings(){renderSettingsButtons();$('settingsModal').classList.remove('hidden');}
 function closeSettings(){$('settingsModal').classList.add('hidden');}
 function renderSettingsButtons(){
@@ -1506,9 +1468,8 @@ document.querySelectorAll('#setFont .set-btn').forEach(b=>b.onclick=()=>{setting
 document.querySelectorAll('#setSound .set-btn').forEach(b=>b.onclick=()=>{settings.sound=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.onclick=()=>{settings.autoTheme=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.onclick=()=>{settings.aiProvider=b.dataset.v;localStorage.setItem(K.AI,settings.aiProvider);saveSettings();renderSettingsButtons();});
-function resetProgress(){if(!confirm('Сбросить прогресс?'))return;game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0};saveGame();toast('Сброшено');}
+function resetProgress(){if(!confirm('Сбросить прогресс?'))return;game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};saveGame();toast('Сброшено');}
 
-/* ============ ONBOARDING ============ */
 const ONBOARD=[
   {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов с AI и геймификацией.'},
   {title:'🎯 Проходите тесты',text:'6 режимов + мультиплеер с PIN-комнатами для класса.'},
@@ -1518,7 +1479,6 @@ function startOnboard(){if(localStorage.getItem('aq_onboarded_v7'))return;onboar
 function renderOnboard(){$('onboardTitle').textContent=ONBOARD[onboardStep].title;$('onboardText').textContent=ONBOARD[onboardStep].text;document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));}
 function nextOnboard(){onboardStep++;if(onboardStep>=ONBOARD.length){$('onboardModal').classList.add('hidden');localStorage.setItem('aq_onboarded_v7','1');return;}renderOnboard();}
 
-/* ============ DAILY ============ */
 function startDailyChallenge(){
   if(tests.length<1){toast('Сначала создайте тесты');return;}
   const allQ=[];tests.forEach(t=>t.questions.forEach(q=>allQ.push({q,tid:t.id})));
@@ -1531,19 +1491,16 @@ function startDailyChallenge(){
 }
 
 /* ==========================================================
-   MULTIPLAYER (PIN-ROOMS)
+   MULTIPLAYER (v7.1 — с фиксами)
    ========================================================== */
 function generatePin(){return Math.floor(100000+Math.random()*900000).toString();}
 
 function openMultiplayerMenu(){
   const urlPin = new URLSearchParams(location.search).get('pin');
   show('multiplayerMenuScreen');
-  if(urlPin){
-    setTimeout(()=>{$('joinPinInput').value=urlPin;},100);
-  }
+  if(urlPin){setTimeout(()=>{$('joinPinInput').value=urlPin;},100);}
 }
 
-// === ХОСТ: Создать комнату ===
 async function hostCreateRoom(){
   if(!initSupabase())return;
   if(!TEST){toast('Сначала выберите тест');return;}
@@ -1554,15 +1511,13 @@ async function hostCreateRoom(){
     config:{broadcast:{self:false},presence:{key:'host-'+Date.now()}}
   });
   multiplayerState = {pin,players:[],scores:{},testId:TEST.id,testTitle:TEST.title,questions:TEST.questions,currentQ:0,answers:{}};
-  // Presence: список игроков
   currentChannel.on('presence',{event:'sync'},()=>{
-    const state = currentChannel.presenceState();
+    const st = currentChannel.presenceState();
     const players = [];
-    Object.values(state).flat().forEach(p=>{if(p.role==='player'&&p.name)players.push(p.name);});
+    Object.values(st).flat().forEach(p=>{if(p.role==='player'&&p.name)players.push(p.name);});
     multiplayerState.players = players;
     updateLobbyUI();
   });
-  // Приём ответов
   currentChannel.on('broadcast',{event:'player-answer'},(msg)=>{
     handleIncomingAnswer(msg.payload.player,msg.payload.answer,msg.payload.questionIndex);
   });
@@ -1593,7 +1548,7 @@ function updateLobbyUI(){
   list.innerHTML = players.map(n=>`<div style="padding:10px 16px;background:rgba(255,255,255,0.5);border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:6px">👤 ${esc(n)}</div>`).join('');
 }
 
-// === ИГРОК: Войти ===
+// === ИГРОК: Войти (с поддержкой стриминга) ===
 async function playerJoinRoom(){
   if(!initSupabase())return;
   const pin = ($('joinPinInput').value||'').trim();
@@ -1602,13 +1557,50 @@ async function playerJoinRoom(){
   if(!name){toast('Введите имя');return;}
   const channelName = 'aq-room-'+pin;
   if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
+
+  let streamedQuestions = null;
+
   currentChannel = sbClient.channel(channelName,{
     config:{broadcast:{self:false},presence:{key:'player-'+name+'-'+Date.now()}}
   });
-  currentChannel.on('broadcast',{event:'game-started'},(msg)=>{
-    toast('🎮 Игра началась!');
-    startMultiplayerQuiz(msg.payload);
+
+  currentChannel.on('broadcast',{event:'game-started-header'},(msg)=>{
+    console.log('[MP] Header received:', msg.payload);
+    streamedQuestions = [];
   });
+
+  currentChannel.on('broadcast',{event:'game-question'},(msg)=>{
+    console.log('[MP] Question received:', msg.payload.index);
+    if (!streamedQuestions) streamedQuestions = [];
+    streamedQuestions[msg.payload.index] = msg.payload.question;
+  });
+
+  currentChannel.on('broadcast',{event:'game-started'},(msg)=>{
+    console.log('[MP] game-started received:', msg);
+    if (!msg || !msg.payload) { toast('❌ Пустой payload'); return; }
+
+    let questions;
+    if (msg.payload.streaming) {
+      questions = streamedQuestions || [];
+      streamedQuestions = null;
+    } else {
+      questions = msg.payload.questions;
+    }
+
+    if (!Array.isArray(questions) || !questions.length) {
+      console.error('[MP] Invalid questions:', questions);
+      toast('❌ Нет вопросов в payload');
+      return;
+    }
+
+    toast('🎮 Игра началась!');
+    startMultiplayerQuiz({
+      testTitle: msg.payload.testTitle,
+      questions: questions,
+      pin: msg.payload.pin
+    });
+  });
+
   currentChannel.on('broadcast',{event:'new-question'},(msg)=>{
     renderMultiplayerQuestion(msg.payload);
   });
@@ -1618,6 +1610,7 @@ async function playerJoinRoom(){
   currentChannel.on('broadcast',{event:'game-ended'},()=>{
     finishMultiplayer();
   });
+
   await currentChannel.subscribe(async(status)=>{
     if(status==='SUBSCRIBED'){
       await currentChannel.track({role:'player',name:name,online_at:new Date().toISOString()});
@@ -1636,55 +1629,118 @@ async function playerJoinRoom(){
   });
 }
 
-// === ХОСТ: Начать игру ===
+// === ХОСТ: Начать игру (с чанкингом и обработкой ошибок) ===
 async function hostStartGame(){
-  if(!isHost||!currentChannel||!multiplayerState)return;
+  if(!isHost||!currentChannel||!multiplayerState){
+    console.error('[MP] Cannot start:', {isHost, hasChannel:!!currentChannel, hasState:!!multiplayerState});
+    toast('❌ Нет подключения');
+    return;
+  }
   if(multiplayerState.players.length===0){
     if(!confirm('Нет игроков. Начать в одиночку?'))return;
   }
-  await currentChannel.send({
-    type:'broadcast',
-    event:'game-started',
-    payload:{
-      testTitle: TEST?TEST.title:'Тест',
-      questions: multiplayerState.questions,
-      pin: multiplayerState.pin
+
+  // Сжимаем вопросы: убираем картинки, обрезаем длинные тексты
+  const cleanQuestions = multiplayerState.questions.map(raw => {
+    const nq = normQ(raw);
+    const clean = {
+      type: nq.type,
+      question: String(nq.question || '').slice(0, 400),
+      explanation: String(nq.explanation || '').slice(0, 200)
+    };
+    if (nq.type === 'single' || nq.type === 'multi' || nq.type === 'image') {
+      clean.options = (nq.options || []).map(o => ({
+        text: String(o.text || '').slice(0, 150),
+        correct: !!o.correct
+      }));
+    } else if (nq.type === 'truefalse' || nq.type === 'text') {
+      clean.answer = nq.answer;
     }
+    return clean;
   });
-  startMultiplayerQuiz({
-    testTitle: TEST?TEST.title:'Тест',
-    questions: multiplayerState.questions,
+
+  const payload = {
+    testTitle: TEST ? TEST.title : 'Тест',
+    questions: cleanQuestions,
     pin: multiplayerState.pin
-  });
-}
-
-// === ЗАПУСК ИГРЫ (у всех) ===
-function startMultiplayerQuiz(data){
-  document.body.classList.add('multiplayer-active');
-  multiplayerState = multiplayerState || {};
-  multiplayerState.questions = data.questions.map(normQ);
-  multiplayerState.currentQ = 0;
-  multiplayerState.answers = {};
-  if(!multiplayerState.scores)multiplayerState.scores = {};
-  multiplayerState.pin = data.pin;
-  // Создаём минимальный state для совместимости
-  state = {
-    testId:'multiplayer',
-    questions:multiplayerState.questions,
-    answers:new Array(multiplayerState.questions.length).fill(null),
-    uncertain:new Array(multiplayerState.questions.length).fill(false),
-    current:0,totalTime:0,timeLeft:0,
-    strict:true,antiCheat:false,streak:0,maxStreak:0,multiplayer:true
   };
-  show('quizScreen');
-  renderMultiplayerQuestion({
-    question:multiplayerState.questions[0],
-    index:0,
-    total:multiplayerState.questions.length
-  });
+
+  const payloadSize = JSON.stringify(payload).length;
+  console.log('[MP] Broadcast payload size:', payloadSize, 'bytes');
+
+  try {
+    if (payloadSize > 8000) {
+      console.warn('[MP] Payload too large, splitting into chunks');
+      toast('⏳ Отправка ' + cleanQuestions.length + ' вопросов…');
+
+      await currentChannel.send({
+        type: 'broadcast',
+        event: 'game-started-header',
+        payload: { testTitle: payload.testTitle, totalQuestions: cleanQuestions.length, pin: payload.pin }
+      });
+
+      for (let i = 0; i < cleanQuestions.length; i++) {
+        await currentChannel.send({
+          type: 'broadcast',
+          event: 'game-question',
+          payload: { index: i, question: cleanQuestions[i], total: cleanQuestions.length }
+        });
+        await new Promise(r => setTimeout(r, 80));
+      }
+
+      await currentChannel.send({
+        type: 'broadcast',
+        event: 'game-started',
+        payload: { streaming: true, testTitle: payload.testTitle, pin: payload.pin }
+      });
+    } else {
+      await currentChannel.send({
+        type: 'broadcast',
+        event: 'game-started',
+        payload
+      });
+    }
+    console.log('[MP] Broadcast sent OK');
+  } catch(e) {
+    console.error('[MP] Broadcast failed:', e);
+    toast('❌ Не удалось отправить: ' + e.message);
+    return;
+  }
+
+  startMultiplayerQuiz(payload);
 }
 
-// === ОТРИСОВКА ВОПРОСА В МУЛЬТИПЛЕЕРЕ ===
+// === ЗАПУСК ИГРЫ (с try/catch) ===
+function startMultiplayerQuiz(data){
+  try {
+    console.log('[MP] Starting quiz:', data.testTitle, '| questions:', data.questions.length);
+    document.body.classList.add('multiplayer-active');
+    multiplayerState = multiplayerState || {};
+    multiplayerState.questions = data.questions.map(normQ);
+    multiplayerState.currentQ = 0;
+    multiplayerState.answers = {};
+    if(!multiplayerState.scores)multiplayerState.scores = {};
+    multiplayerState.pin = data.pin;
+    state = {
+      testId:'multiplayer',
+      questions:multiplayerState.questions,
+      answers:new Array(multiplayerState.questions.length).fill(null),
+      uncertain:new Array(multiplayerState.questions.length).fill(false),
+      current:0,totalTime:0,timeLeft:0,
+      strict:true,antiCheat:false,streak:0,maxStreak:0,multiplayer:true
+    };
+    show('quizScreen');
+    renderMultiplayerQuestion({
+      question:multiplayerState.questions[0],
+      index:0,
+      total:multiplayerState.questions.length
+    });
+  } catch(e) {
+    console.error('[MP] startMultiplayerQuiz CRASH:', e);
+    toast('❌ Ошибка запуска: ' + e.message);
+  }
+}
+
 function renderMultiplayerQuestion(data){
   if(!multiplayerState)return;
   multiplayerState.currentQ = data.index;
@@ -1700,7 +1756,6 @@ function renderMultiplayerQuestion(data){
   $('qActions').innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding:6px 12px;background:rgba(255,255,255,0.3);border-radius:8px">🎮 МУЛЬТИПЛЕЕР · PIN: ${multiplayerState.pin} · ${esc(currentUser?currentUser.name:'')}</span>`;
   const box = $('options');
   box.innerHTML = '';
-  // Поддерживаемые типы: single, multi, truefalse
   if(!['single','multi','truefalse'].includes(q.type)){
     box.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);background:rgba(255,255,255,0.4);border-radius:12px">Этот тип вопроса не поддерживается в мультиплеере. Хост может нажать «Дальше».</div>';
     setupMultiplayerNav(data);
@@ -1708,13 +1763,11 @@ function renderMultiplayerQuestion(data){
     return;
   }
   if(q.type === 'truefalse'){
-    const trueLabel = q.answer ? '✓ Правда' : '✗ Ложь';
-    // Для truefalse - два варианта: Правда / Ложь
     const opts = [
       {text:'Правда', val:true},
       {text:'Ложь', val:false}
     ];
-    opts.forEach((opt,i)=>{
+    opts.forEach((opt)=>{
       const el = document.createElement('div');
       el.className = 'option';
       el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${opt.text}</span>`;
@@ -1820,7 +1873,7 @@ function handleIncomingAnswer(player, answer, questionIndex){
   if(!isHost||!multiplayerState)return;
   if(!multiplayerState.answers)multiplayerState.answers = {};
   if(!multiplayerState.answers[questionIndex])multiplayerState.answers[questionIndex] = {};
-  if(multiplayerState.answers[questionIndex][player])return; // уже отвечал
+  if(multiplayerState.answers[questionIndex][player])return;
   const q = multiplayerState.questions[questionIndex];
   const ok = isCorrect(q, answer);
   multiplayerState.answers[questionIndex][player] = {answer, isCorrect:ok};
@@ -1853,6 +1906,7 @@ function renderMultiplayerScore(){
       : '<div style="color:var(--text-muted);font-size:12px">Пока никто не ответил</div>');
 }
 
+// === ФИНИШ (с очисткой state) ===
 function finishMultiplayer(){
   document.body.classList.remove('multiplayer-active');
   const scores = (multiplayerState&&multiplayerState.scores) || {};
@@ -1873,6 +1927,8 @@ function finishMultiplayer(){
   game.multiplayerGames = (game.multiplayerGames||0)+1;
   saveGame();checkAchievements();
   if(sorted.length&&sorted[0][1]>0)confetti();
+  state = null;
+  multiplayerState = null;
 }
 
 async function leaveMultiplayer(){
@@ -1898,7 +1954,6 @@ function selectTestForHost(){
   }
 }
 
-/* ============ KEYBOARD ============ */
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(!$('aiModal').classList.contains('hidden')){closeAiModal();return;}
@@ -1932,7 +1987,6 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-/* ============ AUTO THEME ============ */
 function autoThemeCheck(){
   if(!settings.autoTheme)return;
   const h=new Date().getHours();
@@ -1941,7 +1995,6 @@ function autoThemeCheck(){
 }
 setInterval(autoThemeCheck,60000);
 
-/* ============ INIT ============ */
 loadAll();loadTests();loadTrash();loadAttempts();
 $('settingsBtn').innerHTML=ic('settings');
 $('undoBtn').innerHTML=ic('undo');
