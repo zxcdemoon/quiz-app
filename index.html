@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AuraQuiz v8.0</title>
+<title>AuraQuiz v9.0 — AI Edition</title>
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
 }
 body.dark{--text:#f8f9fa;--text-muted:#a0a0a0;--bg:#0a0a0a;--glass-bg:rgba(20,20,20,0.7);--glass-border:rgba(255,255,255,0.15);--glass-hover:rgba(35,35,35,0.9);--accent:#fff;--accent-hover:#ccc;}
 body.dark svg{color:#ffffff !important;}
-body.dark .btn-primary svg,body.dark .btn-primary,body.dark .btn-accent svg,body.dark .btn-accent,body.dark .set-btn.active svg,body.dark .set-btn.active,body.dark .tag-chip.active svg,body.dark .tag-chip.active,body.dark .option.selected svg,body.dark .option.selected .option-marker,body.dark .q-num,body.dark .q-num svg,body.dark .brand-mark svg,body.dark .brand-mark,body.dark .review-opt.correct svg,body.dark .review-opt.correct .mark,body.dark .streak-badge.hot,body.dark .ai-status.ok,body.dark .flashcard-answer,body.dark .flashcard-actions .btn-primary svg,body.dark .btn-ai,body.dark .btn-ai svg,body.dark .ai-status.ok svg{color:#0a0a0a !important;}
+body.dark .btn-primary svg,body.dark .btn-primary,body.dark .set-btn.active svg,body.dark .set-btn.active,body.dark .tag-chip.active svg,body.dark .tag-chip.active,body.dark .option.selected svg,body.dark .option.selected .option-marker,body.dark .q-num,body.dark .q-num svg,body.dark .brand-mark svg,body.dark .brand-mark,body.dark .review-opt.correct svg,body.dark .streak-badge.hot,body.dark .ai-status.ok,body.dark .flashcard-answer,body.dark .flashcard-actions .btn-primary svg,body.dark .btn-ai,body.dark .btn-ai svg{color:#0a0a0a !important;}
 body.dark .icon-btn,body.dark .icon-btn svg{color:#ffffff;}
 body.dark .icon-btn:hover,body.dark .icon-btn:hover svg{color:#ffffff;}
 body.dark .icon-btn.danger:hover,body.dark .icon-btn.danger:hover svg{color:#dc2626 !important;}
@@ -158,8 +158,6 @@ body.dark .q-card{background:rgba(255,255,255,0.03);}
 .action-btn{padding:10px 20px;font-size:13px;}
 .start-test-btn:hover,.next-q-btn:hover:not(:disabled){transform:translateY(-2px) scale(1.02);background:var(--accent-hover);}
 .next-q-btn:disabled{opacity:.4;cursor:not-allowed;}
-.q-image{max-width:240px;max-height:140px;border:1px solid var(--glass-border);object-fit:contain;border-radius:var(--r-md);}
-.q-image-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
 .quiz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
 .quiz-counter{font-family:var(--mono);font-size:14px;font-weight:700;}
 .quiz-counter .big{font-size:28px;margin-right:6px;}
@@ -274,6 +272,16 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   .xp-bar{display:none;}
   .mp-cols{grid-template-columns:1fr !important;}
 }
+/* AI Chat */
+#aiChatScreen .chat-container{display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:400px;gap:12px;}
+#aiChatScreen .chat-messages{flex:1;overflow-y:auto;padding:16px;background:rgba(255,255,255,0.3);border-radius:var(--r-md);border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:12px;}
+.chat-msg{padding:12px 16px;border-radius:var(--r-md);max-width:85%;line-height:1.5;font-size:14px;word-wrap:break-word;}
+.chat-msg.user{align-self:flex-end;background:var(--accent);color:var(--bg);}
+.chat-msg.assistant{align-self:flex-start;background:rgba(255,255,255,0.6);border:1px solid var(--glass-border);}
+body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
+.chat-input-row{display:flex;gap:8px;}
+.chat-input-row input{flex:1;padding:14px 16px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.4);color:var(--text);border-radius:var(--r-md);font-size:15px;}
+.chat-input-row input:focus{outline:none;background:rgba(255,255,255,0.8);}
 </style>
 </head>
 <body>
@@ -294,7 +302,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div class="xp-fill"><div id="xpFill" style="width:0%"></div></div>
         <span id="xpText">0 XP</span>
       </div>
-      <div class="header-meta" id="headerMeta">v8.0</div>
+      <div class="header-meta" id="headerMeta">v9.0</div>
       <button class="icon-btn" title="Достижения" onclick="openAchievements()" id="achBtn">🏆</button>
       <button class="icon-btn" title="Настройки" onclick="openSettings()" id="settingsBtn"></button>
     </div>
@@ -330,6 +338,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
             <button class="btn-primary" onclick="openEditor(null)" id="welcomeCreate"></button>
             <button class="btn-ghost" onclick="startDailyChallenge()">🎯 Челлендж дня</button>
             <button class="btn-ghost" onclick="openMultiplayerMenu()" style="border:2px solid var(--accent)">🎮 Мультиплеер</button>
+            <button class="btn-ghost" onclick="openAiChat()" style="border:2px solid #10b981;color:#10b981">🤖 AI-Репетитор</button>
           </div>
           <div class="stats-grid" style="margin-top:32px;max-width:600px;width:100%">
             <div class="stat-card"><div class="stat-label">🔥 Стрик</div><div class="stat-value" id="statStreak">0</div></div>
@@ -445,6 +454,22 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div id="reviewList"></div>
       </div>
 
+      <div id="aiChatScreen" class="hidden">
+        <div class="row" style="margin-bottom:16px">
+          <button class="icon-btn" onclick="closeAiChat()">←</button>
+          <h1 style="margin:0">🤖 AI-Репетитор</h1>
+          <div class="spacer"></div>
+          <button class="btn-ghost btn-small" onclick="clearChat()">🗑 Очистить</button>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-row">
+            <input type="text" id="chatInput" placeholder="Спросите что-нибудь по теме…" onkeydown="if(event.key==='Enter')sendChatMessage()">
+            <button class="btn-primary" onclick="sendChatMessage()" id="chatSendBtn">➤</button>
+          </div>
+        </div>
+      </div>
+
       <div id="multiplayerMenuScreen" class="hidden">
         <div class="row" style="margin-bottom:16px">
           <button class="icon-btn" onclick="show('welcomeScreen')">←</button>
@@ -518,7 +543,23 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
       <div class="field" style="flex:1;margin:0"><label>Вопросов</label><input type="number" id="aiCount" value="5" min="1" max="20"></div>
       <div class="field" style="flex:2;margin:0"><label>Сложность</label><select id="aiDiff"><option value="easy">Лёгкая</option><option value="medium" selected>Средняя</option><option value="hard">Сложная</option><option value="mixed">Смешанная</option></select></div>
     </div>
-    <div class="field" style="margin-top:12px"><label>Стиль</label><input type="text" id="aiCustom"></div>
+    <div class="field" style="margin-top:12px"><label>Стиль</label><input type="text" id="aiCustom" placeholder="Например: для школьников, с юмором"></div>
+    <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap" id="aiPresets">
+      <button class="set-btn" onclick="setAiPreset('Для школьников 5-7 класса, простые формулировки')">Школьникам</button>
+      <button class="set-btn" onclick="setAiPreset('Для студентов вуза, академический стиль')">Студентам</button>
+      <button class="set-btn" onclick="setAiPreset('Для собеседования, практические вопросы')">Собеседование</button>
+      <button class="set-btn" onclick="setAiPreset('С юмором и мемами, но по делу')">С юмором</button>
+      <button class="set-btn" onclick="setAiPreset('Максимально коротко и по делу')">Коротко</button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label>Типы вопросов</label>
+      <div class="row" style="gap:12px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" id="aiTypeSingle" checked> Один</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" id="aiTypeMulti"> Несколько</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" id="aiTypeTF"> Правда/Ложь</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" id="aiTypeFill"> Пропуски</label>
+      </div>
+    </div>
     <div id="aiStatus" style="font-family:var(--mono);font-size:12px;padding:12px;margin-top:12px;border-radius:8px;display:none"></div>
     <div class="row" style="justify-content:flex-end;margin-top:20px"><button class="btn-ghost" onclick="closeAiModal()">Отмена</button><button class="btn-primary" id="aiGenBtn" onclick="generateWithAi()">✨ Сгенерировать</button></div>
   </div>
@@ -545,7 +586,45 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
     <div class="set-group"><h3>Размер</h3><div class="set-row" id="setFont"><button class="set-btn" data-v="normal">Обычный</button><button class="set-btn" data-v="large">Крупный</button></div></div>
     <div class="set-group"><h3>Звук</h3><div class="set-row" id="setSound"><button class="set-btn" data-v="on">🔊 Вкл</button><button class="set-btn" data-v="off">🔇 Выкл</button></div></div>
     <div class="set-group"><h3>Авто-тема</h3><div class="set-row" id="setAutoTheme"><button class="set-btn" data-v="off">Выкл</button><button class="set-btn" data-v="on">Авто</button></div></div>
-    <div class="set-group"><h3>AI Провайдер</h3><div class="set-row" id="setAiProvider"><button class="set-btn" data-v="pollinations">Pollinations</button><button class="set-btn" data-v="ovhcloud">OVHcloud</button><button class="set-btn" data-v="hackclub">Hack Club</button></div></div>
+
+    <div class="set-group">
+      <h3>AI Провайдер (основной)</h3>
+      <div class="set-row" id="setAiProvider">
+        <button class="set-btn" data-v="pollinations">Pollinations</button>
+        <button class="set-btn" data-v="gemini">Gemini</button>
+        <button class="set-btn" data-v="groq">Groq</button>
+        <button class="set-btn" data-v="mistral">Mistral</button>
+        <button class="set-btn" data-v="ovhcloud">OVHcloud</button>
+        <button class="set-btn" data-v="hackclub">Hack Club</button>
+      </div>
+    </div>
+
+    <div class="set-group">
+      <h3>API Ключи (хранятся локально)</h3>
+      <div class="field">
+        <label>Gemini API Key</label>
+        <input type="password" id="keyGemini" placeholder="AIza...">
+      </div>
+      <div class="field">
+        <label>Groq API Key</label>
+        <input type="password" id="keyGroq" placeholder="gsk_...">
+      </div>
+      <div class="field">
+        <label>Mistral API Key</label>
+        <input type="password" id="keyMistral" placeholder="...">
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn-ghost btn-small" onclick="saveAiKeys()">💾 Сохранить ключи</button>
+        <button class="btn-ghost btn-small" onclick="clearAiKeys()">🗑 Очистить</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.5">
+        Бесплатные ключи:
+        <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent)">Gemini</a> ·
+        <a href="https://console.groq.com/" target="_blank" style="color:var(--accent)">Groq</a> ·
+        <a href="https://console.mistral.ai/" target="_blank" style="color:var(--accent)">Mistral</a>
+      </p>
+    </div>
+
     <div class="row" style="justify-content:space-between;margin-top:20px">
       <button class="btn-ghost btn-small" onclick="resetProgress()">Reset</button>
       <button class="btn-primary" onclick="closeSettings()">Готово</button>
@@ -598,7 +677,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_NV0ytzdKVjnvhg7li88YsA_xO6wCrEM';
 let sbClient = null;
 let currentChannel = null;
 let roomStateChannel = null;
-let currentUser = null; // { id, name, role }
+let currentUser = null;
 let isHost = false;
 let multiplayerState = null;
 let myDeviceId = null;
@@ -626,7 +705,6 @@ async function initSupabase() {
     try {
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       await getOrCreateUser();
-      console.log('[MP] User ID:', myDeviceId);
     } catch(e) {
       toast('❌ Ошибка Supabase: ' + e.message);
       return null;
@@ -652,8 +730,11 @@ const ic = n => ICONS[n] || '';
 
 const K = {
   TESTS:'aq_tests_v6',TRASH:'aq_trash_v6',SET:'aq_settings_v6',DRAFT:'aq_draft_v6',
-  ATT:'aq_attempts_v6',PROXY:'aq_proxy_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',
-  CACHE:'aq_aicache_v6'
+  ATT:'aq_attempts_v6',
+  STATE:'aq_state_v6',
+  AI:'aq_aiprov_v6',GAME:'aq_game_v6',
+  CACHE:'aq_aicache_v6',
+  CHAT:'aq_chat_v1'
 };
 
 const $ = id => document.getElementById(id);
@@ -670,20 +751,323 @@ function fmtTime(s){s=Math.max(0,Math.ceil(s));return `${Math.floor(s/60)}:${(s%
 
 let settings={theme:'light',fontFamily:'manrope',fontSize:'normal',sound:true,aiProvider:'pollinations',autoTheme:false};
 let tests=[],trash=[],attempts=[],game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};
-let proxyUrl='',aiCache={};
+let aiCache={};
 let TEST=null,editing=null,state=null,timerId=null,pendingSaved=null;
 let aiMode='test',aiResult=null,aiTab='topic';
 let searchQuery='',activeTag='',startMode='normal';
 let editHistory=[],editFuture=[],dragSrc=null;
 let onboardStep=0;
 let antiCheatWarnings=0;
+let hintLevel=0;
+let chatHistory=[];
+let chatContextTest=null;
 
+/* ==========================================================
+   AI PROVIDERS
+   ========================================================== */
+const AI_PROVIDERS = [
+  {
+    name: 'pollinations',
+    url: 'https://text.pollinations.ai/openai',
+    headers: () => ({ 'Content-Type': 'application/json' }),
+    body: (msgs, model) => ({ model: model || 'openai', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
+    parse: (data) => data.choices[0].message.content,
+    models: ['openai', 'mistral', 'llama']
+  },
+  {
+    name: 'gemini',
+    url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+    headers: () => ({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + (localStorage.getItem('aq_gemini_key') || '')
+    }),
+    body: (msgs, model) => ({ model: model || 'gemini-3.8-flash', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
+    parse: (data) => data.choices[0].message.content,
+    models: ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']
+  },
+  {
+    name: 'groq',
+    url: 'https://api.groq.com/openai/v1/chat/completions',
+    headers: () => ({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + (localStorage.getItem('aq_groq_key') || '')
+    }),
+    body: (msgs, model) => ({ model: model || 'llama-3.3-70b-versatile', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
+    parse: (data) => data.choices[0].message.content,
+    models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']
+  },
+  {
+    name: 'mistral',
+    url: 'https://api.mistral.ai/v1/chat/completions',
+    headers: () => ({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + (localStorage.getItem('aq_mistral_key') || '')
+    }),
+    body: (msgs, model) => ({ model: model || 'mistral-small-latest', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
+    parse: (data) => data.choices[0].message.content,
+    models: ['mistral-small-latest', 'open-mistral-nemo']
+  },
+  {
+    name: 'ovhcloud',
+    url: 'https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions',
+    headers: () => ({ 'Content-Type': 'application/json' }),
+    body: (msgs) => ({ model: 'mistral-small-latest', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
+    parse: (data) => data.choices[0].message.content,
+    models: ['mistral-small-latest']
+  },
+  {
+    name: 'hackclub',
+    url: 'https://ai.hackclub.com/proxy/v1/chat/completions',
+    headers: () => ({ 'Content-Type': 'application/json' }),
+    body: (msgs) => ({ model: 'deepseek-chat', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
+    parse: (data) => data.choices[0].message.content,
+    models: ['deepseek-chat']
+  }
+];
+
+function getProviderByName(name) {
+  return AI_PROVIDERS.find(p => p.name === name) || AI_PROVIDERS[0];
+}
+
+async function callAI(msgs, preferredModel) {
+  const cacheKey = JSON.stringify(msgs).slice(0, 200);
+  if (aiCache[cacheKey] && Date.now() - aiCache[cacheKey].ts < 86400000) {
+    return aiCache[cacheKey].content;
+  }
+
+  const preferred = settings.aiProvider || 'pollinations';
+  const ordered = [...AI_PROVIDERS].sort((a, b) => {
+    if (a.name === preferred) return -1;
+    if (b.name === preferred) return 1;
+    return 0;
+  });
+
+  let lastError = null;
+  for (const provider of ordered) {
+    try {
+      const ctl = new AbortController();
+      const tid = setTimeout(() => ctl.abort(), 60000);
+
+      const res = await fetch(provider.url, {
+        method: 'POST',
+        headers: provider.headers(),
+        body: JSON.stringify(provider.body(msgs, preferredModel)),
+        signal: ctl.signal
+      });
+      clearTimeout(tid);
+
+      if (!res.ok) {
+        if (res.status === 429) { lastError = new Error('Лимит ' + provider.name); continue; }
+        if (res.status === 401 || res.status === 403) { lastError = new Error('Ключ ' + provider.name); continue; }
+        throw new Error(provider.name + ': ' + res.status);
+      }
+
+      const data = await res.json();
+      const content = provider.parse(data);
+
+      aiCache[cacheKey] = { content, ts: Date.now() };
+      try { localStorage.setItem(K.CACHE, JSON.stringify(aiCache)); } catch (e) {}
+
+      return content;
+    } catch (err) {
+      if (err.name === 'AbortError') { lastError = new Error('Таймаут ' + provider.name); continue; }
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('Все AI-провайдеры недоступны');
+}
+
+/* ============ HINT LEVELS ============ */
+async function getHint() {
+  const box = $('hintBox');
+  if (box.dataset.loading === '1') return;
+
+  const raw = state.questions[state.current];
+  const q = normQ(raw);
+  const hints = [
+    'Натолкни на мысль. Дай общую подсказку, но не выдавай ответ. 1-2 предложения.',
+    'Сужу варианты. Объясни, почему 2 из вариантов точно неправильные. Не называй правильный.',
+    'Почти ответ. Дай очень сильную подсказку, но не называй правильный ответ прямо.'
+  ];
+
+  hintLevel = Math.min(hintLevel, 2);
+  box.dataset.loading = '1';
+  box.classList.remove('hidden');
+  box.textContent = '⏳ Уровень ' + (hintLevel + 1) + '…';
+
+  try {
+    const content = await callAI([
+      { role: 'system', content: 'Ты — учитель. Отвечай кратко и по делу.' },
+      { role: 'user', content: `Вопрос: "${q.question}". ${hints[hintLevel]}` }
+    ]);
+    box.textContent = '💡 Уровень ' + (hintLevel + 1) + ': ' + content.trim();
+    const penalty = [2, 5, 10][hintLevel];
+    if (game.xp >= penalty) addXP(-penalty);
+    hintLevel++;
+    if (hintLevel >= 3) hintLevel = 2;
+  } catch (err) {
+    box.textContent = '❌ ' + err.message;
+  } finally {
+    delete box.dataset.loading;
+  }
+}
+
+/* ============ AI CHAT (Репетитор) ============ */
+function openAiChat() {
+  chatHistory = [];
+  try {
+    const saved = localStorage.getItem(K.CHAT);
+    if (saved) {
+      const d = JSON.parse(saved);
+      if (Array.isArray(d) && d.length) chatHistory = d;
+    }
+  } catch (e) {}
+  chatContextTest = TEST;
+  renderChat();
+  show('aiChatScreen');
+  $('chatInput').focus();
+}
+
+function closeAiChat() {
+  try { localStorage.setItem(K.CHAT, JSON.stringify(chatHistory.slice(-50))); } catch (e) {}
+  show('welcomeScreen');
+}
+
+function clearChat() {
+  chatHistory = [];
+  localStorage.removeItem(K.CHAT);
+  renderChat();
+  toast('История очищена');
+}
+
+function renderChat() {
+  const box = $('chatMessages');
+  if (!box) return;
+  if (!chatHistory.length) {
+    box.innerHTML = `<div class="chat-msg assistant">Привет! Я AI-репетитор. Могу объяснить тему, разобрать ошибку или дать пример. ${chatContextTest ? 'Контекст: тест «' + esc(chatContextTest.title) + '».' : ''} Спрашивай!</div>`;
+    return;
+  }
+  box.innerHTML = chatHistory.map(m =>
+    `<div class="chat-msg ${m.role}">${md(m.content)}</div>`
+  ).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendChatMessage() {
+  const input = $('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  chatHistory.push({ role: 'user', content: msg });
+  renderChat();
+
+  const btn = $('chatSendBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳';
+
+  try {
+    let system = 'Ты — терпеливый AI-репетитор. Объясняй понятно, кратко, с примерами. Отвечай на русском.';
+    if (chatContextTest && chatContextTest.questions) {
+      const qs = chatContextTest.questions.slice(0, 10).map(q => '- ' + q.question).join('\n');
+      system += `\nКонтекст теста «${chatContextTest.title}»:\n${qs}`;
+    }
+    const msgs = [
+      { role: 'system', content: system },
+      ...chatHistory.slice(-10)
+    ];
+    const reply = await callAI(msgs);
+    chatHistory.push({ role: 'assistant', content: reply });
+    renderChat();
+  } catch (err) {
+    chatHistory.push({ role: 'assistant', content: '❌ ' + err.message });
+    renderChat();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '➤';
+  }
+}
+
+/* ============ AI EXPLAIN MISTAKE ============ */
+async function explainMistake(qIdx) {
+  const q = state.questions[qIdx];
+  const ua = state.answers[qIdx];
+  const nq = normQ(q);
+  const correct = getCorrectAnswerText(nq);
+  const userText = getUserAnswerText(nq, ua);
+
+  const container = document.getElementById('explain-' + qIdx);
+  if (!container) return;
+  if (container.dataset.loading === '1') return;
+  container.dataset.loading = '1';
+  container.innerHTML = '<div style="padding:12px;color:var(--text-muted)">⏳ AI думает…</div>';
+
+  try {
+    const res = await callAI([
+      { role: 'system', content: 'Ты — терпеливый учитель. Объясняй кратко (2-3 предложения), по делу.' },
+      { role: 'user', content: `Вопрос: "${nq.question}". Пользователь ответил: "${userText}". Правильный ответ: "${correct}". Объясни, в чём ошибка и как правильно.` }
+    ]);
+    container.innerHTML = '<div style="padding:12px;background:rgba(16,185,129,0.1);border-left:3px solid #10b981;border-radius:0 8px 8px 0;font-size:13px;line-height:1.5">🤖 ' + md(res) + '</div>';
+  } catch (err) {
+    container.innerHTML = '<div style="padding:12px;color:#ef4444">❌ ' + err.message + '</div>';
+  } finally {
+    delete container.dataset.loading;
+  }
+}
+
+function getCorrectAnswerText(q) {
+  if (q.type === 'truefalse') return q.answer ? 'Правда' : 'Ложь';
+  if (q.type === 'text') return q.answer || '';
+  if (q.type === 'fill') return (q.blanks || []).join(', ');
+  if (q.type === 'matching') return q.pairs.map(p => p.left + ' → ' + p.right).join('; ');
+  if (q.type === 'sort') return (q.items || []).join(' → ');
+  if (q.type === 'image' || q.type === 'single' || q.type === 'multi') {
+    return (q.options || []).filter(o => o.correct).map(o => o.text).join(', ');
+  }
+  return '';
+}
+
+function getUserAnswerText(q, ans) {
+  if (ans === null || ans === undefined) return '—';
+  if (q.type === 'truefalse') return ans === true ? 'Правда' : 'Ложь';
+  if (q.type === 'text') return String(ans);
+  if (q.type === 'fill') return (Array.isArray(ans) ? ans : []).join(', ');
+  if (q.type === 'matching') return (Array.isArray(ans) ? ans.map((v, i) => (q.pairs[i]?.left || '?') + ' → ' + (q.pairs[v]?.right || '—')).join('; ') : '—');
+  if (q.type === 'sort') return (Array.isArray(ans) ? ans.map(i => q.items[i]).join(' → ') : '—');
+  if (q.type === 'image' || q.type === 'single') return q.options[ans] ? q.options[ans].text : '—';
+  if (q.type === 'multi') return Array.isArray(ans) ? ans.map(i => q.options[i]?.text).join(', ') : '—';
+  return String(ans);
+}
+
+/* ============ IMAGE GENERATION ============ */
+async function generateImageForQuestion(qIdx) {
+  const q = editing.questions[qIdx];
+  if (!q) return;
+  const prompt = q.question || q.text || 'abstract illustration';
+  const btn = document.getElementById('genImg-' + qIdx);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', educational illustration, clean')}?width=512&height=384&nologo=true`;
+
+  if (q.type === 'image') {
+    if (!q.options) q.options = [];
+    q.options.push({ text: 'Сгенерированная картинка', image: url, correct: false });
+  } else {
+    q.image = url;
+  }
+  renderEditor();
+  toast('🖼 Картинка добавлена');
+  if (btn) { btn.disabled = false; btn.textContent = '🖼'; }
+}
+
+/* ==========================================================
+   REST (тесты, редактор, прохождение, мультиплеер)
+   ========================================================== */
 function loadAll(){
   try{const raw=localStorage.getItem(K.SET);if(raw)settings={...settings,...JSON.parse(raw)};}catch(e){}
-  try{proxyUrl=localStorage.getItem(K.PROXY)||'';}catch(e){}
   try{const p=localStorage.getItem(K.AI);if(p)settings.aiProvider=p;}catch(e){}
   try{const g=localStorage.getItem(K.GAME);if(g)game={...game,...JSON.parse(g)};}catch(e){}
-  try{const c=localStorage.getItem(K.CACHE);if(c)aiCache=JSON.parse(c);}catch(e){}
+  try{const c=localStorage.getItem(K.CACHE);if(c)aiCache=JSON.parse(c)||{};}catch(e){}
   checkStreak();applySettings();renderXP();
 }
 function saveSettings(){try{localStorage.setItem(K.SET,JSON.stringify(settings));}catch(e){}applySettings();}
@@ -717,6 +1101,7 @@ function renderXP(){
 }
 function addXP(n){
   game.xp+=n;
+  if(game.xp<0)game.xp=0;
   const newLevel=Math.floor(game.xp/100)+1;
   if(newLevel>game.level){game.level=newLevel;toast('🎉 Новый уровень: Lv.'+newLevel);checkAchievements();}
   saveGame();
@@ -771,7 +1156,7 @@ function normQ(q){
     if(!Array.isArray(q.options))q.options=[];
   } else if(q.type==='text'){if(typeof q.answer!=='string')q.answer='';}
   else if(q.type==='matching'){if(!Array.isArray(q.pairs))q.pairs=[{left:'',right:''},{left:'',right:''}];}
-  else if(q.type==='sort'){if(!Array.isArray(q.items))q.items=['','',''];}
+  else if(q.type==='sort'){if(!Array.isArray(q.items))q.items=['','',''];q.items=q.items.map(String);}
   else if(q.type==='truefalse'){if(typeof q.answer!=='boolean')q.answer=true;}
   else if(q.type==='fill'){if(typeof q.text!=='string')q.text='';if(!Array.isArray(q.blanks))q.blanks=[];}
   else if(q.type==='image'){if(!Array.isArray(q.options))q.options=[];}
@@ -779,9 +1164,15 @@ function normQ(q){
   return q;
 }
 function saveTests(){try{localStorage.setItem(K.TESTS,JSON.stringify(tests));}catch(e){toast('⚠ Хранилище переполнено');}}
-function loadTrash(){try{const r=localStorage.getItem(K.TRASH);if(r)trash=JSON.parse(r);}catch(e){trash=[];}}
+function loadTrash(){try{const r=localStorage.getItem(K.TRASH);if(r)trash=JSON.parse(r);}catch(e){trash=[];}if(!Array.isArray(trash))trash=[];}
 function saveTrash(){try{localStorage.setItem(K.TRASH,JSON.stringify(trash));}catch(e){}}
-function loadAttempts(){try{const r=localStorage.getItem(K.ATT);if(r)attempts=JSON.parse(r);}catch(e){attempts=[];}}
+function loadAttempts(){
+  try{
+    const r=localStorage.getItem(K.ATT);
+    if(r){const parsed=JSON.parse(r);attempts=Array.isArray(parsed)?parsed:[];}
+  }catch(e){attempts=[];}
+  if(!Array.isArray(attempts))attempts=[];
+}
 function saveAttempts(){try{localStorage.setItem(K.ATT,JSON.stringify(attempts));}catch(e){}}
 
 function defaultTest(){
@@ -794,7 +1185,7 @@ function defaultTest(){
 
 function show(id){
   ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen',
-   'multiplayerMenuScreen','multiplayerLobbyScreen','multiplayerWaitScreen'].forEach(s=>{
+   'multiplayerMenuScreen','multiplayerLobbyScreen','multiplayerWaitScreen','aiChatScreen'].forEach(s=>{
     const el = $(s);
     if (el) el.classList.toggle('hidden', s!==id);
   });
@@ -830,7 +1221,12 @@ function renderLib(){
     </div>`).join('');
 }
 function toggleTag(tag){activeTag=activeTag===tag?'':tag;renderLib();}
-function onSearch(v){searchQuery=v.trim();renderLib();}
+let searchTimer=null;
+function onSearch(v){
+  clearTimeout(searchTimer);
+  const val=v.trim();
+  searchTimer=setTimeout(()=>{searchQuery=val;renderLib();},150);
+}
 function toggleFav(id){const t=tests.find(x=>x.id===id);if(t){t.fav=!t.fav;saveTests();renderLib();}}
 function deleteTest(id){
   if(!confirm('Удалить в корзину?'))return;
@@ -852,7 +1248,11 @@ function permanentDelete(id){trash=trash.filter(x=>x.id!==id);saveTrash();openTr
 
 function shareTest(id){
   const t=tests.find(x=>x.id===id);if(!t)return;
-  const url=location.origin+location.pathname+'#test='+btoa(unescape(encodeURIComponent(JSON.stringify(t))));
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(t))));
+  const url=location.origin+location.pathname+'#test='+b64;
+  if(url.length>1800){
+    if(!confirm('Ссылка получится очень длинной ('+url.length+' симв.) — может не открыться в некоторых браузерах. Всё равно скопировать?')) return;
+  }
   navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка скопирована')).catch(()=>prompt('Скопируйте:',url));
 }
 function checkHash(){
@@ -887,7 +1287,7 @@ function selectMode(m){
     c.style.background=c.dataset.mode===m?'rgba(255,255,255,0.7)':'rgba(255,255,255,0.4)';
   });
 }
-function discardSaved(){localStorage.removeItem(K.ATT);pendingSaved=null;openStart(TEST.id);toast('Удалено');}
+function discardSaved(){localStorage.removeItem(K.STATE);pendingSaved=null;openStart(TEST.id);toast('Удалено');}
 function resumeTest(){
   state=pendingSaved||loadSaved();if(!state){toast('Не найдено');return;}
   TEST=tests.find(t=>t.id===state.testId)||TEST;
@@ -904,11 +1304,12 @@ function prepareQuestions(qs,shufQ,shufA,sample){
     if((nq.type==='single'||nq.type==='multi'||nq.type==='image')&&shufA)nq.options=shuffle(nq.options);
     else if(nq.type==='truefalse'&&shufA)nq._flip=Math.random()<.5;
     else if(nq.type==='matching')nq._rightShuffled=shuffle(nq.pairs.map((p,i)=>({...p,_orig:i})));
-    else if(nq.type==='sort')nq._userOrder=shuffle(nq.items.map((it,i)=>({...it,_orig:i})));
+    else if(nq.type==='sort')nq._userOrder=shuffle(nq.items.map((text,i)=>({text:String(text),_orig:i})));
     return nq;
   });
 }
 function startTest(){
+  hintLevel=0;
   const shufQ=$('optShuffleQ').checked;
   const shufA=$('optShuffleA').checked;
   const mins=Math.max(0,parseInt($('optTime').value,10)||0);
@@ -917,11 +1318,11 @@ function startTest(){
   const totalTime=mins*60;
   let qs=prepareQuestions(TEST.questions,shufQ,shufA,0);
   if(startMode==='training'){
-    const weak=attempts.filter(a=>a.testId===TEST.id).flatMap(a=>a.perQuestion.filter(p=>!p.correct).map(p=>p.question));
+    const weak=attempts.filter(a=>a.testId===TEST.id).flatMap(a=>(a.perQuestion||[]).filter(p=>!p.correct).map(p=>p.question));
     if(weak.length){qs=qs.filter(q=>weak.includes(q.question));if(!qs.length)qs=prepareQuestions(TEST.questions,shufQ,shufA,0);}
   }
   state={testId:TEST.id,mode:startMode,questions:qs,answers:new Array(qs.length).fill(null),uncertain:new Array(qs.length).fill(false),current:0,totalTime,timeLeft:totalTime,strict,antiCheat,streak:0,maxStreak:0,flashKnown:0,flashUnknown:0,flashRevealed:false,survival:startMode==='survival',reverse:startMode==='reverse',speedrun:startMode==='speedrun',multiplayer:false};
-  localStorage.removeItem(K.ATT);
+  localStorage.removeItem(K.STATE);
   document.body.classList.remove('multiplayer-active');
   if(antiCheat){
     antiCheatWarnings=0;
@@ -932,8 +1333,13 @@ function startTest(){
   if(startMode==='flashcards'){show('flashcardScreen');renderFC();}
   else{show('quizScreen');renderQ();if(totalTime>0)startTimer();}
 }
-function saveState(){if(!state||state.multiplayer)return;try{localStorage.setItem(K.ATT,JSON.stringify(state));}catch(e){}}
-function loadSaved(){try{const r=localStorage.getItem(K.ATT);if(!r)return null;const d=JSON.parse(r);if(!d||!Array.isArray(d.questions))return null;return d;}catch(e){return null;}}
+function saveState(){
+  if(!state||state.multiplayer)return;
+  try{localStorage.setItem(K.STATE,JSON.stringify(state));}catch(e){}
+}
+function loadSaved(){
+  try{const r=localStorage.getItem(K.STATE);if(!r)return null;const d=JSON.parse(r);if(!d||!Array.isArray(d.questions))return null;return d;}catch(e){return null;}
+}
 
 function startTimer(){
   if(timerId)clearInterval(timerId);
@@ -980,10 +1386,10 @@ function renderQ(){
   for(let i=0;i<total;i++){let c='seg';if(hasAnswer(state.answers[i],state.questions[i]))c+=' done';if(i===state.current)c+=' current';segs.push(`<div class="${c}"></div>`);}
   $('progressSegments').innerHTML=segs.join('');
   const imgWrap=$('questionImage');
-  if(q.image){imgWrap.innerHTML=`<img src="${q.image}" style="max-width:100%;max-height:280px;border-radius:12px">`;imgWrap.style.display='block';}
+  if(q.image){imgWrap.innerHTML=`<img src="${esc(q.image)}" style="max-width:100%;max-height:280px;border-radius:12px">`;imgWrap.style.display='block';}
   else{imgWrap.style.display='none';imgWrap.innerHTML='';}
   let actions=`<button class="q-action-btn" onclick="speak()">🔊 Озвучить</button>`;
-  if(!state.strict)actions+=`<button class="q-action-btn" onclick="getHint()">💡 Подсказка</button>`;
+  if(!state.strict)actions+=`<button class="q-action-btn" onclick="getHint()">💡 Подсказка (ур. ${hintLevel+1})</button>`;
   $('qActions').innerHTML=actions;
   $('hintBox').classList.add('hidden');$('hintBox').textContent='';
   const box=$('options');box.innerHTML='';
@@ -1017,10 +1423,16 @@ function renderQ(){
     q.pairs.forEach((pair,i)=>{const left=document.createElement('div');left.style.cssText='padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;font-weight:600';left.textContent=pair.left;const right=document.createElement('div');right.style.cssText='padding:4px;background:rgba(255,255,255,0.4);border-radius:8px';const sel=document.createElement('select');sel.style.cssText='width:100%;padding:8px;border:none;background:rgba(255,255,255,0.6);border-radius:6px';sel.innerHTML='<option value="">—</option>'+rights.map((r,j)=>`<option value="${j}" ${ua[i]===j?'selected':''}>${esc(r.right)}</option>`).join('');sel.onchange=()=>{const ua2=Array.isArray(state.answers[state.current])?[...state.answers[state.current]]:new Array(q.pairs.length).fill(null);ua2[i]=sel.value===''?null:parseInt(sel.value);state.answers[state.current]=ua2;saveState();updateNav();};right.appendChild(sel);grid.appendChild(left);grid.appendChild(right);});
     box.appendChild(grid);
   } else if(q.type==='sort'){
-    const items=raw._userOrder||q.items.map((it,i)=>({...it,_orig:i}));
+    const items = raw._userOrder || q.items.map((text,i)=>({text:String(text),_orig:i}));
     const list=document.createElement('div');
-    items.forEach((item,idx)=>{const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;margin-bottom:8px';row.innerHTML=`<span style="font-family:var(--mono);font-weight:700;color:var(--text-muted);width:20px">${idx+1}</span><span style="flex:1">${esc(typeof item==='string'?item:item.text||item)}</span><button class="icon-btn" onclick="moveSort(${idx},-1)" ${idx===0?'disabled':''}>↑</button><button class="icon-btn" onclick="moveSort(${idx},1)" ${idx===items.length-1?'disabled':''}>↓</button>`;list.appendChild(row);});
-    box.appendChild(list);state.answers[state.current]=items.map(it=>typeof it==='object'?it._orig:it);
+    items.forEach((item,idx)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,0.4);border-radius:8px;margin-bottom:8px';
+      row.innerHTML=`<span style="font-family:var(--mono);font-weight:700;color:var(--text-muted);width:20px">${idx+1}</span><span style="flex:1">${esc(item.text)}</span><button class="icon-btn" onclick="moveSort(${idx},-1)" ${idx===0?'disabled':''}>↑</button><button class="icon-btn" onclick="moveSort(${idx},1)" ${idx===items.length-1?'disabled':''}>↓</button>`;
+      list.appendChild(row);
+    });
+    box.appendChild(list);
+    state.answers[state.current] = items.map(it=>it._orig);
   } else {
     q.options.forEach((opt,i)=>{const el=document.createElement('div');el.className='option'+(ans===i?' selected':'');el.innerHTML=`<span class="option-marker">${ans===i?'■':'□'}</span><span class="option-text">${md(opt.text)}</span>`;el.onclick=()=>{state.answers[state.current]=i;playS('click');saveState();renderQ();};rMath(el.querySelector('.option-text'));box.appendChild(el);});
   }
@@ -1036,9 +1448,16 @@ function updateNav(){
   $('nextBtn').textContent=state.current===total-1?'Завершить ✓':'Далее →';
   $('nextBtn').disabled=!hasAnswer(state.answers[state.current],state.questions[state.current]);
 }
-function moveSort(idx,dir){const raw=state.questions[state.current];const j=idx+dir;if(j<0||j>=raw._userOrder.length)return;[raw._userOrder[idx],raw._userOrder[j]]=[raw._userOrder[j],raw._userOrder[idx]];state.answers[state.current]=raw._userOrder.map(it=>it._orig);saveState();renderQ();}
+function moveSort(idx,dir){
+  const raw=state.questions[state.current];
+  const j=idx+dir;
+  if(j<0||j>=raw._userOrder.length)return;
+  [raw._userOrder[idx],raw._userOrder[j]]=[raw._userOrder[j],raw._userOrder[idx]];
+  state.answers[state.current]=raw._userOrder.map(it=>it._orig);
+  saveState();renderQ();
+}
 function toggleUncertain(c){state.uncertain[state.current]=c;saveState();}
-function prevQuestion(){if(state.strict)return;if(state.current>0){state.current--;saveState();renderQ();}}
+function prevQuestion(){if(state.strict)return;if(state.current>0){state.current--;hintLevel=0;saveState();renderQ();}}
 function nextQuestion(){
   if(!hasAnswer(state.answers[state.current],state.questions[state.current]))return;
   const wasHot=state.streak>=3;
@@ -1046,7 +1465,7 @@ function nextQuestion(){
   if(ok){state.streak++;if(state.streak>state.maxStreak)state.maxStreak=state.streak;addXP(10);playS('correct');if(state.survival)addXP(5);}
   else{state.streak=0;playS('wrong');if(state.survival){toast('💀 Конец');finish(true);return;}}
   if(state.current<state.questions.length-1){
-    state.current++;saveState();renderQ();
+    state.current++;hintLevel=0;saveState();renderQ();
     if(!wasHot&&state.streak>=3){const b=$('streakBadge');b.classList.remove('hot');void b.offsetWidth;b.classList.add('hot');}
   } else finish(false);
 }
@@ -1079,8 +1498,19 @@ function fcRate(knew){
   else finishFC();
 }
 function finishFC(){
-  const total=state.questions.length;const pct=Math.round((state.flashKnown/total)*100);
-  playS('complete');show('resultScreen');
+  const total=state.questions.length;
+  const pct=Math.round((state.flashKnown/total)*100);
+  playS('complete');
+
+  game.totalQuestions += total;
+  const att={
+    testId:state.testId, ts:Date.now(), percent:pct,
+    correctCount:state.flashKnown, total, maxStreak:0,
+    mode:'flashcards', perQuestion:[]
+  };
+  attempts.push(att);saveAttempts();saveGame();checkAchievements();
+
+  show('resultScreen');
   $('scoreText').textContent=pct+'%';
   $('scoreMsg').textContent=`Знаю: ${state.flashKnown} из ${total}`;
   $('scoreStats').textContent='';
@@ -1108,7 +1538,7 @@ function finish(byTimeout){
   if(timerId)clearInterval(timerId);timerId=null;
   if(window._acHandler){document.removeEventListener('visibilitychange',window._acHandler);window._acHandler=null;}
   if(!state||state.multiplayer)return;
-  localStorage.removeItem(K.ATT);pendingSaved=null;
+  localStorage.removeItem(K.STATE);pendingSaved=null;
   const total=state.questions.length;
   const correct=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
   const pct=Math.round(correct/total*100);
@@ -1142,53 +1572,46 @@ function renderReview(){
       const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));
       nq.pairs.forEach((p,j)=>{const ci=Array.isArray(ua)?ua[j]:null;const ct=(ci!==null&&ci!==undefined&&raw[ci])?raw[ci].right:'—';const oi=ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===j;body+=`<div class="review-opt ${oi?'correct':'wrong'}"><span>${oi?'✓':'✗'}</span><span>${esc(p.left)} → ${esc(ct)}${!oi?' (нужно: '+esc(p.right)+')':''}</span></div>`;});
     } else if(nq.type==='sort'){
-      const uo=Array.isArray(ua)?ua.map(idx=>nq.items[idx]):[];
+      const uo=Array.isArray(ua)?ua.map(idx=>String(nq.items[idx]||'')):[];
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${uo.map(esc).join(' → ')}</span></div>`;
+      if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${nq.items.map(esc).join(' → ')}</span></div>`;
     } else if(nq.type==='file'){
       body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Файл: ${esc(ua&&ua.name||'—')}</span></div>`;
     } else {
       nq.options.forEach((o,j)=>{const isC=o.correct;const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;const m=isC?'✓':(isCh?'✗':'○');const cls=isC?'correct':(isCh?'wrong':'');body+=`<div class="review-opt ${cls}"><span>${m}</span><span>${md(o.text||o.image)}</span></div>`;});
     }
     if(nq.explanation)body+=`<div style="margin-top:8px;padding:10px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;font-size:13px">💡 ${md(nq.explanation)}</div>`;
-    return `<div class="review-item"><div class="review-q">${pad(i+1)}. ${md(nq.question)}</div>${body}</div>`;
+    const aiBtn = !ok ? `<button class="btn-ghost btn-small" style="margin-top:8px" onclick="explainMistake(${i})">🤖 Объясни ошибку</button><div id="explain-${i}"></div>` : '';
+    return `<div class="review-item"><div class="review-q">${pad(i+1)}. ${md(nq.question)}</div>${body}${aiBtn}</div>`;
   }).join('');
   $('reviewList').innerHTML=html;rMath($('reviewList'));
 }
 
 function playS(n){if(!settings.sound)return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const f={click:[600,.06],correct:[880,.1],wrong:[300,.15],complete:[523,.15]}[n]||[500,.1];const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f[0];g.gain.setValueAtTime(.05,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+f[1]);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+f[1]);}catch(e){}}
 function speak(){const q=normQ(state.questions[state.current]);if(!('speechSynthesis'in window)){toast('TTS нет');return;}const u=new SpeechSynthesisUtterance(q.question.replace(/[*_`$]/g,''));u.lang='ru-RU';speechSynthesis.cancel();speechSynthesis.speak(u);toast('🔊');}
-async function callAI(msgs){
-  const p=settings.aiProvider||'pollinations';
-  let url='https://text.pollinations.ai/openai';
-  let body=JSON.stringify({model:'openai',messages:msgs,temperature:0.8,max_tokens:4096});
-  if(p==='ovhcloud'){url='https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions';body=JSON.stringify({model:'mistral-small-latest',messages:msgs,temperature:0.8,max_tokens:4096});}
-  else if(p==='hackclub'){url='https://ai.hackclub.com/proxy/v1/chat/completions';body=JSON.stringify({model:'deepseek-chat',messages:msgs,temperature:0.8,max_tokens:4096});}
-  if(proxyUrl)url=proxyUrl;
-  const cacheKey=JSON.stringify(msgs).slice(0,200);
-  if(aiCache[cacheKey]&&Date.now()-aiCache[cacheKey].ts<86400000)return aiCache[cacheKey].content;
-  const ctl=new AbortController();const tid=setTimeout(()=>ctl.abort(),90000);
-  try{
-    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body,signal:ctl.signal});
-    clearTimeout(tid);
-    if(!res.ok){if(res.status===429)throw new Error('Слишком много');throw new Error('Ошибка '+res.status);}
-    const data=await res.json();
-    const content=data.choices[0].message.content;
-    aiCache[cacheKey]={content,ts:Date.now()};
-    try{localStorage.setItem(K.CACHE,JSON.stringify(aiCache));}catch(e){}
-    return content;
-  }catch(err){clearTimeout(tid);if(err.name==='AbortError')throw new Error('Таймаут');throw err;}
-}
 function parseJSON(t){if(!t)throw new Error('пусто');try{return JSON.parse(t);}catch(e){}const f=t.match(/```(?:json)?\s*([\s\S]*?)```/i);if(f){try{return JSON.parse(f[1]);}catch(e){}}const s=t.indexOf('{'),e=t.lastIndexOf('}');if(s>=0&&e>s){try{return JSON.parse(t.slice(s,e+1));}catch(e){}}throw new Error('JSON');}
 function aiSetTab(t){aiTab=t;document.querySelectorAll('#aiModal .tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));$('aiTopicTab').classList.toggle('hidden',t!=='topic');$('aiTextTab').classList.toggle('hidden',t!=='text');$('aiBatchTab').classList.toggle('hidden',t!=='batch');}
-function openAiModal(mode){aiMode=mode;aiResult=null;$('aiTopic').value='';$('aiText').value='';$('aiBatchTopics').value='';$('aiCustom').value='';$('aiCount').value=5;$('aiDiff').value='medium';$('aiStatus').style.display='none';$('aiGenBtn').textContent='✨ Сгенерировать';$('aiGenBtn').onclick=generateWithAi;$('aiGenBtn').disabled=false;aiSetTab('topic');$('aiModal').classList.remove('hidden');}
+function openAiModal(mode){aiMode=mode;aiResult=null;$('aiTopic').value='';$('aiText').value='';$('aiBatchTopics').value='';$('aiCustom').value='';$('aiCount').value=5;$('aiDiff').value='medium';$('aiStatus').style.display='none';$('aiGenBtn').textContent='✨ Сгенерировать';$('aiGenBtn').onclick=generateWithAi;$('aiGenBtn').disabled=false;$('aiTypeSingle').checked=true;$('aiTypeMulti').checked=false;$('aiTypeTF').checked=false;$('aiTypeFill').checked=false;aiSetTab('topic');$('aiModal').classList.remove('hidden');}
 function closeAiModal(){$('aiModal').classList.add('hidden');aiResult=null;}
 function aiStatus(m,k){const el=$('aiStatus');el.style.display='block';el.style.background=k==='err'?'rgba(239,68,68,0.15)':k==='ok'?'rgba(16,185,129,0.2)':'rgba(139,92,246,0.1)';el.textContent=m;}
+function setAiPreset(text){$('aiCustom').value=text;}
+
 async function generateWithAi(){
+  const btn=$('aiGenBtn');
+  if(btn.dataset.loading==='1') return;
   if(aiResult){applyAiResult();return;}
+  btn.dataset.loading='1';
   const count=Math.min(20,Math.max(1,parseInt($('aiCount').value)||5));
   const diff=$('aiDiff').value;const custom=$('aiCustom').value.trim();
   const diffLabel={easy:'лёгкий',medium:'средний',hard:'сложный',mixed:'смешанный'}[diff];
-  const btn=$('aiGenBtn');btn.disabled=true;btn.textContent='⏳ Генерирую…';
+  const types=[];
+  if($('aiTypeSingle').checked)types.push('single');
+  if($('aiTypeMulti').checked)types.push('multi');
+  if($('aiTypeTF').checked)types.push('truefalse');
+  if($('aiTypeFill').checked)types.push('fill');
+  if(!types.length)types.push('single');
+
+  btn.disabled=true;btn.textContent='⏳ Генерирую…';
   try{
     if(aiTab==='batch'){
       const topics=$('aiBatchTopics').value.split(',').map(s=>s.trim()).filter(Boolean);
@@ -1201,21 +1624,35 @@ async function generateWithAi(){
         if(p.questions)results.push({title:p.title||topic,description:'AI',tags:[topic.toLowerCase()],timeLimit:0,questions:p.questions.map(q=>({type:'single',question:String(q.question),options:(q.options||[]).map((t,i)=>({text:String(t),correct:i===q.correct})),explanation:''}))});
       }
       aiResult=results;aiStatus('✓ Готово: '+results.length,'ok');
-      btn.textContent='✓ Применить все';btn.disabled=false;btn.onclick=applyAiResult;return;
+      btn.textContent='✓ Применить все';btn.disabled=false;btn.onclick=applyAiResult;
+      delete btn.dataset.loading;
+      return;
     }
     let prompt='';
     if(aiTab==='topic'){const topic=$('aiTopic').value.trim();if(!topic)throw new Error('Введите тему');prompt=`Создай ${count} тестовых вопросов по "${topic}". Уровень: ${diffLabel}.`;}
     else{const text=$('aiText').value.trim();if(text.length<50)throw new Error('Текст короткий');prompt=`Создай ${count} вопросов по тексту:\n\n${text.slice(0,4000)}`;}
     if(custom)prompt+='\nСтиль: '+custom;
-    prompt+=`\nОтвет ТОЛЬКО JSON: {"title":"Название","questions":[{"question":"","options":["A","B","C","D"],"correct":0,"explanation":""}]}. 4 варианта, correct=0..3, на русском.`;
-    aiStatus('Запрос к AI. 10-40 сек…','info');
+    prompt+=`\nТипы вопросов: ${types.join(', ')}.`;
+    prompt+=`\nОтвет ТОЛЬКО JSON: {"title":"Название","questions":[{"type":"single","question":"","options":["A","B","C","D"],"correct":0,"explanation":""}]}. Для truefalse: {"type":"truefalse","question":"","answer":true}. Для fill: {"type":"fill","text":"Текст с ___","blanks":["ответ"]}. На русском.`;
+    aiStatus('Запрос к AI…','info');
     const content=await callAI([{role:'system',content:'Методист. Отвечай только валидным JSON.'},{role:'user',content:prompt}]);
     const parsed=parseJSON(content);
     if(!parsed.questions)throw new Error('Нет questions');
-    aiResult={title:parsed.title||'AI Тест',description:'',tags:[],timeLimit:0,questions:parsed.questions.map(q=>({type:'single',question:String(q.question),options:(q.options||[]).map((t,i)=>({text:String(t),correct:i===q.correct})),explanation:String(q.explanation||'')}))};
+    const normed = parsed.questions.map(q=>{
+      if(q.type==='truefalse') return {type:'truefalse',question:String(q.question),answer:!!q.answer,explanation:String(q.explanation||'')};
+      if(q.type==='fill') return {type:'fill',question:String(q.question||q.text||''),text:String(q.text||q.question||''),blanks:(q.blanks||[]).map(String),explanation:String(q.explanation||'')};
+      const t = q.type==='multi'?'multi':'single';
+      return {type:t,question:String(q.question),options:(q.options||[]).map((opt,i)=>({text:String(opt),correct:i===q.correct})),explanation:String(q.explanation||'')};
+    });
+    aiResult={title:parsed.title||'AI Тест',description:'',tags:[],timeLimit:0,questions:normed};
     aiStatus('✓ Готово: '+aiResult.questions.length,'ok');
     btn.textContent='✓ Применить';btn.disabled=false;btn.onclick=applyAiResult;playS('correct');
-  }catch(err){aiStatus('❌ '+err.message,'err');btn.disabled=false;btn.textContent='✨ Сгенерировать';btn.onclick=generateWithAi;}
+    delete btn.dataset.loading;
+  }catch(err){
+    aiStatus('❌ '+err.message,'err');
+    btn.disabled=false;btn.textContent='✨ Сгенерировать';btn.onclick=generateWithAi;
+    delete btn.dataset.loading;
+  }
 }
 function applyAiResult(){
   if(!aiResult)return;
@@ -1227,12 +1664,6 @@ function applyAiResult(){
   if(aiMode==='questions'&&editing){pushHist();editing.questions.push(...deep(aiResult.questions));renderEditor();}
   else{const t={id:uid(),...deep(aiResult)};tests.push(norm(t));saveTests();renderLib();}
   game.aiGenerated=(game.aiGenerated||0)+1;saveGame();closeAiModal();toast('✓ Готово');
-}
-async function getHint(){
-  const q=normQ(state.questions[state.current]);
-  const box=$('hintBox');box.classList.remove('hidden');box.textContent='⏳…';
-  try{const content=await callAI([{role:'system',content:'Краткая подсказка. Не выдавай ответ.'},{role:'user',content:`Вопрос: "${q.question}". Подсказка 1-2 предложения.`}]);box.textContent=content.trim();}
-  catch(err){box.textContent='❌ '+err.message;}
 }
 
 function openEditor(idOrTest){
@@ -1264,7 +1695,8 @@ function renderEditor(){
     else if(nq.type==='sort')inner=nq.items.map((it,j)=>`<div class="opt-row"><span style="width:20px;text-align:center">${j+1}</span><input type="text" class="sort-input" data-i="${i}" data-j="${j}" value="${esc(it)}"><button class="icon-btn danger" onclick="deleteSortItem(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addSortItem(${i})">+ Элемент</button>`;
     else if(nq.type==='file')inner=`<div class="field"><label>Тип файла</label><input type="text" class="file-type" data-i="${i}" value="${esc(nq.fileType||'any')}"></div>`;
     else{const t=nq.type==='multi'?'checkbox':'radio';inner=nq.options.map((opt,j)=>`<div class="opt-row"><input type="${t}" class="opt-correct" data-i="${i}" data-j="${j}" ${opt.correct?'checked':''}><input type="text" class="opt-text" data-i="${i}" data-j="${j}" value="${esc(opt.text)}"><button class="icon-btn danger" onclick="deleteOption(${i},${j})">✕</button></div>`).join('')+`<button class="add-opt-btn" onclick="addOption(${i})">+ Вариант</button>`;}
-    return `<div class="q-card" data-qi="${i}" style="--i:${i}"><div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div><select class="q-type-select" onchange="changeType(${i},this.value)"><option value="single" ${nq.type==='single'?'selected':''}>Один</option><option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option><option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option><option value="text" ${nq.type==='text'?'selected':''}>Текст</option><option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option><option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option><option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option><option value="image" ${nq.type==='image'?'selected':''}>Картинки</option><option value="file" ${nq.type==='file'?'selected':''}>Файл</option></select><div class="spacer"></div><button class="icon-btn danger" onclick="deleteQ(${i})">✕</button></div><div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div><div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение">${esc(nq.explanation||'')}</textarea></div>${inner}</div>`;
+    const imgBtn = `<button class="btn-ghost btn-small" id="genImg-${i}" onclick="generateImageForQuestion(${i})" title="Сгенерировать картинку">🖼</button>`;
+    return `<div class="q-card" data-qi="${i}" style="--i:${i}"><div class="q-card-header"><span class="drag-handle" draggable="true" data-qi="${i}">⋮⋮</span><div class="q-num">${pad(i+1)}</div><select class="q-type-select" onchange="changeType(${i},this.value)"><option value="single" ${nq.type==='single'?'selected':''}>Один</option><option value="multi" ${nq.type==='multi'?'selected':''}>Несколько</option><option value="truefalse" ${nq.type==='truefalse'?'selected':''}>Правда/Ложь</option><option value="text" ${nq.type==='text'?'selected':''}>Текст</option><option value="fill" ${nq.type==='fill'?'selected':''}>Пропуски</option><option value="matching" ${nq.type==='matching'?'selected':''}>Соответствие</option><option value="sort" ${nq.type==='sort'?'selected':''}>Сортировка</option><option value="image" ${nq.type==='image'?'selected':''}>Картинки</option><option value="file" ${nq.type==='file'?'selected':''}>Файл</option></select><div class="spacer"></div>${imgBtn}<button class="icon-btn danger" onclick="deleteQ(${i})">✕</button></div><div class="field" style="margin-bottom:10px"><input type="text" class="q-text" data-i="${i}" value="${esc(nq.question)}" placeholder="Текст вопроса"></div><div class="field" style="margin-bottom:10px"><textarea class="q-explanation" data-i="${i}" rows="1" placeholder="Объяснение">${esc(nq.explanation||'')}</textarea></div>${inner}</div>`;
   }).join('');
   setupDnD();
 }
@@ -1394,7 +1826,7 @@ function showCertificate(){
 async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
 function confetti(opts){if(window.confetti)window.confetti({particleCount:150,spread:70,origin:{y:0.6},...opts});}
 
-function openSettings(){renderSettingsButtons();$('settingsModal').classList.remove('hidden');}
+function openSettings(){renderSettingsButtons();$('keyGemini').value=localStorage.getItem('aq_gemini_key')||'';$('keyGroq').value=localStorage.getItem('aq_groq_key')||'';$('keyMistral').value=localStorage.getItem('aq_mistral_key')||'';$('settingsModal').classList.remove('hidden');}
 function closeSettings(){$('settingsModal').classList.add('hidden');}
 function renderSettingsButtons(){
   document.querySelectorAll('#setTheme .set-btn').forEach(b=>{const need=parseInt(b.dataset.lvl)||0;b.classList.toggle('locked',game.level<need);b.classList.toggle('active',b.dataset.v===settings.theme);});
@@ -1410,12 +1842,31 @@ document.querySelectorAll('#setFont .set-btn').forEach(b=>b.onclick=()=>{setting
 document.querySelectorAll('#setSound .set-btn').forEach(b=>b.onclick=()=>{settings.sound=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.onclick=()=>{settings.autoTheme=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.onclick=()=>{settings.aiProvider=b.dataset.v;localStorage.setItem(K.AI,settings.aiProvider);saveSettings();renderSettingsButtons();});
-function resetProgress(){if(!confirm('Сбросить прогресс?'))return;game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};saveGame();toast('Сброшено');}
+function saveAiKeys(){
+  localStorage.setItem('aq_gemini_key',$('keyGemini').value.trim());
+  localStorage.setItem('aq_groq_key',$('keyGroq').value.trim());
+  localStorage.setItem('aq_mistral_key',$('keyMistral').value.trim());
+  toast('✓ Ключи сохранены');
+}
+function clearAiKeys(){
+  ['aq_gemini_key','aq_groq_key','aq_mistral_key'].forEach(k=>localStorage.removeItem(k));
+  $('keyGemini').value='';$('keyGroq').value='';$('keyMistral').value='';
+  toast('Ключи очищены');
+}
+function resetProgress(){
+  if(!confirm('Сбросить весь прогресс, историю попыток и корзину? Это нельзя отменить.'))return;
+  game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};
+  attempts=[];trash=[];aiCache={};
+  saveGame();saveAttempts();saveTrash();
+  localStorage.removeItem(K.STATE);localStorage.removeItem(K.CACHE);localStorage.removeItem(K.CHAT);
+  renderLib();renderXP();
+  toast('Прогресс сброшен');
+}
 
 const ONBOARD=[
   {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов с AI и геймификацией.'},
   {title:'🎯 Проходите тесты',text:'6 режимов + мультиплеер с PIN-комнатами для класса.'},
-  {title:'🏆 Зарабатывайте XP',text:'+10 XP за правильный ответ. Стрики, достижения, уровни.'},
+  {title:'🤖 AI-помощник',text:'Генерация вопросов, объяснение ошибок и репетитор — всё бесплатно.'},
 ];
 function startOnboard(){if(localStorage.getItem('aq_onboarded_v8'))return;onboardStep=0;renderOnboard();$('onboardModal').classList.remove('hidden');}
 function renderOnboard(){$('onboardTitle').textContent=ONBOARD[onboardStep].title;$('onboardText').textContent=ONBOARD[onboardStep].text;document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));}
@@ -1423,7 +1874,8 @@ function nextOnboard(){onboardStep++;if(onboardStep>=ONBOARD.length){$('onboardM
 
 function startDailyChallenge(){
   if(tests.length<1){toast('Сначала создайте тесты');return;}
-  const allQ=[];tests.forEach(t=>t.questions.forEach(q=>allQ.push({q,tid:t.id})));
+  const allQ=[];
+  tests.forEach(t=>t.questions.forEach(q=>allQ.push({q,tid:t.id})));
   const picked=shuffle(allQ).slice(0,5);
   if(!picked.length){toast('Нет вопросов');return;}
   TEST={id:'daily',title:'🎯 Челлендж дня',description:new Date().toDateString(),tags:[],questions:picked.map(p=>p.q)};
@@ -1433,9 +1885,15 @@ function startDailyChallenge(){
 }
 
 /* ==========================================================
-   MULTIPLAYER v8.0 — с БД, QR, Anonymous Auth, postgres_changes
+   MULTIPLAYER v8.1
    ========================================================== */
 function generatePin(){return Math.floor(100000+Math.random()*900000).toString();}
+
+function safeSend(payload){
+  if(!currentChannel)return;
+  try{ currentChannel.send(payload).catch(e=>console.warn('[broadcast]',e)); }
+  catch(e){ console.warn('[broadcast]',e); }
+}
 
 function openMultiplayerMenu(){
   const urlPin = new URLSearchParams(location.search).get('pin');
@@ -1443,50 +1901,44 @@ function openMultiplayerMenu(){
   if(urlPin){setTimeout(()=>{$('joinPinInput').value=urlPin;},100);}
 }
 
-// === ХОСТ: Создать комнату ===
 async function hostCreateRoom(){
   if(!await initSupabase()) return;
   if(!TEST){toast('Сначала выберите тест');return;}
-  
-  const pin = generatePin();
-  const channelName = 'aq-room-'+pin;
-  
+
+  let pin=null, created=false, tries=0;
+  while(!created && tries<5){
+    pin = generatePin();
+    const { error } = await sbClient.from('rooms').insert({
+      pin: pin, host_id: myDeviceId, test_id: TEST.id, test_title: TEST.title,
+      status: 'waiting', current_question: 0
+    });
+    if(!error){ created=true; break; }
+    if(error.code==='23505'){ tries++; continue; }
+    toast('❌ Ошибка БД: '+error.message); return;
+  }
+  if(!created){ toast('❌ Не удалось создать комнату'); return; }
+
   if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
   if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){}}
 
-  // 1. Создаем комнату в БД
-  const { error: err } = await sbClient.from('rooms').insert({
-    pin: pin,
-    host_id: myDeviceId,
-    test_id: TEST.id,
-    test_title: TEST.title,
-    status: 'waiting',
-    current_question: 0
-  });
-  if (err) { toast('❌ Ошибка БД: '+err.message); return; }
-
+  const channelName = 'aq-room-'+pin;
   multiplayerState = { pin, players:[], scores:{}, testId:TEST.id, testTitle:TEST.title, questions:TEST.questions, currentQ:0, answers:{} };
   isHost = true;
   currentUser = { id: myDeviceId, name: 'Учитель', role: 'host' };
 
-  // 2. Подписка на Presence (список игроков)
-  currentChannel = sbClient.channel(channelName, {
-    config: { presence: { key: 'host-' + myDeviceId } }
-  });
+  currentChannel = sbClient.channel(channelName, { config: { presence: { key: 'host-' + myDeviceId } } });
 
   currentChannel.on('presence', { event: 'sync' }, () => {
     const state = currentChannel.presenceState();
     const players = [];
-    Object.values(state).flat().forEach(p => {
-      if (p.role === 'player' && p.name) players.push(p.name);
-    });
+    Object.values(state).flat().forEach(p => { if (p.role === 'player' && p.name) players.push(p.name); });
     multiplayerState.players = players;
     updateLobbyUI();
   });
 
-  // 3. Приём ответов
   currentChannel.on('broadcast', { event: 'player-answer' }, (msg) => {
-    handleIncomingAnswer(msg.payload.player, msg.payload.answer, msg.payload.questionIndex);
+    const p = msg.payload;
+    handleIncomingAnswer(p.userId, p.player, p.answer, p.questionIndex);
   });
 
   await currentChannel.subscribe(async (status) => {
@@ -1494,10 +1946,8 @@ async function hostCreateRoom(){
       await currentChannel.track({ role: 'host', name: 'Учитель', user_id: myDeviceId });
       $('roomPinDisplay').textContent = pin;
       $('roomTestName').textContent = TEST.title;
-      
       const url = location.origin + location.pathname + '?pin=' + pin;
       $('qrContainer').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" alt="QR">`;
-      
       show('multiplayerLobbyScreen');
       toast('✓ Комната создана: ' + pin);
     } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
@@ -1506,28 +1956,20 @@ async function hostCreateRoom(){
   });
 }
 
-// === ИГРОК: Войти ===
 async function playerJoinRoom(){
   if(!await initSupabase()) return;
   const pin = ($('joinPinInput').value||'').trim();
   const name = ($('joinNameInput').value||'').trim();
-  
   if(!pin||pin.length!==6){toast('Введите 6-значный PIN');return;}
   if(!name){toast('Введите имя');return;}
 
-  // 1. Проверяем комнату
   const { data: room, error: rErr } = await sbClient.from('rooms').select('*').eq('pin', pin).maybeSingle();
   if (rErr) { toast('❌ Ошибка БД: '+rErr.message); return; }
   if (!room) { toast('❌ Комната не найдена'); return; }
   if (room.status === 'finished') { toast('❌ Игра уже завершена'); return; }
 
-  // 2. Добавляем игрока в БД
   const { error: pErr } = await sbClient.from('room_players').insert({
-    room_pin: pin,
-    user_id: myDeviceId,
-    name: name,
-    score: 0,
-    status: 'ready'
+    room_pin: pin, user_id: myDeviceId, name: name, score: 0, status: 'ready'
   });
   if (pErr && !pErr.message.includes('duplicate')) { toast('❌ Ошибка входа: '+pErr.message); return; }
 
@@ -1539,18 +1981,11 @@ async function playerJoinRoom(){
   currentUser = { id: myDeviceId, name: name, role: 'player' };
   multiplayerState = { pin, players:[], scores:{}, currentQ:0, answers:{}, questions:[] };
 
-  // 3. Слушаем Broadcast (вопросы, счёт, кик)
-  currentChannel = sbClient.channel(channelName, {
-    config: { presence: { key: 'player-' + myDeviceId } }
-  });
+  currentChannel = sbClient.channel(channelName, { config: { presence: { key: 'player-' + myDeviceId } } });
 
   currentChannel.on('broadcast', { event: 'game-started' }, (msg) => {
     if (!msg || !msg.payload) return;
-    startMultiplayerQuiz({
-      testTitle: msg.payload.testTitle,
-      questions: msg.payload.questions,
-      pin: pin
-    });
+    startMultiplayerQuiz({ testTitle: msg.payload.testTitle, questions: msg.payload.questions, pin: pin });
   });
 
   currentChannel.on('broadcast', { event: 'score-update' }, (msg) => {
@@ -1560,31 +1995,22 @@ async function playerJoinRoom(){
   currentChannel.on('broadcast', { event: 'new-question' }, (msg) => {
     if(state && state.multiplayer){
       multiplayerState.currentQ = msg.payload.index;
-      renderMultiplayerQuestion(msg.payload.question);
+      renderMultiplayerQuestion(msg.payload.question, msg.payload.index);
     }
   });
 
-  currentChannel.on('broadcast', { event: 'game-ended' }, () => {
-    finishMultiplayer();
-  });
+  currentChannel.on('broadcast', { event: 'game-ended' }, () => { finishMultiplayer(); });
 
   currentChannel.on('broadcast', { event: 'kick' }, (msg) => {
-    if (msg.payload.target === myDeviceId) {
-      toast('❌ Вас исключили из комнаты');
-      leaveMultiplayer();
-    }
+    if (msg.payload.target === myDeviceId) { toast('❌ Вас исключили'); leaveMultiplayer(); }
   });
 
-  // 4. Слушаем изменения в БД (для кика и завершения)
   roomStateChannel = sbClient.channel('room-state-'+pin)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'pin=eq.'+pin }, payload => {
       if (payload.new.status === 'finished' && state) finishMultiplayer();
     })
     .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'room_players', filter: 'room_pin=eq.'+pin }, payload => {
-      if (payload.old.user_id === myDeviceId) {
-        toast('❌ Вас исключили');
-        leaveMultiplayer();
-      }
+      if (payload.old.user_id === myDeviceId) { toast('❌ Вас исключили'); leaveMultiplayer(); }
     })
     .subscribe();
 
@@ -1607,31 +2033,17 @@ function updateLobbyUI(){
   list.innerHTML = players.map(n=>`<div style="padding:10px 16px;background:rgba(255,255,255,0.5);border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:6px">👤 ${esc(n)}</div>`).join('');
 }
 
-// === ХОСТ: Начать игру ===
 async function hostStartGame(){
   if(!isHost || !multiplayerState) return;
   if(multiplayerState.players.length===0 && !confirm('Нет игроков. Начать в одиночку?')) return;
 
-  // 1. Обновляем статус в БД
-  await sbClient.from('rooms').update({
-    status: 'playing',
-    current_question: 0,
-    question_started_at: new Date().toISOString()
-  }).eq('pin', multiplayerState.pin);
+  await sbClient.from('rooms').update({ status: 'playing', current_question: 0, question_started_at: new Date().toISOString() }).eq('pin', multiplayerState.pin);
 
-  // 2. Сжимаем вопросы и отправляем через Broadcast
   const cleanQuestions = multiplayerState.questions.map(raw => {
     const nq = normQ(raw);
-    const clean = {
-      type: nq.type,
-      question: String(nq.question || '').slice(0, 400),
-      explanation: String(nq.explanation || '').slice(0, 200)
-    };
+    const clean = { type: nq.type, question: String(nq.question || '').slice(0, 400), explanation: String(nq.explanation || '').slice(0, 200) };
     if (nq.type === 'single' || nq.type === 'multi' || nq.type === 'image') {
-      clean.options = (nq.options || []).map(o => ({
-        text: String(o.text || '').slice(0, 150),
-        correct: !!o.correct
-      }));
+      clean.options = (nq.options || []).map(o => ({ text: String(o.text || '').slice(0, 150), correct: !!o.correct }));
     } else if (nq.type === 'truefalse' || nq.type === 'text') {
       clean.answer = nq.answer;
     }
@@ -1643,82 +2055,52 @@ async function hostStartGame(){
     if (payloadSize > 8000) {
       toast('⏳ Отправка ' + cleanQuestions.length + ' вопросов...');
       for (let i = 0; i < cleanQuestions.length; i++) {
-        await currentChannel.send({
-          type: 'broadcast',
-          event: 'new-question',
-          payload: { question: cleanQuestions[i], index: i, total: cleanQuestions.length }
-        });
+        safeSend({ type: 'broadcast', event: 'new-question', payload: { question: cleanQuestions[i], index: i, total: cleanQuestions.length } });
         await new Promise(r => setTimeout(r, 80));
       }
-      await currentChannel.send({
-        type: 'broadcast',
-        event: 'game-started',
-        payload: { testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin }
-      });
-    } else {
-      await currentChannel.send({
-        type: 'broadcast',
-        event: 'game-started',
-        payload: { testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin }
-      });
     }
-  } catch(e) {
-    toast('❌ Ошибка отправки: ' + e.message);
-    return;
-  }
+    safeSend({ type: 'broadcast', event: 'game-started', payload: { testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin } });
+  } catch(e) { toast('❌ Ошибка отправки: ' + e.message); return; }
 
-  startMultiplayerQuiz({
-    testTitle: TEST.title,
-    questions: cleanQuestions,
-    pin: multiplayerState.pin
-  });
+  startMultiplayerQuiz({ testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin });
 }
 
-// === ЗАПУСК ИГРЫ (у всех) ===
 function startMultiplayerQuiz(data){
   try {
     document.body.classList.add('multiplayer-active');
     multiplayerState = multiplayerState || {};
-    if (data.questions && data.questions.length) {
-      multiplayerState.questions = data.questions.map(normQ);
-    }
+    if (data.questions && data.questions.length) multiplayerState.questions = data.questions.map(normQ);
     multiplayerState.currentQ = 0;
     if(!multiplayerState.scores) multiplayerState.scores = {};
     multiplayerState.pin = data.pin;
-    
-    state = {
-      testId: 'multiplayer',
-      questions: multiplayerState.questions || [],
-      answers: [],
-      current: 0,
-      multiplayer: true,
-      totalTime: 0
-    };
-    
+    state = { testId: 'multiplayer', questions: multiplayerState.questions || [], answers: [], current: 0, multiplayer: true, totalTime: 0 };
     show('quizScreen');
     renderMultiplayerQuestion(multiplayerState.questions[0], 0);
-  } catch(e) {
-    toast('❌ Ошибка запуска: ' + e.message);
-  }
+  } catch(e) { toast('❌ Ошибка запуска: ' + e.message); }
 }
 
-// === ОТРИСОВКА ВОПРОСА (с задержкой) ===
 function renderMultiplayerQuestion(q, index){
   if (!q) return;
   q = normQ(q);
   multiplayerState.currentQ = index;
-  
   $('questionText').innerHTML = md(q.question);
   rMath($('questionText'));
   $('counterBig').textContent = pad(index + 1);
   $('counterSmall').textContent = '/ ' + pad(multiplayerState.questions.length);
   $('questionImage').style.display = 'none';
   $('qActions').innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding:6px 12px;background:rgba(255,255,255,0.3);border-radius:8px">🎮 PIN: ${multiplayerState.pin} · ${esc(currentUser?currentUser.name:'')}</span>`;
-  
+
   const box = $('options');
-  box.innerHTML = '<div style="text-align:center;padding:40px;font-size:20px;color:var(--text-muted)">⏳ Варианты появятся через 3 секунды...</div>';
-  
+  box.innerHTML = '';
+  const cdBox = document.createElement('div');
+  cdBox.style.cssText = 'text-align:center;padding:40px;font-size:44px;font-family:var(--mono);font-weight:800;color:var(--accent)';
+  cdBox.textContent = '3';
+  box.appendChild(cdBox);
+  let cdLeft = 3;
+  const cdInt = setInterval(()=>{ cdLeft--; if(cdLeft > 0) cdBox.textContent = String(cdLeft); }, 1000);
+
   setTimeout(() => {
+    clearInterval(cdInt);
     box.innerHTML = '';
     const type = q.type;
     if (!['single','multi','truefalse'].includes(type)) {
@@ -1726,7 +2108,6 @@ function renderMultiplayerQuestion(q, index){
       setupMultiplayerNav(index);
       return;
     }
-    
     if (type === 'truefalse') {
       [['Правда', q.answer === true], ['Ложь', q.answer === false]].forEach(([text, isCorrect], i) => {
         const el = document.createElement('div');
@@ -1793,48 +2174,25 @@ function sendMultiplayerAnswer(questionIndex, answer){
   if(!currentChannel || !currentUser) return;
   const q = multiplayerState.questions[questionIndex];
   const ok = isCorrect(q, answer);
-  
-  currentChannel.send({
-    type: 'broadcast',
-    event: 'player-answer',
-    payload: { player: currentUser.name, answer, questionIndex, isCorrect: ok }
-  });
-  
-  sbClient.from('room_answers').insert({
-    room_pin: multiplayerState.pin,
-    user_id: currentUser.id,
-    question_index: questionIndex,
-    answer: JSON.stringify(answer),
-    is_correct: ok
-  }).then();
-
-  if (isHost) handleIncomingAnswer(currentUser.name, answer, questionIndex);
+  safeSend({ type: 'broadcast', event: 'player-answer', payload: { player: currentUser.name, userId: currentUser.id, answer, questionIndex, isCorrect: ok } });
+  sbClient.from('room_answers').insert({ room_pin: multiplayerState.pin, user_id: currentUser.id, question_index: questionIndex, answer: JSON.stringify(answer), is_correct: ok }).then();
+  if (isHost) handleIncomingAnswer(currentUser.id, currentUser.name, answer, questionIndex);
   else toast(ok ? '✓ Ответ отправлен' : 'Ответ отправлен');
 }
 
-async function handleIncomingAnswer(player, answer, questionIndex){
+async function handleIncomingAnswer(userId, player, answer, questionIndex){
   if(!isHost || !multiplayerState) return;
   if(!multiplayerState.answers) multiplayerState.answers = {};
   if(!multiplayerState.answers[questionIndex]) multiplayerState.answers[questionIndex] = {};
   if(multiplayerState.answers[questionIndex][player]) return;
-  
   const q = multiplayerState.questions[questionIndex];
   const ok = isCorrect(q, answer);
   multiplayerState.answers[questionIndex][player] = { answer, isCorrect: ok };
-  
   if(ok){
     multiplayerState.scores[player] = (multiplayerState.scores[player]||0) + 100;
-    await sbClient.from('room_players').update({ score: multiplayerState.scores[player] })
-      .eq('room_pin', multiplayerState.pin).eq('name', player);
+    try{ await sbClient.from('room_players').update({ score: multiplayerState.scores[player] }).eq('room_pin', multiplayerState.pin).eq('user_id', userId); }catch(e){}
   }
-  
-  if(currentChannel){
-    currentChannel.send({
-      type: 'broadcast',
-      event: 'score-update',
-      payload: { scores: multiplayerState.scores }
-    });
-  }
+  safeSend({ type: 'broadcast', event: 'score-update', payload: { scores: multiplayerState.scores } });
   renderMultiplayerScore();
 }
 
@@ -1847,16 +2205,12 @@ function setupMultiplayerNav(index){
     $('nextBtn').onclick = async () => {
       if (index + 1 < multiplayerState.questions.length) {
         const next = index + 1;
-        await sbClient.from('rooms').update({ current_question: next }).eq('pin', multiplayerState.pin);
-        currentChannel.send({
-          type: 'broadcast',
-          event: 'new-question',
-          payload: { question: multiplayerState.questions[next], index: next }
-        });
+        try{ await sbClient.from('rooms').update({ current_question: next }).eq('pin', multiplayerState.pin); }catch(e){}
+        safeSend({ type: 'broadcast', event: 'new-question', payload: { question: multiplayerState.questions[next], index: next } });
         renderMultiplayerQuestion(multiplayerState.questions[next], next);
       } else {
-        await sbClient.from('rooms').update({ status: 'finished' }).eq('pin', multiplayerState.pin);
-        currentChannel.send({ type: 'broadcast', event: 'game-ended' });
+        try{ await sbClient.from('rooms').update({ status: 'finished' }).eq('pin', multiplayerState.pin); }catch(e){}
+        safeSend({ type: 'broadcast', event: 'game-ended' });
         finishMultiplayer();
       }
     };
@@ -1876,9 +2230,7 @@ function renderMultiplayerScore(){
   }
   const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
   el.innerHTML = '<div style="font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">🏆 Счёт</div>' +
-    (sorted.length
-      ? sorted.map(([name,score],i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:14px"><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(name)}</span><span style="font-family:var(--mono);font-weight:700">${score}</span></div>`).join('')
-      : '<div style="color:var(--text-muted);font-size:12px">Пока никто не ответил</div>');
+    (sorted.length ? sorted.map(([name,score],i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:14px"><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(name)}</span><span style="font-family:var(--mono);font-weight:700">${score}</span></div>`).join('') : '<div style="color:var(--text-muted);font-size:12px">Пока никто не ответил</div>');
 }
 
 async function finishMultiplayer(){
@@ -1887,48 +2239,30 @@ async function finishMultiplayer(){
   const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
   const scoreEl = document.getElementById('multiplayerScore');
   if(scoreEl) scoreEl.remove();
-  
-  // Сохраняем историю
+
   if (currentUser && multiplayerState) {
-    try {
-      await sbClient.from('game_history').insert({
-        room_pin: multiplayerState.pin,
-        test_id: multiplayerState.testId || 'unknown',
-        user_id: currentUser.id,
-        name: currentUser.name,
-        score: scores[currentUser.name] || 0,
-        total_questions: (multiplayerState.questions || []).length
-      });
-    } catch(e) { console.warn('[History]', e); }
+    try { await sbClient.from('game_history').insert({ room_pin: multiplayerState.pin, test_id: multiplayerState.testId || 'unknown', user_id: currentUser.id, name: currentUser.name, score: scores[currentUser.name] || 0, total_questions: (multiplayerState.questions || []).length }); } catch(e) {}
   }
 
   show('resultScreen');
   $('scoreText').textContent = '🏁';
   $('scoreMsg').textContent = 'Игра завершена!';
-  $('scoreStats').innerHTML = sorted.length
-    ? sorted.map(([name,score],i)=>`<div>${['🥇','🥈','🥉'][i]||(i+1)+'.'} <b>${esc(name)}</b> — ${score} XP</div>`).join('')
-    : 'Никто не играл';
+  $('scoreStats').innerHTML = sorted.length ? sorted.map(([name,score],i)=>`<div>${['🥇','🥈','🥉'][i]||(i+1)+'.'} <b>${esc(name)}</b> — ${score} XP</div>`).join('') : 'Никто не играл';
   $('btnCert').classList.add('hidden');
   $('reviewList').innerHTML = '';
-  
+
   if(currentUser && scores[currentUser.name]) addXP(scores[currentUser.name]);
   game.multiplayerGames = (game.multiplayerGames||0)+1;
   saveGame(); checkAchievements();
   if(sorted.length && sorted[0][1] > 0) confetti();
-  
-  state = null;
-  multiplayerState = null;
+  state = null; multiplayerState = null;
 }
 
 async function leaveMultiplayer(){
+  if(isHost && multiplayerState && sbClient){ try{ await sbClient.from('rooms').update({status:'finished'}).eq('pin',multiplayerState.pin); }catch(e){} }
   if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){} currentChannel=null;}
   if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){} roomStateChannel=null;}
-  
-  // Удаляем игрока из БД
-  if (currentUser && multiplayerState && !isHost) {
-    try { await sbClient.from('room_players').delete().eq('room_pin', multiplayerState.pin).eq('user_id', myDeviceId); } catch(e){}
-  }
-  
+  if (currentUser && multiplayerState && !isHost) { try { await sbClient.from('room_players').delete().eq('room_pin', multiplayerState.pin).eq('user_id', myDeviceId); } catch(e){} }
   isHost=false; currentUser=null; multiplayerState=null; state=null;
   document.body.classList.remove('multiplayer-active');
   const scoreEl = document.getElementById('multiplayerScore');
@@ -1939,14 +2273,12 @@ async function leaveMultiplayer(){
 
 function selectTestForHost(){
   if(!tests.length){toast('Сначала создайте тест');return;}
-  const list = tests.map((t,i)=>`${i+1}. ${t.title} (${t.questions.length} вопр.)`).join('\n');
-  const idx = prompt('Выберите номер теста:\n\n'+list);
-  if(!idx)return;
-  const n = parseInt(idx)-1;
-  if(n>=0 && n<tests.length){
-    TEST = tests[n];
-    hostCreateRoom();
-  }
+  const modal=document.createElement('div');
+  modal.className='modal';modal.style.zIndex='300';
+  modal.innerHTML=`<div class="modal-content"><h2>Выберите тест</h2><div id="hostTestList" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;margin-top:12px">${tests.map(t=>`<button class="set-btn" style="text-align:left;justify-content:flex-start;padding:14px" data-id="${t.id}"><div><b>${esc(t.title)}</b><div style="font-size:11px;color:var(--text-muted);margin-top:2px">${t.questions.length} вопросов</div></div></button>`).join('')}</div><div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn-ghost" id="hostCancelBtn">Отмена</button></div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelectorAll('#hostTestList .set-btn').forEach(btn=>{ btn.onclick=()=>{ const t=tests.find(x=>x.id===btn.dataset.id); if(t){TEST=t;modal.remove();hostCreateRoom();} }; });
+  modal.querySelector('#hostCancelBtn').onclick=()=>modal.remove();
 }
 
 /* ============ KEYBOARD + AUTO THEME ============ */
@@ -1987,7 +2319,7 @@ function autoThemeCheck(){
   if(!settings.autoTheme)return;
   const h=new Date().getHours();
   const want=(h>=20||h<7)?'dark':'light';
-  if(settings.theme!==want&&(want==='light'||want==='dark')){settings.theme=want;applySettings();}
+  if(settings.theme!==want && (want==='light'||want==='dark')){ settings.theme=want; saveSettings(); renderSettingsButtons(); }
 }
 setInterval(autoThemeCheck,60000);
 
@@ -2002,6 +2334,10 @@ $('welcomeCreate').innerHTML=ic('plus')+' Новый тест';
 $('btnSaveTest').innerHTML=ic('edit')+' Сохранить';
 $('startBtn').innerHTML='Начать →';
 renderLib();show('welcomeScreen');startOnboard();checkHash();autoThemeCheck();addXP(0);
+
+document.querySelectorAll('.icon-btn[title], .q-action-btn').forEach(b=>{
+  if(!b.getAttribute('aria-label') && b.title) b.setAttribute('aria-label', b.title);
+});
 </script>
 </body>
 </html>
