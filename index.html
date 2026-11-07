@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AuraQuiz v7.1</title>
+<title>AuraQuiz v7.2</title>
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -341,7 +341,7 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
         <div class="xp-fill"><div id="xpFill" style="width:0%"></div></div>
         <span id="xpText">0 XP</span>
       </div>
-      <div class="header-meta" id="headerMeta">v7.1</div>
+      <div class="header-meta" id="headerMeta">v7.2</div>
       <button class="icon-btn" title="Достижения" onclick="openAchievements()" id="achBtn">🏆</button>
       <button class="icon-btn" title="Настройки" onclick="openSettings()" id="settingsBtn"></button>
     </div>
@@ -666,9 +666,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ==========================================================
-   SUPABASE (мультиплеер)
-   ========================================================== */
 const SUPABASE_URL = 'https://jdszmkyarbkjrqcirpkh.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_NV0ytzdKVjnvhg7li88YsA_xO6wCrEM';
 
@@ -1491,7 +1488,7 @@ function startDailyChallenge(){
 }
 
 /* ==========================================================
-   MULTIPLAYER (v7.1 — с фиксами)
+   MULTIPLAYER (v7.2 — исправлен renderMath)
    ========================================================== */
 function generatePin(){return Math.floor(100000+Math.random()*900000).toString();}
 
@@ -1548,7 +1545,6 @@ function updateLobbyUI(){
   list.innerHTML = players.map(n=>`<div style="padding:10px 16px;background:rgba(255,255,255,0.5);border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:6px">👤 ${esc(n)}</div>`).join('');
 }
 
-// === ИГРОК: Войти (с поддержкой стриминга) ===
 async function playerJoinRoom(){
   if(!initSupabase())return;
   const pin = ($('joinPinInput').value||'').trim();
@@ -1629,7 +1625,6 @@ async function playerJoinRoom(){
   });
 }
 
-// === ХОСТ: Начать игру (с чанкингом и обработкой ошибок) ===
 async function hostStartGame(){
   if(!isHost||!currentChannel||!multiplayerState){
     console.error('[MP] Cannot start:', {isHost, hasChannel:!!currentChannel, hasState:!!multiplayerState});
@@ -1710,7 +1705,6 @@ async function hostStartGame(){
   startMultiplayerQuiz(payload);
 }
 
-// === ЗАПУСК ИГРЫ (с try/catch) ===
 function startMultiplayerQuiz(data){
   try {
     console.log('[MP] Starting quiz:', data.testTitle, '| questions:', data.questions.length);
@@ -1787,7 +1781,7 @@ function renderMultiplayerQuestion(data){
       const el = document.createElement('div');
       el.className = 'option';
       el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${md(opt.text)}</span>`;
-      renderMath(el.querySelector('.option-text'));
+      rMath(el.querySelector('.option-text')); // ИСПРАВЛЕНО: было renderMath
       el.onclick = () => {
         if(el.dataset.locked)return;
         if(selected.has(i)){selected.delete(i);el.classList.remove('selected');el.querySelector('.option-marker').textContent='□';}
@@ -1812,7 +1806,7 @@ function renderMultiplayerQuestion(data){
       const el = document.createElement('div');
       el.className = 'option';
       el.innerHTML = `<span class="option-marker">□</span><span class="option-text">${md(opt.text)}</span>`;
-      renderMath(el.querySelector('.option-text'));
+      rMath(el.querySelector('.option-text')); // ИСПРАВЛЕНО: было renderMath
       el.onclick = () => {
         if(el.dataset.picked)return;
         el.dataset.picked='1';
@@ -1906,7 +1900,6 @@ function renderMultiplayerScore(){
       : '<div style="color:var(--text-muted);font-size:12px">Пока никто не ответил</div>');
 }
 
-// === ФИНИШ (с очисткой state) ===
 function finishMultiplayer(){
   document.body.classList.remove('multiplayer-active');
   const scores = (multiplayerState&&multiplayerState.scores) || {};
