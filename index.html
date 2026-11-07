@@ -27,8 +27,10 @@ body.density-compact .q-card{padding:12px;margin-bottom:10px;}
 body.density-spacious .test-item{padding:26px 4px;}
 body.density-spacious .q-card{padding:20px;margin-bottom:20px;}
 body.density-spacious .option{padding:20px 22px;}
+
 html,body{background:var(--white);color:var(--black);font-family:var(--sans);font-size:15px;
-  line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .15s,color .15s;}
+  line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;
+  transition:background-color .3s ease,color .3s ease;}
 .app{max-width:920px;margin:0 auto;padding:32px 24px 80px;min-height:100vh;}
 
 .header{display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -45,10 +47,11 @@ h2{font-size:13px;font-family:var(--mono);font-weight:700;text-transform:upperca
 
 button{font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;
   padding:10px 18px;border:var(--line);background:var(--white);color:var(--black);
-  transition:background .12s,color .12s;border-radius:0;letter-spacing:-.005em;}
+  transition:background-color .12s ease,color .12s ease,transform .08s ease,border-color .12s ease;
+  border-radius:0;letter-spacing:-.005em;}
 button:hover:not(:disabled){background:var(--black);color:var(--white);}
 button:disabled{opacity:.3;cursor:not-allowed;}
-button:active:not(:disabled){transform:translateY(1px);}
+button:active:not(:disabled){transform:scale(.97);}
 .btn-primary{background:var(--black);color:var(--white);}
 .btn-primary:hover:not(:disabled){background:var(--gray-700);color:var(--white);}
 .btn-ghost{border-color:var(--gray-300);color:var(--gray-600);}
@@ -82,7 +85,7 @@ button:active:not(:disabled){transform:translateY(1px);}
 
 .test-list{display:flex;flex-direction:column;border-top:var(--line-thin);}
 .test-item{display:flex;align-items:center;gap:14px;padding:18px 4px;
-  border-bottom:var(--line-thin);transition:padding .12s;}
+  border-bottom:var(--line-thin);transition:padding .2s ease,background-color .2s ease;}
 .test-item:hover{padding-left:12px;padding-right:12px;background:var(--gray-50);}
 .ti-index{font-family:var(--mono);font-size:11px;color:var(--gray-400);width:32px;flex-shrink:0;}
 .ti-body{flex:1;min-width:0;}
@@ -165,7 +168,6 @@ button:active:not(:disabled){transform:translateY(1px);}
   border-top:1px dashed var(--line-thin);}
 .q-ai-row button{font-size:12px;padding:5px 10px;font-family:var(--mono);}
 
-/* Quiz */
 .quiz-top{display:flex;align-items:center;justify-content:space-between;gap:16px;
   margin-bottom:24px;padding-bottom:16px;border-bottom:var(--line);flex-wrap:wrap;}
 .quiz-counter{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.03em;}
@@ -175,27 +177,36 @@ button:active:not(:disabled){transform:translateY(1px);}
 .streak-badge.hot{background:var(--black);color:var(--white);}
 .timer{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;
   padding:4px 10px;border:var(--line);background:var(--white);}
-.timer.warning{background:var(--black);color:var(--white);animation:blink 1s infinite;}
-@keyframes blink{50%{opacity:.4;}}
+.timer.warning{background:var(--black);color:var(--white);animation:blink 1s ease-in-out infinite;}
+@keyframes blink{50%{opacity:.35;}}
 
 .progress-segments{display:flex;gap:4px;margin-bottom:28px;height:6px;}
-.progress-segments .seg{flex:1;background:var(--gray-200);transition:background .15s;}
+.progress-segments .seg{flex:1;background:var(--gray-200);transition:background-color .35s ease;}
 .progress-segments .seg.done{background:var(--black);}
-.progress-segments .seg.current{background:var(--gray-600);}
+.progress-segments .seg.current{background:var(--gray-600);animation:seg-pop .4s ease;}
 .progress-segments .seg.uncertain{background:var(--gray-400);}
+@keyframes seg-pop{0%{transform:scaleY(1);}50%{transform:scaleY(1.6);}100%{transform:scaleY(1);}}
 
 .question{font-size:22px;font-weight:700;line-height:1.35;letter-spacing:-.015em;
   margin-bottom:20px;padding-top:8px;}
 .question code,.option-text code,.explanation code{font-family:var(--mono);
   font-size:.92em;padding:1px 5px;background:var(--gray-100);border:1px solid var(--gray-200);}
 .q-image-wrap{margin-bottom:16px;}
-.q-image-wrap img{max-width:100%;max-height:320px;border:var(--line);display:block;object-fit:contain;}
+.q-image-wrap img{max-width:100%;max-height:320px;border:var(--line);display:block;object-fit:contain;
+  animation:fade-in .3s ease;}
 
 .option{display:flex;align-items:center;gap:14px;padding:16px 18px;border:var(--line);
-  margin-bottom:10px;cursor:pointer;user-select:none;transition:background .12s,color .12s;
-  background:var(--white);border-radius:0;}
+  margin-bottom:10px;cursor:pointer;user-select:none;
+  transition:background-color .12s ease,color .12s ease;background:var(--white);border-radius:0;}
 .option:hover{background:var(--gray-50);}
 .option.selected{background:var(--black);color:var(--white);}
+.option.selected.just-picked{animation:pick-pulse .28s ease;}
+@keyframes pick-pulse{
+  0%{transform:scale(1);}
+  40%{transform:scale(.985);}
+  70%{transform:scale(1.008);}
+  100%{transform:scale(1);}
+}
 .option-marker{font-family:var(--mono);font-size:12px;font-weight:700;width:26px;
   flex-shrink:0;text-align:center;}
 .option-text{flex:1;font-size:15px;line-height:1.5;}
@@ -207,14 +218,12 @@ button:active:not(:disabled){transform:translateY(1px);}
   background:var(--white);color:var(--black);font-family:var(--sans);font-size:15px;}
 .text-answer-input:focus{outline:none;background:var(--gray-50);}
 
-/* matching */
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
 .match-item{padding:12px 14px;border:var(--line);background:var(--white);}
 .match-item.left{font-weight:600;}
 .match-item select{width:100%;padding:8px;border:var(--line-thin);
   background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;}
 
-/* sort */
 .sort-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
 .sort-item{display:flex;align-items:center;gap:10px;padding:12px 14px;
   border:var(--line);background:var(--white);}
@@ -233,7 +242,6 @@ button:active:not(:disabled){transform:translateY(1px);}
 .nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:var(--line-thin);}
 .nav .btn-primary{flex:1;}
 
-/* Result */
 .result-hero{text-align:center;padding:32px 0 28px;border-bottom:var(--line);margin-bottom:28px;}
 .result-hero .label{font-family:var(--mono);font-size:11px;text-transform:uppercase;
   letter-spacing:.1em;color:var(--gray-500);margin-bottom:8px;}
@@ -277,7 +285,9 @@ button:active:not(:disabled){transform:translateY(1px);}
   font-size:14px;border:1px solid transparent;margin-bottom:4px;}
 .review-opt .mark{font-family:var(--mono);font-size:12px;font-weight:700;
   width:16px;flex-shrink:0;color:var(--gray-400);}
-.review-opt.correct{border-color:var(--black);background:var(--gray-50);}
+.review-opt.correct{border-color:var(--black);background:var(--gray-50);
+  animation:fill-correct .35s ease both;}
+@keyframes fill-correct{from{background-color:transparent;}to{background-color:var(--gray-50);}}
 .review-opt.correct .mark{color:var(--black);}
 .review-opt.wrong{border-color:var(--gray-400);color:var(--gray-600);
   text-decoration:line-through;text-decoration-color:var(--gray-400);}
@@ -289,9 +299,13 @@ button:active:not(:disabled){transform:translateY(1px);}
 .explanation::before{content:"💡 ";}
 
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;
-  align-items:center;justify-content:center;padding:24px;z-index:200;}
+  align-items:center;justify-content:center;padding:24px;z-index:200;
+  animation:fade-in .15s ease;}
 .modal-content{background:var(--white);color:var(--black);border:var(--line);
-  padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+  padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;
+  animation:modal-in .22s cubic-bezier(.2,.9,.3,1) both;}
+@keyframes modal-in{from{opacity:0;transform:scale(.94) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
 .modal-content h2{font-size:22px;font-family:var(--sans);font-weight:800;
   text-transform:none;letter-spacing:-.01em;margin-bottom:6px;color:var(--black);}
 .modal-sub{font-size:13px;color:var(--gray-500);margin-bottom:22px;}
@@ -305,7 +319,8 @@ button:active:not(:disabled){transform:translateY(1px);}
 .ai-status.ok{display:block;background:var(--black);color:var(--white);border-color:var(--black);}
 .ai-status.err{display:block;border-color:var(--black);border-left-width:3px;}
 
-.skeleton{padding:20px 0;}
+.skeleton{padding:20px 0;animation:pulse-dim 1.5s ease-in-out infinite;}
+@keyframes pulse-dim{0%,100%{opacity:1;}50%{opacity:.55;}}
 .skeleton-bar{height:12px;background:linear-gradient(90deg,var(--gray-100) 0%,
   var(--gray-200) 50%,var(--gray-100) 100%);background-size:200% 100%;
   animation:sk 1.2s linear infinite;margin-bottom:10px;}
@@ -330,6 +345,42 @@ button:active:not(:disabled){transform:translateY(1px);}
   border:2px solid var(--white);outline:2px solid var(--black);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
+/* ============ АНИМАЦИИ ============ */
+@keyframes screen-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+#libraryScreen:not(.hidden),
+#startScreen:not(.hidden),
+#editorScreen:not(.hidden),
+#quizScreen:not(.hidden),
+#resultScreen:not(.hidden){animation:screen-in .28s cubic-bezier(.2,.9,.3,1) both;}
+
+@keyframes item-in{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
+.test-item{animation:item-in .3s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--i,0) * 30ms);}
+.q-card{animation:item-in .3s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--i,0) * 20ms);}
+
+@keyframes streak-bump{0%{transform:scale(1);}40%{transform:scale(1.18);}100%{transform:scale(1);}}
+.streak-badge.hot{animation:streak-bump .5s cubic-bezier(.2,.9,.3,1.4);}
+
+@keyframes shake{
+  10%,90%{transform:translateX(-1px);}
+  20%,80%{transform:translateX(2px);}
+  30%,50%,70%{transform:translateX(-4px);}
+  40%,60%{transform:translateX(4px);}
+}
+.shake{animation:shake .4s ease;}
+
+@keyframes review-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.review-item{animation:review-in .35s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--i,0) * 40ms);}
+
+@keyframes score-in{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+.result-hero .score{animation:score-in .45s cubic-bezier(.2,.9,.3,1) both;}
+
+@keyframes copy-flash{0%{background-color:var(--black);color:var(--white);}
+  100%{background-color:var(--white);color:var(--black);}}
+button.copied{animation:copy-flash .7s ease;}
+
 @media(max-width:640px){
   .app{padding:20px 16px 60px;}
   h1{font-size:22px;}
@@ -346,6 +397,14 @@ button:active:not(:disabled){transform:translateY(1px);}
   .match-grid{grid-template-columns:1fr;}
 }
 
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
 @media print{
   body{background:white!important;color:black!important;}
   .app{max-width:100%!important;padding:0!important;}
@@ -357,8 +416,8 @@ button:active:not(:disabled){transform:translateY(1px);}
   .option{border:1px solid #999!important;background:white!important;color:black!important;}
   .option.selected{background:#f0f0f0!important;color:black!important;}
   .option-marker,.option-text{color:black!important;}
-  .review-item{page-break-inside:avoid;border:1px solid #ccc;}
-  .review-opt.correct{background:#f0f0f0!important;}
+  .review-item{page-break-inside:avoid;border:1px solid #ccc;animation:none!important;}
+  .review-opt.correct{background:#f0f0f0!important;animation:none!important;}
   .review-opt.wrong{color:#000!important;text-decoration:line-through;}
   .explanation{border-left:2px solid black;}
   .question,.review-q{page-break-after:avoid;}
@@ -374,12 +433,11 @@ button:active:not(:disabled){transform:translateY(1px);}
       <span>QUIZ / TEST STUDIO PRO</span>
     </div>
     <div class="header-actions">
-      <div class="header-meta" id="headerMeta">v3.0</div>
+      <div class="header-meta" id="headerMeta">v3.1</div>
       <button class="icon-btn" title="Настройки" onclick="openSettings()">⚙</button>
     </div>
   </header>
 
-  <!-- БИБЛИОТЕКА -->
   <div id="libraryScreen">
     <div class="library-toolbar">
       <div>
@@ -402,7 +460,6 @@ button:active:not(:disabled){transform:translateY(1px);}
     <input type="file" id="csvInput" accept=".csv,.txt" class="hidden" onchange="importCsv(event)">
   </div>
 
-  <!-- СТАРТ -->
   <div id="startScreen" class="hidden">
     <div class="editor-header">
       <button class="icon-btn" onclick="backToLibrary()">←</button>
@@ -432,7 +489,6 @@ button:active:not(:disabled){transform:translateY(1px);}
     <button class="btn-primary" style="width:100%;padding:14px" onclick="startTest()">НАЧАТЬ ТЕСТ →</button>
   </div>
 
-  <!-- РЕДАКТОР -->
   <div id="editorScreen" class="hidden">
     <div class="editor-header">
       <button class="icon-btn" onclick="closeEditor()">←</button>
@@ -474,7 +530,6 @@ button:active:not(:disabled){transform:translateY(1px);}
     </div>
   </div>
 
-  <!-- ТЕСТ -->
   <div id="quizScreen" class="hidden">
     <div class="quiz-top">
       <div class="quiz-counter">
@@ -500,7 +555,6 @@ button:active:not(:disabled){transform:translateY(1px);}
     </div>
   </div>
 
-  <!-- РЕЗУЛЬТАТ -->
   <div id="resultScreen" class="hidden">
     <div class="result-hero">
       <div class="label">Результат</div>
@@ -509,7 +563,7 @@ button:active:not(:disabled){transform:translateY(1px);}
       <p class="stats" id="scoreStats"></p>
     </div>
     <div class="result-actions">
-      <button class="btn-ghost btn-small" onclick="copyResult()">📋 КОПИРОВАТЬ</button>
+      <button class="btn-ghost btn-small" onclick="copyResult(event)">📋 КОПИРОВАТЬ</button>
       <button class="btn-ghost btn-small" onclick="exportResultCsv()">📊 CSV</button>
       <button class="btn-ghost btn-small" onclick="printResult()">🖨 PDF</button>
       <button class="btn-ghost btn-small" onclick="aiAnalyzeErrors()">🤖 AI АНАЛИЗ</button>
@@ -532,7 +586,6 @@ button:active:not(:disabled){transform:translateY(1px);}
   </div>
 </div>
 
-<!-- МОДАЛ AI -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
     <h2 id="aiModalTitle">🤖 Создать тест с AI</h2>
@@ -568,7 +621,6 @@ button:active:not(:disabled){transform:translateY(1px);}
   </div>
 </div>
 
-<!-- МОДАЛ НАСТРОЕК -->
 <div id="settingsModal" class="modal hidden">
   <div class="modal-content">
     <h2>⚙ Настройки</h2>
@@ -598,7 +650,7 @@ button:active:not(:disabled){transform:translateY(1px);}
     <div class="set-group">
       <h3>AI Прокси (опционально)</h3>
       <p style="font-size:12px;color:var(--gray-500);margin-bottom:8px;line-height:1.5;">
-        Если указан — используется вместо прямого Pollinations. Формат: URL вашего Cloudflare Worker с поддержкой OpenAI-совместимого POST.
+        Если указан — используется вместо прямого Pollinations.
       </p>
       <input type="url" id="setProxy" placeholder="https://your-worker.workers.dev/chat" style="width:100%;padding:9px 12px;border:var(--line);background:var(--white);color:var(--black);font-family:var(--sans);font-size:13px;margin-bottom:6px;">
       <button class="btn-ghost btn-small" onclick="saveProxy()">СОХРАНИТЬ URL</button>
@@ -612,9 +664,6 @@ button:active:not(:disabled){transform:translateY(1px);}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ==========================================================
-   БАЗА
-   ========================================================== */
 const TESTS_KEY = "quiz_tests_v3";
 const STATE_KEY = "quiz_state_v3";
 const SETTINGS_KEY = "quiz_settings_v3";
@@ -634,6 +683,13 @@ function showToast(msg){
   const t=$("toast");t.textContent=msg;t.classList.add("show");
   clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove("show"),2500);
 }
+function shakeEl(el){
+  if (!el) return;
+  el.classList.remove("shake");
+  void el.offsetWidth;
+  el.classList.add("shake");
+  setTimeout(()=>el.classList.remove("shake"),500);
+}
 function md(text){
   if (!text) return "";
   let s = escapeHtml(text);
@@ -652,9 +708,6 @@ function renderMath(el){
   }); } catch(e){}
 }
 
-/* ==========================================================
-   НАСТРОЙКИ
-   ========================================================== */
 let settings = { theme:"light", fontSize:"normal", density:"normal" };
 let proxyUrl = "";
 
@@ -693,9 +746,6 @@ document.querySelectorAll("#setTheme .set-btn").forEach(b=>b.onclick=()=>{settin
 document.querySelectorAll("#setFont .set-btn").forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll("#setDensity .set-btn").forEach(b=>b.onclick=()=>{settings.density=b.dataset.v;saveSettings();renderSettingsButtons();});
 
-/* ==========================================================
-   МОДЕЛЬ ВОПРОСА
-   ========================================================== */
 function blankQuestion(){
   return { type:"single", question:"",
     options:[{text:"",correct:true},{text:"",correct:false}],
@@ -730,9 +780,6 @@ function normalizeQ(q){
   return q;
 }
 
-/* ==========================================================
-   ТЕСТЫ
-   ========================================================== */
 let tests = [];
 let TEST = null;
 let editing = null;
@@ -743,7 +790,8 @@ let aiMode = "test";
 let aiResult = null;
 let searchQuery = "";
 let activeTag = "";
-let attempts = [];  // {testId, ts, percent, correctCount, total, answers}
+let attempts = [];
+let userJustPicked = false;
 
 function defaultTests(){
   return [{
@@ -817,21 +865,15 @@ function saveAttempts(){
   try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts)); } catch(e){}
 }
 
-/* ==========================================================
-   НАВИГАЦИЯ
-   ========================================================== */
 function show(id){
   ["libraryScreen","startScreen","editorScreen","quizScreen","resultScreen"]
     .forEach(s=>$(s).classList.toggle("hidden",s!==id));
   window.scrollTo({top:0});
   const names={libraryScreen:"LIBRARY",startScreen:"TEST / START",
     editorScreen:"TEST / EDIT",quizScreen:"TEST / IN PROGRESS",resultScreen:"TEST / RESULT"};
-  $("headerMeta").textContent = "v3.0 · " + (names[id]||"");
+  $("headerMeta").textContent = "v3.1 · " + (names[id]||"");
 }
 
-/* ==========================================================
-   БИБЛИОТЕКА
-   ========================================================== */
 function filterTests(){
   return tests.filter(t=>{
     if (searchQuery){
@@ -860,7 +902,7 @@ function renderLibrary(){
   if (!filtered.length){
     box.innerHTML = !tests.length
       ? `<div class="empty-state">Тестов пока нет
-          <span class="hint">Нажмите <kbd>N</kbd> — новый · <kbd>A</kbd> — AI · <kbd>?</kbd> — помощь</span>
+          <span class="hint">Нажмите <kbd>N</kbd> — новый · <kbd>A</kbd> — AI · <kbd>/</kbd> — поиск</span>
         </div>`
       : `<div class="empty-state">Ничего не найдено
           <span class="hint">Попробуйте другой запрос или сбросьте фильтр</span>
@@ -868,7 +910,7 @@ function renderLibrary(){
     return;
   }
   box.innerHTML=filtered.map((t,idx)=>`
-    <div class="test-item">
+    <div class="test-item" style="--i:${idx}">
       <div class="ti-index">${pad(idx+1)}</div>
       <div class="ti-body">
         <div class="ti-title">${escapeHtml(t.title||"Без названия")}</div>
@@ -963,9 +1005,6 @@ function shareTest(id){
   } catch(e){ showToast("ОШИБКА"); }
 }
 
-/* ==========================================================
-   URL-ХЭШ: ИМПОРТ
-   ========================================================== */
 function checkHashImport(){
   const hash = location.hash;
   if (!hash.startsWith("#test=")) return;
@@ -980,15 +1019,10 @@ function checkHashImport(){
       tests.push(t); saveTests(); renderLibrary();
       showToast("✓ ТЕСТ ИМПОРТИРОВАН");
     }
-  } catch(e){
-    showToast("ОШИБКА: ссылка повреждена");
-  }
+  } catch(e){ showToast("ОШИБКА: ссылка повреждена"); }
   history.replaceState(null, "", location.pathname + location.search);
 }
 
-/* ==========================================================
-   СТАРТ / ПРОХОЖДЕНИЕ
-   ========================================================== */
 function openStart(id){
   TEST=tests.find(t=>t.id===id); if(!TEST) return;
   $("startTitle").textContent=TEST.title||"Тест";
@@ -1025,11 +1059,8 @@ function prepareQuestions(questions, shufQ, shufA, sampleN){
   return qs.map(q=>{
     const nq=deepCopy(normalizeQ(q));
     if (nq.type==="single"||nq.type==="multi"){
-      if (shufA){
-        nq.options=shuffle(nq.options.map((o,i)=>({...o,_orig:i})));
-      }
+      if (shufA){ nq.options=shuffle(nq.options.map((o,i)=>({...o,_orig:i}))); }
     } else if (nq.type==="matching"){
-      // перемешиваем правые элементы для показа
       nq._rightShuffled = shuffle(nq.pairs.map((p,i)=>({...p,_orig:i})));
     } else if (nq.type==="sort"){
       nq._userOrder = shuffle(nq.items.map((it,i)=>({...it,_orig:i})));
@@ -1076,9 +1107,6 @@ function resumeTest(){
   if (state.totalTime===0||state.timeLeft>0) startTimer(); else finish(true);
 }
 
-/* ==========================================================
-   ТАЙМЕР
-   ========================================================== */
 function startTimer(){
   if (timerId) clearInterval(timerId);
   updateTimer();
@@ -1099,9 +1127,6 @@ function updateTimer(){
   el.classList.toggle("warning",state.timeLeft<=30);
 }
 
-/* ==========================================================
-   ПРОХОЖДЕНИЕ
-   ========================================================== */
 function hasAnswer(ans,q){
   const nq=normalizeQ(q);
   if (nq.type==="text") return typeof ans==="string" && ans.trim()!=="";
@@ -1164,6 +1189,7 @@ function renderQuestion(){
         let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];
         const idx=a.indexOf(i);
         state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];
+        userJustPicked = true;
         saveState(); renderQuestion();
       };
       renderMath(el.querySelector(".option-text"));
@@ -1209,9 +1235,10 @@ function renderQuestion(){
     q.options.forEach((opt,i)=>{
       const el=document.createElement("div");
       el.className="option"+(ans===i?" selected":"");
+      if (ans===i && userJustPicked) el.classList.add("just-picked");
       el.innerHTML=`<span class="option-marker">${ans===i?"■":"□"}</span>
         <span class="option-text">${md(opt.text)}</span>${i<9?`<span class="option-key">${i+1}</span>`:""}`;
-      el.onclick=()=>{state.answers[state.current]=i;saveState();renderQuestion();};
+      el.onclick=()=>{state.answers[state.current]=i;userJustPicked=true;saveState();renderQuestion();};
       renderMath(el.querySelector(".option-text"));
       box.appendChild(el);
     });
@@ -1221,6 +1248,7 @@ function renderQuestion(){
   $("streakBadge").textContent = `🔥 ${state.streak}`;
   $("streakBadge").classList.toggle("hot", state.streak >= 3);
   updateNav();
+  userJustPicked = false;
 }
 function moveSort(idx, dir){
   const raw=state.questions[state.current];
@@ -1237,20 +1265,23 @@ function toggleUncertain(checked){
 function prevQuestion(){if(state.current>0){state.current--;saveState();renderQuestion();}}
 function nextQuestion(){
   if (!hasAnswer(state.answers[state.current], state.questions[state.current])) return;
-  // Streak update
+  const wasHot = state.streak >= 3;
   if (isAnswerCorrect(state.questions[state.current], state.answers[state.current])){
     state.streak++;
     if (state.streak > state.maxStreak) state.maxStreak = state.streak;
   } else {
     state.streak = 0;
   }
-  if (state.current<state.questions.length-1){state.current++;saveState();renderQuestion();}
+  if (state.current<state.questions.length-1){
+    state.current++;saveState();renderQuestion();
+    if (!wasHot && state.streak >= 3){
+      const badge = $("streakBadge");
+      badge.classList.remove("hot"); void badge.offsetWidth; badge.classList.add("hot");
+    }
+  }
   else finish(false);
 }
 
-/* ==========================================================
-   ОЦЕНКА
-   ========================================================== */
 function isAnswerCorrect(question, answer){
   const q=normalizeQ(question);
   if (answer===null||answer===undefined) return false;
@@ -1283,6 +1314,21 @@ function isAnswerCorrect(question, answer){
   return answer===idx;
 }
 
+function animateScoreTo(target){
+  const el = $("scoreText");
+  el.textContent = "0%";
+  const duration = 900;
+  const start = performance.now();
+  function tick(now){
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(target * eased) + "%";
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = target + "%";
+  }
+  requestAnimationFrame(tick);
+}
+
 function finish(byTimeout){
   if (timerId){clearInterval(timerId);timerId=null;}
   localStorage.removeItem(STATE_KEY);
@@ -1293,7 +1339,6 @@ function finish(byTimeout){
   const percent=Math.round((correctCount/total)*100);
   const uncertainCount=state.uncertain.filter(Boolean).length;
 
-  // Сохранение попытки
   const attempt={testId:state.testId, ts:Date.now(), percent, correctCount, total,
     maxStreak: state.maxStreak,
     perQuestion: state.questions.map((q,i)=>({
@@ -1304,9 +1349,8 @@ function finish(byTimeout){
   };
   attempts.push(attempt); saveAttempts();
 
-  // Показ
   show("resultScreen");
-  $("scoreText").textContent=`${percent}%`;
+  animateScoreTo(percent);
   $("scoreMsg").textContent=(byTimeout?"⏰ ВРЕМЯ ИСТЕКЛО. ":"")+`Правильных: ${correctCount} из ${total}.`+
     (uncertainCount?` Спорных: ${uncertainCount}.`:"");
   $("scoreStats").textContent=`Отвечено: ${answeredCount}/${total}`+
@@ -1364,7 +1408,6 @@ function renderWeakTopics(){
   const section = $("weakSection");
   if (testAttempts.length < 2){ section.classList.add("hidden"); return; }
 
-  // Считаем провалы по вопросам
   const failureMap = {};
   testAttempts.forEach(a=>{
     a.perQuestion.forEach(pq=>{
@@ -1392,7 +1435,7 @@ function renderReview(){
     const ua=state.answers[i];
     const ok=isAnswerCorrect(q, ua);
     const uncertainBadge = state.uncertain[i] ? `<span class="badge uncertain">спорный</span>` : "";
-    html.push(`<div class="review-item"><div class="review-q"><span class="num">${pad(i+1)}</span>${md(nq.question)}${uncertainBadge}</div>`);
+    html.push(`<div class="review-item" style="--i:${i}"><div class="review-q"><span class="num">${pad(i+1)}</span>${md(nq.question)}${uncertainBadge}</div>`);
     if (nq.image) html.push(`<div style="margin-bottom:10px"><img src="${nq.image}" class="q-image"></div>`);
 
     if (nq.type==="text"){
@@ -1435,16 +1478,20 @@ function renderReview(){
 
 function restart(){ if (TEST) openStart(TEST.id); else show("libraryScreen"); }
 
-/* ==========================================================
-   РЕЗУЛЬТАТ: КОПИЯ / CSV / PDF
-   ========================================================== */
-function copyResult(){
+function copyResult(ev){
   const total = state.questions.length;
   const correct = state.questions.reduce((acc,q,i)=>acc+(isAnswerCorrect(q,state.answers[i])?1:0),0);
   const percent = Math.round((correct/total)*100);
   const testTitle = TEST ? TEST.title : "Тест";
   const text = `${correct} из ${total} (${percent}%) — ${testTitle}`;
-  navigator.clipboard.writeText(text).then(()=>showToast("✓ СКОПИРОВАНО")).catch(()=>prompt("Копировать:", text));
+  navigator.clipboard.writeText(text).then(()=>{
+    showToast("✓ СКОПИРОВАНО");
+    const btn = (ev && ev.target) || (ev && ev.currentTarget);
+    if (btn && btn.classList){
+      btn.classList.add("copied");
+      setTimeout(()=>btn.classList.remove("copied"), 800);
+    }
+  }).catch(()=>prompt("Копировать:", text));
 }
 
 function exportResultCsv(){
@@ -1533,15 +1580,11 @@ function printResult(){
   setTimeout(()=>w.print(),400);
 }
 
-/* ==========================================================
-   РЕДАКТОР
-   ========================================================== */
 function openEditor(idOrTest){
   let existing=null;
   if (typeof idOrTest==="string") existing=tests.find(t=>t.id===idOrTest);
   else if (idOrTest && typeof idOrTest==="object") existing=idOrTest;
 
-  // Проверка черновика
   if (!existing){
     try {
       const draftRaw = localStorage.getItem(DRAFT_KEY);
@@ -1634,7 +1677,7 @@ function renderEditor(){
       `).join("") + `<button class="add-opt-btn" onclick="addOption(${i})">＋ ДОБАВИТЬ ВАРИАНТ</button>`;
     }
     return `
-      <div class="q-card">
+      <div class="q-card" style="--i:${i}">
         <div class="q-card-header">
           <div class="q-num">${pad(i+1)}</div>
           <select class="q-type-select" onchange="changeQType(${i},this.value)">
@@ -1790,7 +1833,12 @@ function saveTest(){
   editing.tags=$("edTags").value.split(",").map(s=>s.trim()).filter(Boolean);
   editing.timeLimit=Math.max(0,parseInt($("edTime").value,10)||0)*60;
 
-  if (!editing.title){showToast("ВВЕДИТЕ НАЗВАНИЕ");$("edTitle").focus();return;}
+  if (!editing.title){
+    showToast("ВВЕДИТЕ НАЗВАНИЕ");
+    $("edTitle").focus();
+    shakeEl($("edTitle"));
+    return;
+  }
   if (!editing.questions.length){showToast("ДОБАВЬТЕ ВОПРОС");return;}
   for (let i=0;i<editing.questions.length;i++){
     const q=editing.questions[i];
@@ -1811,7 +1859,6 @@ function saveTest(){
   }
   const idx=tests.findIndex(t=>t.id===editing.id);
   const clean=deepCopy(editing);
-  // Убираем временные поля
   clean.questions = clean.questions.map(q=>{
     const c = {...q};
     delete c._userOrder; delete c._rightShuffled;
@@ -1826,9 +1873,6 @@ function saveTest(){
   showToast("✓ ТЕСТ СОХРАНЁН");
 }
 
-/* ==========================================================
-   ИМПОРТ / ЭКСПОРТ
-   ========================================================== */
 function exportAll(){
   const data=JSON.stringify(tests,null,2);
   const blob=new Blob([data],{type:"application/json"});
@@ -1871,10 +1915,7 @@ function isValidTest(t){
   return t&&typeof t==="object"&&typeof t.title==="string"&&Array.isArray(t.questions)&&t.questions.length>0;
 }
 
-/* CSV импорт */
-function importCsvDialog(){
-  $("csvInput").click();
-}
+function importCsvDialog(){ $("csvInput").click(); }
 function importCsv(event){
   const file=event.target.files[0];event.target.value="";
   if (!file) return;
@@ -1884,15 +1925,12 @@ function importCsv(event){
       const text=e.target.result;
       const lines=text.split(/\r?\n/).filter(l=>l.trim());
       if (!lines.length){alert("Пустой файл");return;}
-      // Формат: Вопрос;Ответ1;Ответ2;Ответ3;Ответ4;Правильный(1..4);[Объяснение]
       const questions=[];
       for (const line of lines){
         const parts=line.split(";").map(s=>s.trim().replace(/^"|"$/g,""));
         if (parts.length<3) continue;
         const qtext=parts[0];
         if (!qtext) continue;
-        // Последние 2 — правильный и опционально объяснение
-        // Мягкий вариант: если 3 колонки — вопрос, 1 вариант, правильно/нет
         let opts=[], correctIdx=0, explanation="";
         if (parts.length>=6){
           opts = parts.slice(1,5).map(t=>({text:t,correct:false}));
@@ -1918,9 +1956,6 @@ function importCsv(event){
   reader.readAsText(file);
 }
 
-/* ==========================================================
-   AI — общий вызов
-   ========================================================== */
 async function callAI(messages){
   const useProxy = proxyUrl && proxyUrl.trim();
   const url = useProxy ? proxyUrl : "https://text.pollinations.ai/openai";
@@ -1961,7 +1996,6 @@ function parseJsonLoose(text){
   throw new Error("не удалось найти JSON");
 }
 
-/* AI: Модалка создания/генерации */
 function openAiModal(mode){
   aiMode=mode;aiResult=null;
   $("aiTopic").value="";$("aiCount").value=5;$("aiDiff").value="medium";
@@ -2000,7 +2034,7 @@ async function generateWithAi(){
   const topic=$("aiTopic").value.trim();
   const count=Math.min(20,Math.max(1,parseInt($("aiCount").value,10)||5));
   const diff=$("aiDiff").value;
-  if (!topic){setStatus("Введите тему","err");return;}
+  if (!topic){setStatus("Введите тему","err");shakeEl($("aiTopic"));$("aiTopic").focus();return;}
   const diffLabel={easy:"лёгкий",medium:"средний",hard:"сложный",mixed:"смешанный"}[diff];
 
   const sys="Ты — методист. Отвечай ТОЛЬКО валидным JSON, без markdown-обёрток.";
@@ -2053,7 +2087,6 @@ function applyAiResult(){
   showToast("✓ СГЕНЕРИРОВАН");
 }
 
-/* AI: Улучшить / объяснить вопрос */
 async function aiImprove(i, action){
   const q = editing.questions[i];
   if (!q || !q.question.trim()){showToast("ВОПРОС ПУСТ");return;}
@@ -2117,7 +2150,6 @@ async function aiImprove(i, action){
   } catch(err){ showToast("❌ "+err.message); }
 }
 
-/* AI: Перевод теста на английский */
 async function aiTranslateTest(){
   if (!editing){showToast("ОТКРОЙТЕ РЕДАКТОР");return;}
   if (!confirm("Перевести тест на английский через AI?")) return;
@@ -2151,100 +2183,5 @@ async function aiTranslateTest(){
   } catch(err){ showToast("❌ "+err.message); }
 }
 
-/* AI: Анализ ошибок + генерация слабого теста */
 async function aiAnalyzeErrors(){
-  if (!state || !TEST){showToast("НЕТ РЕЗУЛЬТАТА");return;}
-  const wrongQuestions = state.questions.filter((q,i)=>!isAnswerCorrect(q, state.answers[i]));
-  if (!wrongQuestions.length){showToast("ОШИБОК НЕТ 🎉");return;}
-
-  const summary = wrongQuestions.slice(0,10).map(q=>normalizeQ(q).question).join("; ");
-  showToast("⏳ AI АНАЛИЗИРУЕТ…");
-
-  try {
-    const content = await callAI([
-      {role:"system",content:"Ты — методист. Отвечай ТОЛЬКО валидным JSON."},
-      {role:"user",content:`Пользователь ошибся в вопросах: ${summary}
-Сгенерируй 5 новых вопросов по этим же темам (чтобы закрепить слабые места).
-Ответ ТОЛЬКО JSON: {"title":"Закрепление","questions":[{"question":"","options":["A","B","C","D"],"correct":0}]}
-На русском, 5 вопросов, 4 варианта, correct=0..3.`}
-    ]);
-    const parsed = parseJsonLoose(content);
-    const qs = normalizeAiQuestions(parsed.questions || []);
-    if (!qs.length) throw new Error("нет вопросов");
-    const draft = {
-      id: uid(),
-      title: `Закрепление — ${TEST.title}`,
-      description: "Сгенерировано по ошибкам в предыдущем тесте",
-      tags: ["закрепление", ...(TEST.tags||[])],
-      timeLimit: 0,
-      questions: qs
-    };
-    openEditor(draft);
-    showToast("✓ ТЕСТ ПО ОШИБКАМ СОЗДАН");
-  } catch(err){
-    showToast("❌ "+err.message);
-  }
-}
-
-$("aiTopic").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiCount").focus();}});
-$("aiCount").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("aiGenBtn").click();}});
-
-/* ==========================================================
-   ХОТКЕИ
-   ========================================================== */
-document.addEventListener("keydown",e=>{
-  if (e.key==="Escape"){
-    if (!$("aiModal").classList.contains("hidden")){closeAiModal();return;}
-    if (!$("settingsModal").classList.contains("hidden")){closeSettings();return;}
-  }
-  // Slash = поиск
-  if (e.key==="/"&&!$("libraryScreen").classList.contains("hidden")){
-    const tag=(e.target.tagName||"").toLowerCase();
-    if (tag!=="input"&&tag!=="textarea"){
-      e.preventDefault();$("searchInput").focus();$("searchInput").select();return;
-    }
-  }
-  // Quiz hotkeys
-  if (!$("quizScreen").classList.contains("hidden")&&state){
-    if (e.key==="ArrowLeft"){e.preventDefault();prevQuestion();}
-    else if (e.key==="ArrowRight"){e.preventDefault();nextQuestion();}
-    else if (/^[1-9]$/.test(e.key)){
-      const i=parseInt(e.key,10)-1;
-      const q=normalizeQ(state.questions[state.current]);
-      if (q.type==="text"||q.type==="matching"||q.type==="sort") return;
-      if (i<(q.options||[]).length){
-        if (q.type==="multi"){
-          let a=Array.isArray(state.answers[state.current])?state.answers[state.current]:[];
-          const idx=a.indexOf(i);
-          state.answers[state.current]=idx>=0?a.filter(x=>x!==i):[...a,i];
-        } else state.answers[state.current]=i;
-        saveState();renderQuestion();
-      }
-    }
-    return;
-  }
-  if ($("libraryScreen").classList.contains("hidden")) return;
-  if (e.ctrlKey||e.metaKey||e.altKey) return;
-  const tag=(e.target.tagName||"").toLowerCase();
-  if (tag==="input"||tag==="textarea") return;
-  if (e.key==="n"||e.key==="N"||e.key==="т"||e.key==="Т"){e.preventDefault();openEditor(null);}
-  else if (e.key==="a"||e.key==="A"||e.key==="ф"||e.key==="Ф"){e.preventDefault();openAiModal("test");}
-  else if (e.key==="Enter"){
-    const list=filterTests();
-    if (list.length===1){e.preventDefault();openStart(list[0].id);}
-  }
-});
-
-/* ==========================================================
-   СТАРТ
-   ========================================================== */
-loadSettings();
-loadAttempts();
-loadTests().then(()=>{
-  renderLibrary();
-  show("libraryScreen");
-  checkHashImport();
-});
-</script>
-</body>
-</html>
+ 
