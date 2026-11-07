@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Основы веб-разработки",
+    "description": "Проверьте знания HTML, CSS и JavaScript.",
+    "timeLimit": 300,
+    "questions": [
+      {
+        "question": "Что такое HTML?",
+        "options": ["Язык программирования", "Язык разметки гипертекста", "База данных", "Операционная система"],
+        "correct": 1
+      },
+      {
+        "question": "Какая компания разработала JavaScript?",
+        "options": ["Microsoft", "Google", "Netscape", "Apple"],
+        "correct": 2
+      },
+      {
+        "question": "Что из перечисленного НЕ является языком программирования?",
+        "options": ["Python", "Java", "HTML", "C++"],
+        "correct": 2
+      },
+      {
+        "question": "Какой тег создаёт самый крупный заголовок?",
+        "options": ["<h6>", "<h1>", "<title>", "<head>"],
+        "correct": 1
+      },
+      {
+        "question": "Что означает CSS?",
+        "options": ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style System", "Colorful Style Sheets"],
+        "correct": 1
+      }
+    ]
+  }
+]
