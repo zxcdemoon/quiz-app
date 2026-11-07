@@ -29,30 +29,42 @@
   --r-sm:10px;--r-md:16px;--r-lg:24px;--r-xl:32px;
 }
 
-/* Пастельный фон */
+/* =========================================
+   ФОН С ВАШЕЙ КАРТИНКОЙ
+   ========================================= */
 body{
-  background-color: #f8f9fa;
+  /* Градиент-заглушка, если картинки нет */
+  background-color: #f8f9fa; 
   background-image: 
     radial-gradient(circle at 10% 20%, rgba(255, 182, 193, 0.45) 0%, transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(173, 216, 230, 0.5) 0%, transparent 40%),
     radial-gradient(circle at 50% 50%, rgba(221, 160, 221, 0.35) 0%, transparent 50%);
+  
+  /* 👇 ЗДЕСЬ ВАША КАРТИНКА. Сохраните её как bg.jpg рядом с index.html */
+  background-image: url('bg.jpg'); 
+  
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
+  background-repeat: no-repeat;
+  
   color:var(--text);font-family:var(--sans);font-size:15px;
   line-height:1.5;-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
   transition:background-color .3s,color .3s;
 }
 
-/* Темная тема */
+/* Тёмная тема (затемняет вашу картинку) */
 body.dark{
   --text:#f3f4f6;--text-muted:#9ca3af;
   --glass-bg:rgba(17, 24, 39, 0.65);
   --glass-border:rgba(255, 255, 255, 0.1);
   --glass-hover:rgba(31, 41, 55, 0.85);
+  
   background-color: #0f172a;
+  /* Затемняющий слой поверх картинки для тёмной темы */
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+    linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
+    url('bg.jpg');
 }
 
 body.font-large{font-size:17px;}
@@ -349,7 +361,7 @@ body.dark ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2);}
       <span>AuraQuiz</span>
     </div>
     <div class="header-actions">
-      <div class="header-meta" id="headerMeta">v4.0</div>
+      <div class="header-meta" id="headerMeta">v4.1</div>
       <button class="icon-btn" title="Настройки" data-act="settings" onclick="openSettings()" id="settingsBtn"></button>
     </div>
   </header>
@@ -884,7 +896,7 @@ function show(id){
   if (main) main.scrollTop = 0;
   const names={welcomeScreen:"WELCOME",startScreen:"START",editorScreen:"EDIT",
     quizScreen:"IN PROGRESS",resultScreen:"RESULT"};
-  $("headerMeta").textContent = "v4.0 · " + (names[id]||"");
+  $("headerMeta").textContent = "v4.1 · " + (names[id]||"");
 }
 
 /* ==========================================================
