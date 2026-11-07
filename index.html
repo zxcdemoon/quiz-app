@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AuraQuiz v9.0 — AI Edition</title>
+<title>AuraQuiz v10.0 — Gamification Edition</title>
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
 }
 body.dark{--text:#f8f9fa;--text-muted:#a0a0a0;--bg:#0a0a0a;--glass-bg:rgba(20,20,20,0.7);--glass-border:rgba(255,255,255,0.15);--glass-hover:rgba(35,35,35,0.9);--accent:#fff;--accent-hover:#ccc;}
 body.dark svg{color:#ffffff !important;}
-body.dark .btn-primary svg,body.dark .btn-primary,body.dark .set-btn.active svg,body.dark .set-btn.active,body.dark .tag-chip.active svg,body.dark .tag-chip.active,body.dark .option.selected svg,body.dark .option.selected .option-marker,body.dark .q-num,body.dark .q-num svg,body.dark .brand-mark svg,body.dark .brand-mark,body.dark .review-opt.correct svg,body.dark .streak-badge.hot,body.dark .ai-status.ok,body.dark .flashcard-answer,body.dark .flashcard-actions .btn-primary svg,body.dark .btn-ai,body.dark .btn-ai svg{color:#0a0a0a !important;}
+body.dark .btn-primary svg,body.dark .btn-primary,body.dark .set-btn.active svg,body.dark .set-btn.active,body.dark .tag-chip.active svg,body.dark .tag-chip.active,body.dark .option.selected svg,body.dark .option.selected .option-marker,body.dark .q-num,body.dark .q-num svg,body.dark .brand-mark svg,body.dark .brand-mark,body.dark .review-opt.correct svg,body.dark .streak-badge.hot,body.dark .flashcard-answer,body.dark .flashcard-actions .btn-primary svg,body.dark .btn-ai,body.dark .btn-ai svg{color:#0a0a0a !important;}
 body.dark .icon-btn,body.dark .icon-btn svg{color:#ffffff;}
 body.dark .icon-btn:hover,body.dark .icon-btn:hover svg{color:#ffffff;}
 body.dark .icon-btn.danger:hover,body.dark .icon-btn.danger:hover svg{color:#dc2626 !important;}
@@ -55,13 +55,16 @@ body.font-large{font-size:17px;}
 body.font-large h1{font-size:30px;}
 body.multiplayer-active .timer,body.multiplayer-active #streakBadge,body.multiplayer-active .uncertain-row,body.multiplayer-active #progressSegments{display:none !important;}
 @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+@keyframes xpFloat{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-60px) scale(1.4);}}
+@keyframes levelUp{0%{transform:scale(0.5);opacity:0;}50%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:16px;}
 .header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;flex-shrink:0;background:var(--glass-bg);backdrop-filter:blur(var(--blur));border:1px solid var(--glass-border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);margin-bottom:16px;}
 .brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:800;font-size:18px;letter-spacing:-.03em;}
 .brand-mark{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--accent);color:var(--bg);}
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .header-meta{font-family:var(--mono);font-size:12px;color:var(--text-muted);text-transform:uppercase;}
-.xp-bar{display:flex;align-items:center;gap:8px;background:var(--glass-hover);padding:6px 12px;border-radius:20px;font-family:var(--mono);font-size:11px;}
+.xp-bar{display:flex;align-items:center;gap:8px;background:var(--glass-hover);padding:6px 12px;border-radius:20px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:transform .2s;}
+.xp-bar:hover{transform:scale(1.03);}
 .xp-fill{width:80px;height:6px;background:rgba(0,0,0,0.2);border-radius:3px;overflow:hidden;}
 .xp-fill>div{height:100%;background:var(--accent);transition:width .3s;}
 body.dark .xp-fill{background:rgba(255,255,255,0.2);}
@@ -272,7 +275,6 @@ body.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);}
   .xp-bar{display:none;}
   .mp-cols{grid-template-columns:1fr !important;}
 }
-/* AI Chat */
 #aiChatScreen .chat-container{display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:400px;gap:12px;}
 #aiChatScreen .chat-messages{flex:1;overflow-y:auto;padding:16px;background:rgba(255,255,255,0.3);border-radius:var(--r-md);border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:12px;}
 .chat-msg{padding:12px 16px;border-radius:var(--r-md);max-width:85%;line-height:1.5;font-size:14px;word-wrap:break-word;}
@@ -282,6 +284,55 @@ body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
 .chat-input-row{display:flex;gap:8px;}
 .chat-input-row input{flex:1;padding:14px 16px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.4);color:var(--text);border-radius:var(--r-md);font-size:15px;}
 .chat-input-row input:focus{outline:none;background:rgba(255,255,255,0.8);}
+
+/* Quest cards */
+.quest-card{padding:14px 18px;border-radius:var(--r-md);background:rgba(255,255,255,0.4);border:1px solid var(--glass-border);display:flex;align-items:center;gap:12px;margin-bottom:8px;transition:all .2s;}
+body.dark .quest-card{background:rgba(255,255,255,0.05);}
+.quest-card.done{opacity:.55;background:rgba(16,185,129,0.1);}
+.quest-icon{font-size:24px;flex-shrink:0;}
+.quest-body{flex:1;min-width:0;}
+.quest-title{font-weight:700;font-size:14px;}
+.quest-progress{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-top:2px;}
+.quest-reward{font-family:var(--mono);font-size:12px;font-weight:700;color:#10b981;flex-shrink:0;}
+.quest-bar{height:4px;background:rgba(0,0,0,0.1);border-radius:2px;margin-top:6px;overflow:hidden;}
+body.dark .quest-bar{background:rgba(255,255,255,0.1);}
+.quest-bar>div{height:100%;background:var(--accent);transition:width .3s;}
+
+/* Profile */
+.profile-header{display:flex;align-items:center;gap:20px;padding:24px;background:rgba(255,255,255,0.4);border-radius:var(--r-lg);border:1px solid var(--glass-border);margin-bottom:24px;flex-wrap:wrap;}
+body.dark .profile-header{background:rgba(255,255,255,0.05);}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0;cursor:pointer;}
+.profile-name{font-size:24px;font-weight:800;}
+.profile-title{font-family:var(--mono);font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
+.profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-top:16px;width:100%;}
+.profile-stat{text-align:center;}
+.profile-stat .v{font-family:var(--mono);font-size:22px;font-weight:800;}
+.profile-stat .l{font-family:var(--mono);font-size:10px;color:var(--text-muted);text-transform:uppercase;}
+
+/* Activity calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:340px;}
+.cal-cell{aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,0.05);font-size:9px;}
+body.dark .cal-cell{background:rgba(255,255,255,0.05);}
+.cal-cell.l1{background:rgba(16,185,129,0.25);}
+.cal-cell.l2{background:rgba(16,185,129,0.5);}
+.cal-cell.l3{background:rgba(16,185,129,0.75);}
+.cal-cell.l4{background:#10b981;}
+
+/* Shop */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
+.shop-item{padding:16px;border-radius:var(--r-md);background:rgba(255,255,255,0.4);border:1px solid var(--glass-border);text-align:center;cursor:pointer;transition:all .2s;}
+body.dark .shop-item{background:rgba(255,255,255,0.05);}
+.shop-item:hover{transform:translateY(-2px);border-color:var(--accent);}
+.shop-item.owned{opacity:.55;cursor:default;}
+.shop-icon{font-size:32px;margin-bottom:8px;}
+.shop-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.shop-price{font-family:var(--mono);font-size:11px;color:#10b981;font-weight:700;}
+
+/* XP float animation */
+.xp-float{position:fixed;font-family:var(--mono);font-weight:800;font-size:20px;color:#10b981;pointer-events:none;z-index:1000;animation:xpFloat 1s forwards;text-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.levelup-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:32px 48px;background:linear-gradient(135deg,#10b981,#0891b2);color:#fff;border-radius:var(--r-xl);text-align:center;z-index:1000;animation:levelUp .5s;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.levelup-popup h2{font-size:32px;margin-bottom:8px;color:#fff;text-transform:none;letter-spacing:0;}
+.levelup-popup p{font-size:16px;opacity:.9;}
 </style>
 </head>
 <body>
@@ -297,12 +348,12 @@ body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
       <span>AuraQuiz</span>
     </div>
     <div class="header-actions">
-      <div class="xp-bar" id="xpBar" title="Опыт и уровень">
+      <div class="xp-bar" id="xpBar" title="Профиль" onclick="openProfile()">
         <span id="lvlText">Lv.1</span>
         <div class="xp-fill"><div id="xpFill" style="width:0%"></div></div>
         <span id="xpText">0 XP</span>
       </div>
-      <div class="header-meta" id="headerMeta">v9.0</div>
+      <button class="icon-btn" title="Магазин" onclick="openShop()" id="shopBtn">🛒</button>
       <button class="icon-btn" title="Достижения" onclick="openAchievements()" id="achBtn">🏆</button>
       <button class="icon-btn" title="Настройки" onclick="openSettings()" id="settingsBtn"></button>
     </div>
@@ -344,6 +395,14 @@ body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
             <div class="stat-card"><div class="stat-label">🔥 Стрик</div><div class="stat-value" id="statStreak">0</div></div>
             <div class="stat-card"><div class="stat-label">⚡ XP</div><div class="stat-value" id="statXP">0</div></div>
             <div class="stat-card"><div class="stat-label">🏆 Достижения</div><div class="stat-value" id="statAch">0</div></div>
+          </div>
+
+          <div id="dailyQuestsBox" style="margin-top:24px;max-width:600px;width:100%;text-align:left">
+            <div class="row" style="justify-content:space-between;margin-bottom:12px">
+              <h2 style="margin:0">📅 Ежедневные квесты</h2>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--text-muted)" id="questsResetInfo"></span>
+            </div>
+            <div id="dailyQuestsList"></div>
           </div>
         </div>
       </div>
@@ -454,6 +513,27 @@ body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
         <div id="reviewList"></div>
       </div>
 
+      <div id="profileScreen" class="hidden">
+        <div class="row" style="margin-bottom:16px"><button class="icon-btn" onclick="show('welcomeScreen')">←</button></div>
+        <div id="profileContent"></div>
+      </div>
+
+      <div id="shopScreen" class="hidden">
+        <div class="row" style="margin-bottom:16px"><button class="icon-btn" onclick="show('welcomeScreen')">←</button></div>
+        <h1>🛒 Магазин</h1>
+        <p class="subtitle">Трать XP на темы, аватарки и титулы</p>
+        <div style="padding:16px;background:rgba(16,185,129,0.1);border-radius:var(--r-md);margin-bottom:20px;border:1px solid rgba(16,185,129,0.3)">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--text-muted);text-transform:uppercase">Баланс</div>
+          <div style="font-size:32px;font-weight:900" id="shopBalance">0 XP</div>
+        </div>
+        <h2>🎨 Темы</h2>
+        <div class="shop-grid" id="shopThemes" style="margin-bottom:24px"></div>
+        <h2>😀 Аватарки</h2>
+        <div class="shop-grid" id="shopAvatars" style="margin-bottom:24px"></div>
+        <h2>🏷 Титулы</h2>
+        <div class="shop-grid" id="shopTitles" style="margin-bottom:24px"></div>
+      </div>
+
       <div id="aiChatScreen" class="hidden">
         <div class="row" style="margin-bottom:16px">
           <button class="icon-btn" onclick="closeAiChat()">←</button>
@@ -523,7 +603,6 @@ body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
           <button class="btn-ghost" style="margin-top:32px" onclick="leaveMultiplayer()">Покинуть комнату</button>
         </div>
       </div>
-
     </main>
   </div>
 </div>
@@ -601,18 +680,9 @@ body.dark .chat-msg.assistant{background:rgba(255,255,255,0.08);}
 
     <div class="set-group">
       <h3>API Ключи (хранятся локально)</h3>
-      <div class="field">
-        <label>Gemini API Key</label>
-        <input type="password" id="keyGemini" placeholder="AIza...">
-      </div>
-      <div class="field">
-        <label>Groq API Key</label>
-        <input type="password" id="keyGroq" placeholder="gsk_...">
-      </div>
-      <div class="field">
-        <label>Mistral API Key</label>
-        <input type="password" id="keyMistral" placeholder="...">
-      </div>
+      <div class="field"><label>Gemini API Key</label><input type="password" id="keyGemini" placeholder="AIza..."></div>
+      <div class="field"><label>Groq API Key</label><input type="password" id="keyGroq" placeholder="gsk_..."></div>
+      <div class="field"><label>Mistral API Key</label><input type="password" id="keyMistral" placeholder="..."></div>
       <div class="row" style="margin-top:8px">
         <button class="btn-ghost btn-small" onclick="saveAiKeys()">💾 Сохранить ключи</button>
         <button class="btn-ghost btn-small" onclick="clearAiKeys()">🗑 Очистить</button>
@@ -730,11 +800,8 @@ const ic = n => ICONS[n] || '';
 
 const K = {
   TESTS:'aq_tests_v6',TRASH:'aq_trash_v6',SET:'aq_settings_v6',DRAFT:'aq_draft_v6',
-  ATT:'aq_attempts_v6',
-  STATE:'aq_state_v6',
-  AI:'aq_aiprov_v6',GAME:'aq_game_v6',
-  CACHE:'aq_aicache_v6',
-  CHAT:'aq_chat_v1'
+  ATT:'aq_attempts_v6',STATE:'aq_state_v6',AI:'aq_aiprov_v6',GAME:'aq_game_v6',
+  CACHE:'aq_aicache_v6',CHAT:'aq_chat_v1',QUESTS:'aq_quests_v1'
 };
 
 const $ = id => document.getElementById(id);
@@ -750,7 +817,12 @@ function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math
 function fmtTime(s){s=Math.max(0,Math.ceil(s));return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;}
 
 let settings={theme:'light',fontFamily:'manrope',fontSize:'normal',sound:true,aiProvider:'pollinations',autoTheme:false};
-let tests=[],trash=[],attempts=[],game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};
+let tests=[],trash=[],attempts=[],game={
+  xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0,
+  perfectCount:0,perfectStreak:0,multiplayerWins:0,themesTried:['light'],chatMessages:0,aiExplains:0,hintsUsed:0,typesUsed:[],
+  avatar:'🎓',title:'Новичок',ownedThemes:['light','dark'],ownedAvatars:['🎓'],ownedTitles:['Новичок'],
+  dailyBonusDate:null,streakFreezeUsed:null,createdQuestions:0,aiQuestionsGenerated:0
+};
 let aiCache={};
 let TEST=null,editing=null,state=null,timerId=null,pendingSaved=null;
 let aiMode='test',aiResult=null,aiTab='topic';
@@ -777,21 +849,15 @@ const AI_PROVIDERS = [
   {
     name: 'gemini',
     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
-    headers: () => ({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + (localStorage.getItem('aq_gemini_key') || '')
-    }),
+    headers: () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('aq_gemini_key') || '') }),
     body: (msgs, model) => ({ model: model || 'gemini-3.8-flash', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
     parse: (data) => data.choices[0].message.content,
-    models: ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']
+    models: ['gemini-3.8-flash', 'gemini-3.6-flash']
   },
   {
     name: 'groq',
     url: 'https://api.groq.com/openai/v1/chat/completions',
-    headers: () => ({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + (localStorage.getItem('aq_groq_key') || '')
-    }),
+    headers: () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('aq_groq_key') || '') }),
     body: (msgs, model) => ({ model: model || 'llama-3.3-70b-versatile', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
     parse: (data) => data.choices[0].message.content,
     models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']
@@ -799,10 +865,7 @@ const AI_PROVIDERS = [
   {
     name: 'mistral',
     url: 'https://api.mistral.ai/v1/chat/completions',
-    headers: () => ({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + (localStorage.getItem('aq_mistral_key') || '')
-    }),
+    headers: () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('aq_mistral_key') || '') }),
     body: (msgs, model) => ({ model: model || 'mistral-small-latest', messages: msgs, temperature: 0.8, max_tokens: 4096 }),
     parse: (data) => data.choices[0].message.content,
     models: ['mistral-small-latest', 'open-mistral-nemo']
@@ -825,64 +888,389 @@ const AI_PROVIDERS = [
   }
 ];
 
-function getProviderByName(name) {
-  return AI_PROVIDERS.find(p => p.name === name) || AI_PROVIDERS[0];
-}
-
 async function callAI(msgs, preferredModel) {
   const cacheKey = JSON.stringify(msgs).slice(0, 200);
-  if (aiCache[cacheKey] && Date.now() - aiCache[cacheKey].ts < 86400000) {
-    return aiCache[cacheKey].content;
-  }
-
+  if (aiCache[cacheKey] && Date.now() - aiCache[cacheKey].ts < 86400000) return aiCache[cacheKey].content;
   const preferred = settings.aiProvider || 'pollinations';
   const ordered = [...AI_PROVIDERS].sort((a, b) => {
     if (a.name === preferred) return -1;
     if (b.name === preferred) return 1;
     return 0;
   });
-
   let lastError = null;
   for (const provider of ordered) {
     try {
       const ctl = new AbortController();
       const tid = setTimeout(() => ctl.abort(), 60000);
-
-      const res = await fetch(provider.url, {
-        method: 'POST',
-        headers: provider.headers(),
-        body: JSON.stringify(provider.body(msgs, preferredModel)),
-        signal: ctl.signal
-      });
+      const res = await fetch(provider.url, { method: 'POST', headers: provider.headers(), body: JSON.stringify(provider.body(msgs, preferredModel)), signal: ctl.signal });
       clearTimeout(tid);
-
       if (!res.ok) {
         if (res.status === 429) { lastError = new Error('Лимит ' + provider.name); continue; }
         if (res.status === 401 || res.status === 403) { lastError = new Error('Ключ ' + provider.name); continue; }
         throw new Error(provider.name + ': ' + res.status);
       }
-
       const data = await res.json();
       const content = provider.parse(data);
-
       aiCache[cacheKey] = { content, ts: Date.now() };
       try { localStorage.setItem(K.CACHE, JSON.stringify(aiCache)); } catch (e) {}
-
       return content;
     } catch (err) {
       if (err.name === 'AbortError') { lastError = new Error('Таймаут ' + provider.name); continue; }
       lastError = err;
     }
   }
-
   throw lastError || new Error('Все AI-провайдеры недоступны');
 }
 
-/* ============ HINT LEVELS ============ */
+/* ==========================================================
+   XP + LEVELS
+   ========================================================== */
+function xpForLevel(lvl){ return 100 + (lvl - 1) * 50; }
+function getTitle(lvl){
+  if (lvl >= 50) return 'Легенда';
+  if (lvl >= 30) return 'Гуру';
+  if (lvl >= 20) return 'Эксперт';
+  if (lvl >= 10) return 'Знаток';
+  if (lvl >= 5) return 'Ученик';
+  return 'Новичок';
+}
+function addXP(n, showFloat){
+  if (showFloat === undefined) showFloat = true;
+  const oldLevel = game.level;
+  game.xp += n;
+  if (game.xp < 0) game.xp = 0;
+  const newLevel = Math.floor(game.xp / xpForLevel(game.level)) + 1;
+  if (newLevel > game.level) {
+    game.level = newLevel;
+    if (newLevel >= 5 && game.title === 'Новичок') game.title = getTitle(newLevel);
+    showLevelUpPopup(newLevel);
+    checkAchievements();
+  }
+  if (showFloat && n > 0) showXPFloat(n);
+  saveGame();
+}
+function showXPFloat(n){
+  const el = document.createElement('div');
+  el.className = 'xp-float';
+  el.textContent = '+' + n + ' XP';
+  el.style.left = (window.innerWidth / 2 - 30) + 'px';
+  el.style.top = (window.innerHeight / 2) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+function showLevelUpPopup(lvl){
+  const el = document.createElement('div');
+  el.className = 'levelup-popup';
+  el.innerHTML = `<h2>🎉 Уровень ${lvl}!</h2><p>${getTitle(lvl)}</p>`;
+  document.body.appendChild(el);
+  confetti();
+  setTimeout(() => el.remove(), 2500);
+}
+function getNextLevelNeed(){
+  return xpForLevel(game.level);
+}
+
+/* ==========================================================
+   ACHIEVEMENTS (35)
+   ========================================================== */
+const ACHIEVEMENTS = [
+  // Прогресс
+  {id:'first_test',icon:'🎯',title:'Первый тест',desc:'Пройди 1 тест',check:()=>attempts.length>=1},
+  {id:'ten_tests',icon:'🔥',title:'10 тестов',desc:'Пройди 10 тестов',check:()=>attempts.length>=10},
+  {id:'twentyfive_tests',icon:'🎓',title:'Бакалавр',desc:'Пройди 25 тестов',check:()=>attempts.length>=25},
+  {id:'fifty_tests',icon:'🎓',title:'Магистр',desc:'Пройди 50 тестов',check:()=>attempts.length>=50},
+  {id:'hundred_tests',icon:'👨‍🎓',title:'Профессор',desc:'Пройди 100 тестов',check:()=>attempts.length>=100},
+  {id:'fifty_q',icon:'💯',title:'50 вопросов',desc:'Ответь на 50',check:()=>game.totalQuestions>=50},
+  {id:'hundred_q',icon:'🧠',title:'100 вопросов',desc:'Ответь на 100',check:()=>game.totalQuestions>=100},
+  {id:'fivehundred_q',icon:'🌟',title:'Гений',desc:'Ответь на 500',check:()=>game.totalQuestions>=500},
+  // Серии
+  {id:'streak_3',icon:'🔥',title:'Серия 3',desc:'3 правильных подряд',check:()=>attempts.some(a=>a.maxStreak>=3)},
+  {id:'streak_10',icon:'🔥',title:'Серия 10',desc:'10 подряд',check:()=>attempts.some(a=>a.maxStreak>=10)},
+  {id:'streak_25',icon:'🔥',title:'Серия 25',desc:'25 подряд',check:()=>attempts.some(a=>a.maxStreak>=25)},
+  {id:'streak_3days',icon:'📅',title:'3 дня',desc:'3 дня подряд',check:()=>game.streak>=3},
+  {id:'streak_7days',icon:'📅',title:'Неделя',desc:'7 дней подряд',check:()=>game.streak>=7},
+  {id:'streak_30days',icon:'📅',title:'Месяц',desc:'30 дней подряд',check:()=>game.streak>=30},
+  // Идеальные
+  {id:'perfect',icon:'⭐',title:'Идеально',desc:'100% в тесте',check:()=>game.perfectCount>=1},
+  {id:'perfect_5',icon:'💎',title:'5 идеальных',desc:'5 тестов на 100%',check:()=>game.perfectCount>=5},
+  {id:'perfect_streak_3',icon:'👑',title:'3 идеальных подряд',desc:'3 раза 100% подряд',check:()=>game.perfectStreak>=3},
+  // Скорость
+  {id:'speedrun',icon:'⚡',title:'Скоростной',desc:'Тест за <2 мин, ≥80%',check:()=>attempts.some(a=>a.percent>=80 && a.duration && a.duration<120000)},
+  // Создание
+  {id:'creator',icon:'✏️',title:'Создатель',desc:'5 тестов',check:()=>tests.length>=5},
+  {id:'author',icon:'📚',title:'Автор',desc:'10 тестов',check:()=>tests.length>=10},
+  {id:'factory',icon:'🏭',title:'Фабрика',desc:'25 тестов',check:()=>tests.length>=25},
+  {id:'hundred_created_q',icon:'📝',title:'100 вопросов создано',desc:'Создай 100 вопросов',check:()=>game.createdQuestions>=100},
+  // Мультиплеер
+  {id:'multiplayer',icon:'🎮',title:'Мультиплеер',desc:'Сыграй в комнате',check:()=>(game.multiplayerGames||0)>=1},
+  {id:'mp_win',icon:'🥇',title:'Первая победа',desc:'1 место в игре',check:()=>game.multiplayerWins>=1},
+  {id:'mp_champ',icon:'👑',title:'Чемпион',desc:'5 побед',check:()=>game.multiplayerWins>=5},
+  {id:'mp_legend',icon:'👑',title:'Легенда',desc:'10 побед',check:()=>game.multiplayerWins>=10},
+  // AI
+  {id:'ai_master',icon:'🤖',title:'AI Мастер',desc:'10 AI-генераций',check:()=>game.aiGenerated>=10},
+  {id:'ai_wizard',icon:'🧙',title:'AI Волшебник',desc:'50 AI-генераций',check:()=>game.aiGenerated>=50},
+  {id:'ai_chat',icon:'💬',title:'Собеседник',desc:'10 сообщений в чате',check:()=>game.chatMessages>=10},
+  {id:'ai_explains',icon:'🔍',title:'Любопытный',desc:'5 AI-объяснений',check:()=>game.aiExplains>=5},
+  // Уровни
+  {id:'lvl_5',icon:'🏅',title:'Уровень 5',desc:'Lv.5',check:()=>game.level>=5},
+  {id:'lvl_10',icon:'🏅',title:'Уровень 10',desc:'Lv.10',check:()=>game.level>=10},
+  {id:'lvl_20',icon:'🏅',title:'Уровень 20',desc:'Lv.20',check:()=>game.level>=20},
+  // Секретные
+  {id:'all_themes',icon:'🌈',title:'Радуга',desc:'Попробуй все 7 тем',check:()=>(game.themesTried||[]).length>=7},
+  {id:'all_types',icon:'🧩',title:'Мастер типов',desc:'Используй все 9 типов',check:()=>(game.typesUsed||[]).length>=9}
+];
+function checkAchievements(){
+  let newOnes = false;
+  ACHIEVEMENTS.forEach(a=>{
+    if(!game.achievements.includes(a.id) && a.check()){ game.achievements.push(a.id); toast('🏆 '+a.title); newOnes=true; }
+  });
+  if(newOnes) saveGame();
+}
+function openAchievements(){
+  $('achList').innerHTML=ACHIEVEMENTS.map(a=>`<div class="ach-card ${game.achievements.includes(a.id)?'':'locked'}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div></div>`).join('');
+  $('achCount').textContent=game.achievements.length;
+  $('achTotal').textContent=ACHIEVEMENTS.length;
+  $('achModal').classList.remove('hidden');
+}
+
+/* ==========================================================
+   DAILY QUESTS
+   ========================================================== */
+const QUEST_POOL = [
+  {id:'play2',icon:'🎯',title:'Пройди 2 теста',target:2,reward:50,stat:'testsToday'},
+  {id:'answer20',icon:'💯',title:'Ответь на 20 вопросов',target:20,reward:30,stat:'questionsToday'},
+  {id:'perfect1',icon:'⭐',title:'Получи 100%',target:1,reward:100,stat:'perfectToday'},
+  {id:'mp1',icon:'🎮',title:'Сыграй в мультиплеере',target:1,reward:80,stat:'mpToday'},
+  {id:'ai1',icon:'🤖',title:'Сгенерируй тест через AI',target:1,reward:40,stat:'aiToday'},
+  {id:'chat1',icon:'💬',title:'Задай вопрос AI-репетитору',target:1,reward:20,stat:'chatToday'},
+  {id:'create1',icon:'✏️',title:'Создай тест',target:1,reward:60,stat:'createdToday'}
+];
+
+function getTodayStr(){ return new Date().toDateString(); }
+
+function ensureDailyQuests(){
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(K.QUESTS) || 'null'); } catch(e) {}
+  const today = getTodayStr();
+  if (!data || data.date !== today) {
+    const picked = shuffle(QUEST_POOL).slice(0, 3).map(q => ({ ...q, progress: 0, done: false }));
+    data = { date: today, quests: picked, stats: { testsToday:0, questionsToday:0, perfectToday:0, mpToday:0, aiToday:0, chatToday:0, createdToday:0 } };
+    localStorage.setItem(K.QUESTS, JSON.stringify(data));
+  }
+  return data;
+}
+
+function saveDailyQuests(data){ localStorage.setItem(K.QUESTS, JSON.stringify(data)); }
+
+function bumpQuestStat(stat, amount){
+  if (amount === undefined) amount = 1;
+  const data = ensureDailyQuests();
+  data.stats[stat] = (data.stats[stat] || 0) + amount;
+  data.quests.forEach(q => {
+    if (q.stat === stat && !q.done) {
+      q.progress = Math.min(data.stats[stat], q.target);
+      if (q.progress >= q.target) {
+        q.done = true;
+        addXP(q.reward, false);
+        toast('✅ Квест выполнен: ' + q.title + ' +' + q.reward + ' XP');
+      }
+    }
+  });
+  saveDailyQuests(data);
+  renderDailyQuests();
+}
+
+function renderDailyQuests(){
+  const box = $('dailyQuestsList');
+  if (!box) return;
+  const data = ensureDailyQuests();
+  $('questsResetInfo').textContent = 'до ' + new Date(Date.now() + 86400000).toLocaleDateString('ru-RU');
+  box.innerHTML = data.quests.map(q => {
+    const pct = Math.min(100, q.progress / q.target * 100);
+    return `<div class="quest-card ${q.done?'done':''}">
+      <div class="quest-icon">${q.icon}</div>
+      <div class="quest-body">
+        <div class="quest-title">${q.done?'✓ ':''}${esc(q.title)}</div>
+        <div class="quest-progress">${q.progress} / ${q.target}</div>
+        <div class="quest-bar"><div style="width:${pct}%"></div></div>
+      </div>
+      <div class="quest-reward">+${q.reward} XP</div>
+    </div>`;
+  }).join('');
+}
+
+/* ==========================================================
+   PROFILE
+   ========================================================== */
+function openProfile(){
+  renderProfile();
+  show('profileScreen');
+}
+
+function renderProfile(){
+  const need = getNextLevelNeed();
+  const pct = Math.min(100, (game.xp % need) / need * 100);
+  const totalAttempts = attempts.length;
+  const avgPercent = totalAttempts ? Math.round(attempts.reduce((a, x) => a + x.percent, 0) / totalAttempts) : 0;
+  const perfect = attempts.filter(a => a.percent === 100).length;
+  const mpWins = game.multiplayerWins || 0;
+
+  // Календарь активности
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const ds = d.toDateString();
+    const cnt = attempts.filter(a => new Date(a.ts).toDateString() === ds).length;
+    days.push({ date: d, count: cnt });
+  }
+  const calHtml = days.map(d => {
+    let lvl = '';
+    if (d.count >= 1) lvl = 'l1';
+    if (d.count >= 2) lvl = 'l2';
+    if (d.count >= 3) lvl = 'l3';
+    if (d.count >= 4) lvl = 'l4';
+    return `<div class="cal-cell ${lvl}" title="${d.date.toLocaleDateString('ru-RU')}: ${d.count} тестов"></div>`;
+  }).join('');
+
+  $('profileContent').innerHTML = `
+    <div class="profile-header">
+      <div class="profile-avatar" onclick="openShop()" title="Сменить аватарку">${game.avatar}</div>
+      <div style="flex:1;min-width:0">
+        <div class="profile-name">Игрок</div>
+        <div class="profile-title">🏷 ${esc(game.title)} · Lv.${game.level}</div>
+        <div style="margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--text-muted)">${game.xp} XP · ${pct.toFixed(0)}% до Lv.${game.level+1}</div>
+      </div>
+      <button class="btn-ghost btn-small" onclick="tryStreakFreeze()" ${game.streakFreezeUsed===getTodayStr()?'disabled':''}>❄ Заморозить стрик (200 XP)</button>
+    </div>
+
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="v">${game.streak}</div><div class="l">🔥 Стрик</div></div>
+      <div class="profile-stat"><div class="v">${totalAttempts}</div><div class="l">Тестов</div></div>
+      <div class="profile-stat"><div class="v">${game.totalQuestions}</div><div class="l">Вопросов</div></div>
+      <div class="profile-stat"><div class="v">${avgPercent}%</div><div class="l">Средний</div></div>
+      <div class="profile-stat"><div class="v">${perfect}</div><div class="l">💯 Идеальных</div></div>
+      <div class="profile-stat"><div class="v">${mpWins}</div><div class="l">🎮 Побед</div></div>
+    </div>
+
+    <h2 style="margin-top:24px">📅 Активность (30 дней)</h2>
+    <div class="calendar">${calHtml}</div>
+
+    <h2 style="margin-top:24px">🏆 Достижения (${game.achievements.length}/${ACHIEVEMENTS.length})</h2>
+    <div class="ach-grid">${ACHIEVEMENTS.slice(0, 9).map(a => `<div class="ach-card ${game.achievements.includes(a.id)?'':'locked'}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${a.title}</div></div>`).join('')}</div>
+    <div class="row" style="margin-top:12px"><button class="btn-ghost btn-small" onclick="openAchievements()">Все достижения →</button></div>
+
+    <h2 style="margin-top:24px">Последние попытки</h2>
+    <div>${attempts.slice(-5).reverse().map(a => {
+      const t = tests.find(x => x.id === a.testId);
+      return `<div style="padding:10px 14px;background:rgba(255,255,255,0.4);border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;font-size:13px"><span>${esc(t ? t.title : 'Тест')}</span><span style="font-family:var(--mono);font-weight:700">${a.percent}%</span></div>`;
+    }).join('') || '<div style="color:var(--text-muted);font-size:12px">Пока нет попыток</div>'}</div>
+  `;
+}
+
+function tryStreakFreeze(){
+  if(game.streakFreezeUsed === getTodayStr()) return;
+  if(game.xp < 200){ toast('Нужно 200 XP'); return; }
+  if(!confirm('Заморозить стрик на 200 XP? Это сохранит серию, даже если пропустишь день.')) return;
+  addXP(-200, false);
+  game.streakFreezeUsed = getTodayStr();
+  saveGame();
+  toast('❄ Стрик заморожен');
+  renderProfile();
+}
+
+/* ==========================================================
+   SHOP
+   ========================================================== */
+const SHOP_THEMES = [
+  {id:'light',name:'Светлая',icon:'☀',price:0},
+  {id:'dark',name:'Тёмная',icon:'🌙',price:0},
+  {id:'academic',name:'Academic',icon:'📓',price:500},
+  {id:'terminal',name:'Terminal',icon:'💻',price:800},
+  {id:'notion',name:'Notion',icon:'📝',price:600},
+  {id:'neon',name:'Neon',icon:'🌆',price:1000},
+  {id:'retro',name:'Retro',icon:'🕹',price:1200}
+];
+const SHOP_AVATARS = ['🎓','🦊','🐱','🐶','🦉','🦁','🐯','🐼','🦄','🐸','👽','🤖','🦖','🐉','🌟','⚡','🔥','💎','🎯','🧠'];
+const SHOP_TITLES = ['Новичок','Ученик','Знаток','Эксперт','Гуру','Легенда','Мастер','Хранитель','Мудрец','Повелитель тестов'];
+
+function openShop(){
+  renderShop();
+  show('shopScreen');
+}
+
+function renderShop(){
+  $('shopBalance').textContent = game.xp + ' XP';
+  $('shopThemes').innerHTML = SHOP_THEMES.map(t => {
+    const owned = (game.ownedThemes || []).includes(t.id);
+    return `<div class="shop-item ${owned?'owned':''}" onclick="buyTheme('${t.id}',${t.price})">
+      <div class="shop-icon">${t.icon}</div>
+      <div class="shop-name">${t.name}</div>
+      <div class="shop-price">${owned ? '✓ Есть' : (t.price === 0 ? 'Бесплатно' : t.price + ' XP')}</div>
+    </div>`;
+  }).join('');
+  $('shopAvatars').innerHTML = SHOP_AVATARS.map(a => {
+    const owned = (game.ownedAvatars || []).includes(a);
+    return `<div class="shop-item ${owned?'owned':''}" onclick="buyAvatar('${a}')">
+      <div class="shop-icon">${a}</div>
+      <div class="shop-price">${owned ? '✓ Есть' : '300 XP'}</div>
+    </div>`;
+  }).join('');
+  $('shopTitles').innerHTML = SHOP_TITLES.map(t => {
+    const owned = (game.ownedTitles || []).includes(t);
+    return `<div class="shop-item ${owned?'owned':''}" onclick="buyTitle('${esc(t)}')">
+      <div class="shop-icon">🏷</div>
+      <div class="shop-name">${esc(t)}</div>
+      <div class="shop-price">${owned ? '✓ Есть' : '1000 XP'}</div>
+    </div>`;
+  }).join('');
+}
+
+function buyTheme(id, price){
+  if((game.ownedThemes || []).includes(id)) { settings.theme = id; saveSettings(); toast('Тема применена'); return; }
+  if(game.xp < price){ toast('Не хватает XP'); return; }
+  if(!confirm('Купить тему за ' + price + ' XP?')) return;
+  addXP(-price, false);
+  game.ownedThemes = game.ownedThemes || [];
+  game.ownedThemes.push(id);
+  settings.theme = id;
+  saveSettings(); saveGame();
+  toast('✓ Куплено и применено');
+  renderShop();
+}
+
+function buyAvatar(a){
+  if((game.ownedAvatars || []).includes(a)) { game.avatar = a; saveGame(); toast('Аватарка применена'); return; }
+  if(game.xp < 300){ toast('Не хватает XP'); return; }
+  if(!confirm('Купить аватарку за 300 XP?')) return;
+  addXP(-300, false);
+  game.ownedAvatars = game.ownedAvatars || [];
+  game.ownedAvatars.push(a);
+  game.avatar = a;
+  saveGame();
+  toast('✓ Куплено');
+  renderShop();
+}
+
+function buyTitle(t){
+  if((game.ownedTitles || []).includes(t)) { game.title = t; saveGame(); toast('Титул применён'); return; }
+  if(game.xp < 1000){ toast('Не хватает XP'); return; }
+  if(!confirm('Купить титул за 1000 XP?')) return;
+  addXP(-1000, false);
+  game.ownedTitles = game.ownedTitles || [];
+  game.ownedTitles.push(t);
+  game.title = t;
+  saveGame();
+  toast('✓ Куплено');
+  renderShop();
+}
+
+/* ==========================================================
+   HINTS
+   ========================================================== */
 async function getHint() {
   const box = $('hintBox');
   if (box.dataset.loading === '1') return;
-
   const raw = state.questions[state.current];
   const q = normQ(raw);
   const hints = [
@@ -890,12 +1278,10 @@ async function getHint() {
     'Сужу варианты. Объясни, почему 2 из вариантов точно неправильные. Не называй правильный.',
     'Почти ответ. Дай очень сильную подсказку, но не называй правильный ответ прямо.'
   ];
-
   hintLevel = Math.min(hintLevel, 2);
   box.dataset.loading = '1';
   box.classList.remove('hidden');
   box.textContent = '⏳ Уровень ' + (hintLevel + 1) + '…';
-
   try {
     const content = await callAI([
       { role: 'system', content: 'Ты — учитель. Отвечай кратко и по делу.' },
@@ -903,9 +1289,11 @@ async function getHint() {
     ]);
     box.textContent = '💡 Уровень ' + (hintLevel + 1) + ': ' + content.trim();
     const penalty = [2, 5, 10][hintLevel];
-    if (game.xp >= penalty) addXP(-penalty);
+    if (game.xp >= penalty) addXP(-penalty, false);
+    game.hintsUsed = (game.hintsUsed || 0) + 1;
     hintLevel++;
     if (hintLevel >= 3) hintLevel = 2;
+    saveGame();
   } catch (err) {
     box.textContent = '❌ ' + err.message;
   } finally {
@@ -913,7 +1301,7 @@ async function getHint() {
   }
 }
 
-/* ============ AI CHAT (Репетитор) ============ */
+/* ============ AI CHAT ============ */
 function openAiChat() {
   chatHistory = [];
   try {
@@ -948,9 +1336,7 @@ function renderChat() {
     box.innerHTML = `<div class="chat-msg assistant">Привет! Я AI-репетитор. Могу объяснить тему, разобрать ошибку или дать пример. ${chatContextTest ? 'Контекст: тест «' + esc(chatContextTest.title) + '».' : ''} Спрашивай!</div>`;
     return;
   }
-  box.innerHTML = chatHistory.map(m =>
-    `<div class="chat-msg ${m.role}">${md(m.content)}</div>`
-  ).join('');
+  box.innerHTML = chatHistory.map(m => `<div class="chat-msg ${m.role}">${md(m.content)}</div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
 
@@ -961,24 +1347,24 @@ async function sendChatMessage() {
   input.value = '';
   chatHistory.push({ role: 'user', content: msg });
   renderChat();
-
   const btn = $('chatSendBtn');
   btn.disabled = true;
   btn.textContent = '⏳';
-
   try {
     let system = 'Ты — терпеливый AI-репетитор. Объясняй понятно, кратко, с примерами. Отвечай на русском.';
     if (chatContextTest && chatContextTest.questions) {
       const qs = chatContextTest.questions.slice(0, 10).map(q => '- ' + q.question).join('\n');
       system += `\nКонтекст теста «${chatContextTest.title}»:\n${qs}`;
     }
-    const msgs = [
-      { role: 'system', content: system },
-      ...chatHistory.slice(-10)
-    ];
+    const msgs = [{ role: 'system', content: system }, ...chatHistory.slice(-10)];
     const reply = await callAI(msgs);
     chatHistory.push({ role: 'assistant', content: reply });
     renderChat();
+    game.chatMessages = (game.chatMessages || 0) + 1;
+    saveGame();
+    bumpQuestStat('chatToday');
+    checkAchievements();
+    addXP(10, false);
   } catch (err) {
     chatHistory.push({ role: 'assistant', content: '❌ ' + err.message });
     renderChat();
@@ -995,19 +1381,20 @@ async function explainMistake(qIdx) {
   const nq = normQ(q);
   const correct = getCorrectAnswerText(nq);
   const userText = getUserAnswerText(nq, ua);
-
   const container = document.getElementById('explain-' + qIdx);
   if (!container) return;
   if (container.dataset.loading === '1') return;
   container.dataset.loading = '1';
   container.innerHTML = '<div style="padding:12px;color:var(--text-muted)">⏳ AI думает…</div>';
-
   try {
     const res = await callAI([
       { role: 'system', content: 'Ты — терпеливый учитель. Объясняй кратко (2-3 предложения), по делу.' },
       { role: 'user', content: `Вопрос: "${nq.question}". Пользователь ответил: "${userText}". Правильный ответ: "${correct}". Объясни, в чём ошибка и как правильно.` }
     ]);
     container.innerHTML = '<div style="padding:12px;background:rgba(16,185,129,0.1);border-left:3px solid #10b981;border-radius:0 8px 8px 0;font-size:13px;line-height:1.5">🤖 ' + md(res) + '</div>';
+    game.aiExplains = (game.aiExplains || 0) + 1;
+    saveGame();
+    checkAchievements();
   } catch (err) {
     container.innerHTML = '<div style="padding:12px;color:#ef4444">❌ ' + err.message + '</div>';
   } finally {
@@ -1021,9 +1408,7 @@ function getCorrectAnswerText(q) {
   if (q.type === 'fill') return (q.blanks || []).join(', ');
   if (q.type === 'matching') return q.pairs.map(p => p.left + ' → ' + p.right).join('; ');
   if (q.type === 'sort') return (q.items || []).join(' → ');
-  if (q.type === 'image' || q.type === 'single' || q.type === 'multi') {
-    return (q.options || []).filter(o => o.correct).map(o => o.text).join(', ');
-  }
+  if (q.type === 'image' || q.type === 'single' || q.type === 'multi') return (q.options || []).filter(o => o.correct).map(o => o.text).join(', ');
   return '';
 }
 
@@ -1046,9 +1431,7 @@ async function generateImageForQuestion(qIdx) {
   const prompt = q.question || q.text || 'abstract illustration';
   const btn = document.getElementById('genImg-' + qIdx);
   if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
-
   const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', educational illustration, clean')}?width=512&height=384&nologo=true`;
-
   if (q.type === 'image') {
     if (!q.options) q.options = [];
     q.options.push({ text: 'Сгенерированная картинка', image: url, correct: false });
@@ -1061,14 +1444,25 @@ async function generateImageForQuestion(qIdx) {
 }
 
 /* ==========================================================
-   REST (тесты, редактор, прохождение, мультиплеер)
+   LOAD / SAVE
    ========================================================== */
 function loadAll(){
   try{const raw=localStorage.getItem(K.SET);if(raw)settings={...settings,...JSON.parse(raw)};}catch(e){}
   try{const p=localStorage.getItem(K.AI);if(p)settings.aiProvider=p;}catch(e){}
   try{const g=localStorage.getItem(K.GAME);if(g)game={...game,...JSON.parse(g)};}catch(e){}
   try{const c=localStorage.getItem(K.CACHE);if(c)aiCache=JSON.parse(c)||{};}catch(e){}
+  if(!Array.isArray(game.achievements))game.achievements=[];
+  if(!Array.isArray(game.themesTried))game.themesTried=['light'];
+  if(!Array.isArray(game.typesUsed))game.typesUsed=[];
+  if(!Array.isArray(game.ownedThemes))game.ownedThemes=['light','dark'];
+  if(!Array.isArray(game.ownedAvatars))game.ownedAvatars=['🎓'];
+  if(!Array.isArray(game.ownedTitles))game.ownedTitles=['Новичок'];
+  if(!game.avatar)game.avatar='🎓';
+  if(!game.title)game.title='Новичок';
   checkStreak();applySettings();renderXP();
+  ensureDailyQuests();
+  renderDailyQuests();
+  checkDailyBonus();
 }
 function saveSettings(){try{localStorage.setItem(K.SET,JSON.stringify(settings));}catch(e){}applySettings();}
 function saveGame(){try{localStorage.setItem(K.GAME,JSON.stringify(game));}catch(e){}renderXP();}
@@ -1081,6 +1475,12 @@ function applySettings(){
   if(state&&state.multiplayer)document.body.classList.add('multiplayer-active');
   const fm={manrope:'var(--f-manrope)',inter:'var(--f-inter)',playfair:'var(--f-playfair)',space:'var(--f-space)'};
   document.documentElement.style.setProperty('--font-current',fm[settings.fontFamily]||fm.manrope);
+  if(!(game.themesTried||[]).includes(settings.theme)){
+    game.themesTried=game.themesTried||[];
+    game.themesTried.push(settings.theme);
+    saveGame();
+    checkAchievements();
+  }
 }
 function checkStreak(){
   const today=new Date().toDateString();
@@ -1089,22 +1489,24 @@ function checkStreak(){
     if(game.lastDay!==yesterday&&game.lastDay!==null)game.streak=0;
   }
 }
+function checkDailyBonus(){
+  const today = new Date().toDateString();
+  if(game.dailyBonusDate !== today){
+    game.dailyBonusDate = today;
+    game.xp += 25;
+    saveGame();
+    setTimeout(()=>toast('🎁 Ежедневный бонус: +25 XP'), 1500);
+  }
+}
 function renderXP(){
-  const need=(game.level)*100;
-  const pct=Math.min(100,(game.xp%need)/need*100);
+  const need = getNextLevelNeed();
+  const pct = Math.min(100, (game.xp % need) / need * 100);
   if($('xpFill'))$('xpFill').style.width=pct+'%';
   if($('lvlText'))$('lvlText').textContent='Lv.'+game.level;
   if($('xpText'))$('xpText').textContent=game.xp+' XP';
   if($('statStreak'))$('statStreak').textContent=game.streak;
   if($('statXP'))$('statXP').textContent=game.xp;
   if($('statAch'))$('statAch').textContent=game.achievements.length;
-}
-function addXP(n){
-  game.xp+=n;
-  if(game.xp<0)game.xp=0;
-  const newLevel=Math.floor(game.xp/100)+1;
-  if(newLevel>game.level){game.level=newLevel;toast('🎉 Новый уровень: Lv.'+newLevel);checkAchievements();}
-  saveGame();
 }
 function touchDay(){
   const today=new Date().toDateString();
@@ -1118,32 +1520,9 @@ function touchDay(){
   }
 }
 
-const ACHIEVEMENTS=[
-  {id:'first_test',icon:'🎯',title:'Первый тест',desc:'Пройди 1 тест',check:()=>attempts.length>=1},
-  {id:'ten_tests',icon:'🔥',title:'10 тестов',desc:'Пройди 10 тестов',check:()=>attempts.length>=10},
-  {id:'fifty_q',icon:'💯',title:'50 вопросов',desc:'Ответь на 50',check:()=>game.totalQuestions>=50},
-  {id:'hundred_q',icon:'🧠',title:'100 вопросов',desc:'Ответь на 100',check:()=>game.totalQuestions>=100},
-  {id:'perfect',icon:'⭐',title:'Идеально',desc:'100% в тесте',check:()=>attempts.some(a=>a.percent===100)},
-  {id:'streak_10',icon:'🔥',title:'Серия 10',desc:'10 подряд',check:()=>attempts.some(a=>a.maxStreak>=10)},
-  {id:'streak_3days',icon:'📅',title:'3 дня',desc:'3 дня подряд',check:()=>game.streak>=3},
-  {id:'lvl_5',icon:'🏅',title:'Уровень 5',desc:'Lv.5',check:()=>game.level>=5},
-  {id:'creator',icon:'✏️',title:'Создатель',desc:'5 тестов',check:()=>tests.length>=5},
-  {id:'ai_master',icon:'🤖',title:'AI Мастер',desc:'10 AI-генераций',check:()=>game.aiGenerated>=10},
-  {id:'multiplayer',icon:'🎮',title:'Мультиплеер',desc:'Сыграй в комнате',check:()=>(game.multiplayerGames||0)>=1},
-];
-function checkAchievements(){
-  ACHIEVEMENTS.forEach(a=>{
-    if(!game.achievements.includes(a.id)&&a.check()){game.achievements.push(a.id);toast('🏆 '+a.title);}
-  });
-  saveGame();
-}
-function openAchievements(){
-  $('achList').innerHTML=ACHIEVEMENTS.map(a=>`<div class="ach-card ${game.achievements.includes(a.id)?'':'locked'}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div></div>`).join('');
-  $('achCount').textContent=game.achievements.length;
-  $('achTotal').textContent=ACHIEVEMENTS.length;
-  $('achModal').classList.remove('hidden');
-}
-
+/* ==========================================================
+   TESTS / EDITOR
+   ========================================================== */
 async function loadTests(){
   try{const r=localStorage.getItem(K.TESTS);if(r){const a=JSON.parse(r);if(Array.isArray(a)&&a.length){tests=a.map(norm);return;}}}catch(e){}
   tests=[defaultTest()];saveTests();
@@ -1166,13 +1545,7 @@ function normQ(q){
 function saveTests(){try{localStorage.setItem(K.TESTS,JSON.stringify(tests));}catch(e){toast('⚠ Хранилище переполнено');}}
 function loadTrash(){try{const r=localStorage.getItem(K.TRASH);if(r)trash=JSON.parse(r);}catch(e){trash=[];}if(!Array.isArray(trash))trash=[];}
 function saveTrash(){try{localStorage.setItem(K.TRASH,JSON.stringify(trash));}catch(e){}}
-function loadAttempts(){
-  try{
-    const r=localStorage.getItem(K.ATT);
-    if(r){const parsed=JSON.parse(r);attempts=Array.isArray(parsed)?parsed:[];}
-  }catch(e){attempts=[];}
-  if(!Array.isArray(attempts))attempts=[];
-}
+function loadAttempts(){try{const r=localStorage.getItem(K.ATT);if(r){const parsed=JSON.parse(r);attempts=Array.isArray(parsed)?parsed:[];}}catch(e){attempts=[];}if(!Array.isArray(attempts))attempts=[];}
 function saveAttempts(){try{localStorage.setItem(K.ATT,JSON.stringify(attempts));}catch(e){}}
 
 function defaultTest(){
@@ -1184,7 +1557,7 @@ function defaultTest(){
 }
 
 function show(id){
-  ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen',
+  ['welcomeScreen','startScreen','editorScreen','quizScreen','flashcardScreen','resultScreen','profileScreen','shopScreen',
    'multiplayerMenuScreen','multiplayerLobbyScreen','multiplayerWaitScreen','aiChatScreen'].forEach(s=>{
     const el = $(s);
     if (el) el.classList.toggle('hidden', s!==id);
@@ -1250,9 +1623,7 @@ function shareTest(id){
   const t=tests.find(x=>x.id===id);if(!t)return;
   const b64=btoa(unescape(encodeURIComponent(JSON.stringify(t))));
   const url=location.origin+location.pathname+'#test='+b64;
-  if(url.length>1800){
-    if(!confirm('Ссылка получится очень длинной ('+url.length+' симв.) — может не открыться в некоторых браузерах. Всё равно скопировать?')) return;
-  }
+  if(url.length>1800){if(!confirm('Ссылка получится очень длинной ('+url.length+' симв.) — может не открыться в некоторых браузерах. Всё равно скопировать?')) return;}
   navigator.clipboard.writeText(url).then(()=>toast('🔗 Ссылка скопирована')).catch(()=>prompt('Скопируйте:',url));
 }
 function checkHash(){
@@ -1321,7 +1692,12 @@ function startTest(){
     const weak=attempts.filter(a=>a.testId===TEST.id).flatMap(a=>(a.perQuestion||[]).filter(p=>!p.correct).map(p=>p.question));
     if(weak.length){qs=qs.filter(q=>weak.includes(q.question));if(!qs.length)qs=prepareQuestions(TEST.questions,shufQ,shufA,0);}
   }
-  state={testId:TEST.id,mode:startMode,questions:qs,answers:new Array(qs.length).fill(null),uncertain:new Array(qs.length).fill(false),current:0,totalTime,timeLeft:totalTime,strict,antiCheat,streak:0,maxStreak:0,flashKnown:0,flashUnknown:0,flashRevealed:false,survival:startMode==='survival',reverse:startMode==='reverse',speedrun:startMode==='speedrun',multiplayer:false};
+  qs.forEach(q=>{
+    const t=q.type||'single';
+    if(!(game.typesUsed||[]).includes(t)){game.typesUsed=game.typesUsed||[];game.typesUsed.push(t);}
+  });
+  saveGame();
+  state={testId:TEST.id,mode:startMode,questions:qs,answers:new Array(qs.length).fill(null),uncertain:new Array(qs.length).fill(false),current:0,totalTime,timeLeft:totalTime,strict,antiCheat,streak:0,maxStreak:0,flashKnown:0,flashUnknown:0,flashRevealed:false,survival:startMode==='survival',reverse:startMode==='reverse',speedrun:startMode==='speedrun',multiplayer:false,startedAt:Date.now()};
   localStorage.removeItem(K.STATE);
   document.body.classList.remove('multiplayer-active');
   if(antiCheat){
@@ -1333,13 +1709,8 @@ function startTest(){
   if(startMode==='flashcards'){show('flashcardScreen');renderFC();}
   else{show('quizScreen');renderQ();if(totalTime>0)startTimer();}
 }
-function saveState(){
-  if(!state||state.multiplayer)return;
-  try{localStorage.setItem(K.STATE,JSON.stringify(state));}catch(e){}
-}
-function loadSaved(){
-  try{const r=localStorage.getItem(K.STATE);if(!r)return null;const d=JSON.parse(r);if(!d||!Array.isArray(d.questions))return null;return d;}catch(e){return null;}
-}
+function saveState(){if(!state||state.multiplayer)return;try{localStorage.setItem(K.STATE,JSON.stringify(state));}catch(e){}}
+function loadSaved(){try{const r=localStorage.getItem(K.STATE);if(!r)return null;const d=JSON.parse(r);if(!d||!Array.isArray(d.questions))return null;return d;}catch(e){return null;}}
 
 function startTimer(){
   if(timerId)clearInterval(timerId);
@@ -1462,7 +1833,19 @@ function nextQuestion(){
   if(!hasAnswer(state.answers[state.current],state.questions[state.current]))return;
   const wasHot=state.streak>=3;
   const ok=isCorrect(state.questions[state.current],state.answers[state.current]);
-  if(ok){state.streak++;if(state.streak>state.maxStreak)state.maxStreak=state.streak;addXP(10);playS('correct');if(state.survival)addXP(5);}
+  if(ok){
+    state.streak++;
+    if(state.streak>state.maxStreak)state.maxStreak=state.streak;
+    let bonus = 10;
+    if(state.streak >= 20) bonus = 20;
+    else if(state.streak >= 10) bonus = 15;
+    else if(state.streak >= 5) bonus = 12;
+    if(state.speedrun) bonus = Math.round(bonus * 1.5);
+    if(state.reverse) bonus = Math.round(bonus * 1.3);
+    if(state.survival) bonus = Math.round(bonus * 1.4);
+    addXP(bonus);
+    playS('correct');
+  }
   else{state.streak=0;playS('wrong');if(state.survival){toast('💀 Конец');finish(true);return;}}
   if(state.current<state.questions.length-1){
     state.current++;hintLevel=0;saveState();renderQ();
@@ -1501,15 +1884,12 @@ function finishFC(){
   const total=state.questions.length;
   const pct=Math.round((state.flashKnown/total)*100);
   playS('complete');
-
   game.totalQuestions += total;
-  const att={
-    testId:state.testId, ts:Date.now(), percent:pct,
-    correctCount:state.flashKnown, total, maxStreak:0,
-    mode:'flashcards', perQuestion:[]
-  };
+  const att={testId:state.testId, ts:Date.now(), percent:pct, correctCount:state.flashKnown, total, maxStreak:0, mode:'flashcards', perQuestion:[], duration:Date.now()-(state.startedAt||Date.now())};
   attempts.push(att);saveAttempts();saveGame();checkAchievements();
-
+  bumpQuestStat('testsToday');
+  bumpQuestStat('questionsToday', total);
+  if(pct === 100){ bumpQuestStat('perfectToday'); game.perfectCount=(game.perfectCount||0)+1; }
   show('resultScreen');
   $('scoreText').textContent=pct+'%';
   $('scoreMsg').textContent=`Знаю: ${state.flashKnown} из ${total}`;
@@ -1543,8 +1923,19 @@ function finish(byTimeout){
   const correct=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
   const pct=Math.round(correct/total*100);
   game.totalQuestions+=total;
-  const att={testId:state.testId,ts:Date.now(),percent:pct,correctCount:correct,total,maxStreak:state.maxStreak,perQuestion:state.questions.map((q,i)=>({question:q.question,correct:isCorrect(q,state.answers[i])}))};
+  const duration = Date.now() - (state.startedAt || Date.now());
+  const att={testId:state.testId,ts:Date.now(),percent:pct,correctCount:correct,total,maxStreak:state.maxStreak,duration,perQuestion:state.questions.map((q,i)=>({question:q.question,correct:isCorrect(q,state.answers[i])}))};
   attempts.push(att);saveAttempts();saveGame();checkAchievements();
+  bumpQuestStat('testsToday');
+  bumpQuestStat('questionsToday', total);
+  if(pct === 100){
+    bumpQuestStat('perfectToday');
+    game.perfectCount = (game.perfectCount||0) + 1;
+    game.perfectStreak = (game.perfectStreak||0) + 1;
+  } else {
+    game.perfectStreak = 0;
+  }
+  saveGame();
   playS('complete');show('resultScreen');
   $('scoreText').textContent=pct+'%';
   $('scoreMsg').textContent=`Правильно: ${correct} из ${total}`;
@@ -1552,34 +1943,19 @@ function finish(byTimeout){
   $('btnCert').classList.toggle('hidden',pct<80);
   if(pct>=90){confetti();addXP(50);}else if(pct>=80){confetti({particleCount:80});addXP(20);}
   renderReview();
+  checkAchievements();
 }
 function renderReview(){
   const html=state.questions.map((q,i)=>{
     const nq=normQ(q);const ua=state.answers[i];const ok=isCorrect(q,ua);
     let body='';
-    if(nq.type==='text'){
-      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(ua||'<пусто>')}</span></div>`;
-      if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${esc(nq.answer)}</span></div>`;
-    } else if(nq.type==='truefalse'){
-      const exp=q._flip?!nq.answer:nq.answer;
-      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${ua===true?'Правда':ua===false?'Ложь':'—'}</span></div>`;
-      if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${exp?'Правда':'Ложь'}</span></div>`;
-    } else if(nq.type==='fill'){
-      const us=(Array.isArray(ua)?ua:[]).join(', ');
-      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(us||'—')}</span></div>`;
-      if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${esc(nq.blanks.join(', '))}</span></div>`;
-    } else if(nq.type==='matching'){
-      const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));
-      nq.pairs.forEach((p,j)=>{const ci=Array.isArray(ua)?ua[j]:null;const ct=(ci!==null&&ci!==undefined&&raw[ci])?raw[ci].right:'—';const oi=ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===j;body+=`<div class="review-opt ${oi?'correct':'wrong'}"><span>${oi?'✓':'✗'}</span><span>${esc(p.left)} → ${esc(ct)}${!oi?' (нужно: '+esc(p.right)+')':''}</span></div>`;});
-    } else if(nq.type==='sort'){
-      const uo=Array.isArray(ua)?ua.map(idx=>String(nq.items[idx]||'')):[];
-      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${uo.map(esc).join(' → ')}</span></div>`;
-      if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${nq.items.map(esc).join(' → ')}</span></div>`;
-    } else if(nq.type==='file'){
-      body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Файл: ${esc(ua&&ua.name||'—')}</span></div>`;
-    } else {
-      nq.options.forEach((o,j)=>{const isC=o.correct;const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;const m=isC?'✓':(isCh?'✗':'○');const cls=isC?'correct':(isCh?'wrong':'');body+=`<div class="review-opt ${cls}"><span>${m}</span><span>${md(o.text||o.image)}</span></div>`;});
-    }
+    if(nq.type==='text'){body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(ua||'<пусто>')}</span></div>`;if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${esc(nq.answer)}</span></div>`;}
+    else if(nq.type==='truefalse'){const exp=q._flip?!nq.answer:nq.answer;body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${ua===true?'Правда':ua===false?'Ложь':'—'}</span></div>`;if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${exp?'Правда':'Ложь'}</span></div>`;}
+    else if(nq.type==='fill'){const us=(Array.isArray(ua)?ua:[]).join(', ');body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${esc(us||'—')}</span></div>`;if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${esc(nq.blanks.join(', '))}</span></div>`;}
+    else if(nq.type==='matching'){const raw=q._rightShuffled||nq.pairs.map((p,i)=>({...p,_orig:i}));nq.pairs.forEach((p,j)=>{const ci=Array.isArray(ua)?ua[j]:null;const ct=(ci!==null&&ci!==undefined&&raw[ci])?raw[ci].right:'—';const oi=ci!==null&&ci!==undefined&&raw[ci]&&raw[ci]._orig===j;body+=`<div class="review-opt ${oi?'correct':'wrong'}"><span>${oi?'✓':'✗'}</span><span>${esc(p.left)} → ${esc(ct)}${!oi?' (нужно: '+esc(p.right)+')':''}</span></div>`;});}
+    else if(nq.type==='sort'){const uo=Array.isArray(ua)?ua.map(idx=>String(nq.items[idx]||'')):[];body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Ваш: ${uo.map(esc).join(' → ')}</span></div>`;if(!ok)body+=`<div class="review-opt correct"><span>✓</span><span>Правильно: ${nq.items.map(esc).join(' → ')}</span></div>`;}
+    else if(nq.type==='file'){body=`<div class="review-opt ${ok?'correct':'wrong'}"><span>${ok?'✓':'✗'}</span><span>Файл: ${esc(ua&&ua.name||'—')}</span></div>`;}
+    else{nq.options.forEach((o,j)=>{const isC=o.correct;const isCh=nq.type==='multi'?(Array.isArray(ua)&&ua.includes(j)):ua===j;const m=isC?'✓':(isCh?'✗':'○');const cls=isC?'correct':(isCh?'wrong':'');body+=`<div class="review-opt ${cls}"><span>${m}</span><span>${md(o.text||o.image)}</span></div>`;});}
     if(nq.explanation)body+=`<div style="margin-top:8px;padding:10px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;font-size:13px">💡 ${md(nq.explanation)}</div>`;
     const aiBtn = !ok ? `<button class="btn-ghost btn-small" style="margin-top:8px" onclick="explainMistake(${i})">🤖 Объясни ошибку</button><div id="explain-${i}"></div>` : '';
     return `<div class="review-item"><div class="review-q">${pad(i+1)}. ${md(nq.question)}</div>${body}${aiBtn}</div>`;
@@ -1610,7 +1986,6 @@ async function generateWithAi(){
   if($('aiTypeTF').checked)types.push('truefalse');
   if($('aiTypeFill').checked)types.push('fill');
   if(!types.length)types.push('single');
-
   btn.disabled=true;btn.textContent='⏳ Генерирую…';
   try{
     if(aiTab==='batch'){
@@ -1659,13 +2034,18 @@ function applyAiResult(){
   if(Array.isArray(aiResult)){
     aiResult.forEach(t=>{t.id=uid();tests.push(norm(t));});
     game.aiGenerated=(game.aiGenerated||0)+aiResult.length;
-    toast('✓ +'+aiResult.length+' тестов');closeAiModal();renderLib();saveTests();saveGame();return;
+    toast('✓ +'+aiResult.length+' тестов');closeAiModal();renderLib();saveTests();saveGame();bumpQuestStat('aiToday');return;
   }
   if(aiMode==='questions'&&editing){pushHist();editing.questions.push(...deep(aiResult.questions));renderEditor();}
   else{const t={id:uid(),...deep(aiResult)};tests.push(norm(t));saveTests();renderLib();}
-  game.aiGenerated=(game.aiGenerated||0)+1;saveGame();closeAiModal();toast('✓ Готово');
+  game.aiGenerated=(game.aiGenerated||0)+1;
+  game.aiQuestionsGenerated=(game.aiQuestionsGenerated||0)+aiResult.questions.length;
+  saveGame();closeAiModal();toast('✓ Готово');bumpQuestStat('aiToday');
 }
 
+/* ==========================================================
+   EDITOR
+   ========================================================== */
 function openEditor(idOrTest){
   let existing=null;
   if(typeof idOrTest==='string')existing=tests.find(t=>t.id===idOrTest);
@@ -1784,11 +2164,17 @@ function saveTest(){
   editing.history.push({ts:Date.now(),action:idx>=0?'edited':'created'});
   if(editing.history.length>20)editing.history.shift();
   if(idx>=0)tests[idx]=editing;else tests.push(editing);
+  game.createdQuestions = (game.createdQuestions||0) + editing.questions.length;
   saveTests();localStorage.removeItem(K.DRAFT);
-  game.totalTests=(game.totalTests||0)+1;saveGame();checkAchievements();
+  game.totalTests=(game.totalTests||0)+1;
+  saveGame();checkAchievements();
+  bumpQuestStat('createdToday');
   editing=null;renderLib();show('welcomeScreen');toast('✓ Сохранено');
 }
 
+/* ==========================================================
+   EXPORT / RESULTS
+   ========================================================== */
 function exportAll(){
   const blob=new Blob([JSON.stringify(tests,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aq-tests.json';a.click();toast('Экспорт');
@@ -1826,47 +2212,46 @@ function showCertificate(){
 async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
 function confetti(opts){if(window.confetti)window.confetti({particleCount:150,spread:70,origin:{y:0.6},...opts});}
 
+/* ==========================================================
+   SETTINGS
+   ========================================================== */
 function openSettings(){renderSettingsButtons();$('keyGemini').value=localStorage.getItem('aq_gemini_key')||'';$('keyGroq').value=localStorage.getItem('aq_groq_key')||'';$('keyMistral').value=localStorage.getItem('aq_mistral_key')||'';$('settingsModal').classList.remove('hidden');}
 function closeSettings(){$('settingsModal').classList.add('hidden');}
 function renderSettingsButtons(){
-  document.querySelectorAll('#setTheme .set-btn').forEach(b=>{const need=parseInt(b.dataset.lvl)||0;b.classList.toggle('locked',game.level<need);b.classList.toggle('active',b.dataset.v===settings.theme);});
+  document.querySelectorAll('#setTheme .set-btn').forEach(b=>{const need=parseInt(b.dataset.lvl)||0;b.classList.toggle('locked',game.level<need && !(game.ownedThemes||[]).includes(b.dataset.v));b.classList.toggle('active',b.dataset.v===settings.theme);});
   document.querySelectorAll('#setFontFamily .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.fontFamily));
   document.querySelectorAll('#setFont .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.fontSize));
   document.querySelectorAll('#setSound .set-btn').forEach(b=>b.classList.toggle('active',(settings.sound?'on':'off')===b.dataset.v));
   document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.classList.toggle('active',(settings.autoTheme?'on':'off')===b.dataset.v));
   document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===settings.aiProvider));
 }
-document.querySelectorAll('#setTheme .set-btn').forEach(b=>b.onclick=()=>{const need=parseInt(b.dataset.lvl)||0;if(game.level<need){toast('🔒 Lv.'+need);return;}settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();});
+document.querySelectorAll('#setTheme .set-btn').forEach(b=>b.onclick=()=>{const need=parseInt(b.dataset.lvl)||0;if(game.level<need && !(game.ownedThemes||[]).includes(b.dataset.v)){toast('🔒 Купи в магазине или получи Lv.'+need);return;}settings.theme=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setFontFamily .set-btn').forEach(b=>b.onclick=()=>{settings.fontFamily=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setFont .set-btn').forEach(b=>b.onclick=()=>{settings.fontSize=b.dataset.v;saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setSound .set-btn').forEach(b=>b.onclick=()=>{settings.sound=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAutoTheme .set-btn').forEach(b=>b.onclick=()=>{settings.autoTheme=b.dataset.v==='on';saveSettings();renderSettingsButtons();});
 document.querySelectorAll('#setAiProvider .set-btn').forEach(b=>b.onclick=()=>{settings.aiProvider=b.dataset.v;localStorage.setItem(K.AI,settings.aiProvider);saveSettings();renderSettingsButtons();});
-function saveAiKeys(){
-  localStorage.setItem('aq_gemini_key',$('keyGemini').value.trim());
-  localStorage.setItem('aq_groq_key',$('keyGroq').value.trim());
-  localStorage.setItem('aq_mistral_key',$('keyMistral').value.trim());
-  toast('✓ Ключи сохранены');
-}
-function clearAiKeys(){
-  ['aq_gemini_key','aq_groq_key','aq_mistral_key'].forEach(k=>localStorage.removeItem(k));
-  $('keyGemini').value='';$('keyGroq').value='';$('keyMistral').value='';
-  toast('Ключи очищены');
-}
+function saveAiKeys(){localStorage.setItem('aq_gemini_key',$('keyGemini').value.trim());localStorage.setItem('aq_groq_key',$('keyGroq').value.trim());localStorage.setItem('aq_mistral_key',$('keyMistral').value.trim());toast('✓ Ключи сохранены');}
+function clearAiKeys(){['aq_gemini_key','aq_groq_key','aq_mistral_key'].forEach(k=>localStorage.removeItem(k));$('keyGemini').value='';$('keyGroq').value='';$('keyMistral').value='';toast('Ключи очищены');}
 function resetProgress(){
   if(!confirm('Сбросить весь прогресс, историю попыток и корзину? Это нельзя отменить.'))return;
-  game={xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0};
+  game={
+    xp:0,level:1,streak:0,lastDay:null,achievements:[],totalQuestions:0,totalTests:0,bestStreak:0,aiGenerated:0,multiplayerGames:0,
+    perfectCount:0,perfectStreak:0,multiplayerWins:0,themesTried:['light'],chatMessages:0,aiExplains:0,hintsUsed:0,typesUsed:[],
+    avatar:'🎓',title:'Новичок',ownedThemes:['light','dark'],ownedAvatars:['🎓'],ownedTitles:['Новичок'],
+    dailyBonusDate:null,streakFreezeUsed:null,createdQuestions:0,aiQuestionsGenerated:0
+  };
   attempts=[];trash=[];aiCache={};
   saveGame();saveAttempts();saveTrash();
-  localStorage.removeItem(K.STATE);localStorage.removeItem(K.CACHE);localStorage.removeItem(K.CHAT);
-  renderLib();renderXP();
+  localStorage.removeItem(K.STATE);localStorage.removeItem(K.CACHE);localStorage.removeItem(K.CHAT);localStorage.removeItem(K.QUESTS);
+  renderLib();renderXP();renderDailyQuests();
   toast('Прогресс сброшен');
 }
 
 const ONBOARD=[
   {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов с AI и геймификацией.'},
   {title:'🎯 Проходите тесты',text:'6 режимов + мультиплеер с PIN-комнатами для класса.'},
-  {title:'🤖 AI-помощник',text:'Генерация вопросов, объяснение ошибок и репетитор — всё бесплатно.'},
+  {title:'🏆 Зарабатывайте XP',text:'+10 XP за ответ. Стрики, достижения, квесты, магазин.'}
 ];
 function startOnboard(){if(localStorage.getItem('aq_onboarded_v8'))return;onboardStep=0;renderOnboard();$('onboardModal').classList.remove('hidden');}
 function renderOnboard(){$('onboardTitle').textContent=ONBOARD[onboardStep].title;$('onboardText').textContent=ONBOARD[onboardStep].text;document.querySelectorAll('.onboarding-dots span').forEach((s,i)=>s.classList.toggle('active',i===onboardStep));}
@@ -1885,7 +2270,7 @@ function startDailyChallenge(){
 }
 
 /* ==========================================================
-   MULTIPLAYER v8.1
+   MULTIPLAYER
    ========================================================== */
 function generatePin(){return Math.floor(100000+Math.random()*900000).toString();}
 
@@ -1904,30 +2289,22 @@ function openMultiplayerMenu(){
 async function hostCreateRoom(){
   if(!await initSupabase()) return;
   if(!TEST){toast('Сначала выберите тест');return;}
-
   let pin=null, created=false, tries=0;
   while(!created && tries<5){
     pin = generatePin();
-    const { error } = await sbClient.from('rooms').insert({
-      pin: pin, host_id: myDeviceId, test_id: TEST.id, test_title: TEST.title,
-      status: 'waiting', current_question: 0
-    });
+    const { error } = await sbClient.from('rooms').insert({ pin: pin, host_id: myDeviceId, test_id: TEST.id, test_title: TEST.title, status: 'waiting', current_question: 0 });
     if(!error){ created=true; break; }
     if(error.code==='23505'){ tries++; continue; }
     toast('❌ Ошибка БД: '+error.message); return;
   }
   if(!created){ toast('❌ Не удалось создать комнату'); return; }
-
   if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
   if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){}}
-
   const channelName = 'aq-room-'+pin;
   multiplayerState = { pin, players:[], scores:{}, testId:TEST.id, testTitle:TEST.title, questions:TEST.questions, currentQ:0, answers:{} };
   isHost = true;
   currentUser = { id: myDeviceId, name: 'Учитель', role: 'host' };
-
   currentChannel = sbClient.channel(channelName, { config: { presence: { key: 'host-' + myDeviceId } } });
-
   currentChannel.on('presence', { event: 'sync' }, () => {
     const state = currentChannel.presenceState();
     const players = [];
@@ -1935,12 +2312,10 @@ async function hostCreateRoom(){
     multiplayerState.players = players;
     updateLobbyUI();
   });
-
   currentChannel.on('broadcast', { event: 'player-answer' }, (msg) => {
     const p = msg.payload;
     handleIncomingAnswer(p.userId, p.player, p.answer, p.questionIndex);
   });
-
   await currentChannel.subscribe(async (status) => {
     if (status === 'SUBSCRIBED') {
       await currentChannel.track({ role: 'host', name: 'Учитель', user_id: myDeviceId });
@@ -1962,58 +2337,35 @@ async function playerJoinRoom(){
   const name = ($('joinNameInput').value||'').trim();
   if(!pin||pin.length!==6){toast('Введите 6-значный PIN');return;}
   if(!name){toast('Введите имя');return;}
-
   const { data: room, error: rErr } = await sbClient.from('rooms').select('*').eq('pin', pin).maybeSingle();
   if (rErr) { toast('❌ Ошибка БД: '+rErr.message); return; }
   if (!room) { toast('❌ Комната не найдена'); return; }
   if (room.status === 'finished') { toast('❌ Игра уже завершена'); return; }
-
-  const { error: pErr } = await sbClient.from('room_players').insert({
-    room_pin: pin, user_id: myDeviceId, name: name, score: 0, status: 'ready'
-  });
+  const { error: pErr } = await sbClient.from('room_players').insert({ room_pin: pin, user_id: myDeviceId, name: name, score: 0, status: 'ready' });
   if (pErr && !pErr.message.includes('duplicate')) { toast('❌ Ошибка входа: '+pErr.message); return; }
-
   const channelName = 'aq-room-'+pin;
   if(currentChannel){try{await sbClient.removeChannel(currentChannel);}catch(e){}}
   if(roomStateChannel){try{await sbClient.removeChannel(roomStateChannel);}catch(e){}}
-
   isHost = false;
   currentUser = { id: myDeviceId, name: name, role: 'player' };
   multiplayerState = { pin, players:[], scores:{}, currentQ:0, answers:{}, questions:[] };
-
   currentChannel = sbClient.channel(channelName, { config: { presence: { key: 'player-' + myDeviceId } } });
-
   currentChannel.on('broadcast', { event: 'game-started' }, (msg) => {
     if (!msg || !msg.payload) return;
     startMultiplayerQuiz({ testTitle: msg.payload.testTitle, questions: msg.payload.questions, pin: pin });
   });
-
   currentChannel.on('broadcast', { event: 'score-update' }, (msg) => {
     if(multiplayerState){multiplayerState.scores = msg.payload.scores;renderMultiplayerScore();}
   });
-
   currentChannel.on('broadcast', { event: 'new-question' }, (msg) => {
-    if(state && state.multiplayer){
-      multiplayerState.currentQ = msg.payload.index;
-      renderMultiplayerQuestion(msg.payload.question, msg.payload.index);
-    }
+    if(state && state.multiplayer){ multiplayerState.currentQ = msg.payload.index; renderMultiplayerQuestion(msg.payload.question, msg.payload.index); }
   });
-
   currentChannel.on('broadcast', { event: 'game-ended' }, () => { finishMultiplayer(); });
-
-  currentChannel.on('broadcast', { event: 'kick' }, (msg) => {
-    if (msg.payload.target === myDeviceId) { toast('❌ Вас исключили'); leaveMultiplayer(); }
-  });
-
+  currentChannel.on('broadcast', { event: 'kick' }, (msg) => { if (msg.payload.target === myDeviceId) { toast('❌ Вас исключили'); leaveMultiplayer(); } });
   roomStateChannel = sbClient.channel('room-state-'+pin)
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'pin=eq.'+pin }, payload => {
-      if (payload.new.status === 'finished' && state) finishMultiplayer();
-    })
-    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'room_players', filter: 'room_pin=eq.'+pin }, payload => {
-      if (payload.old.user_id === myDeviceId) { toast('❌ Вас исключили'); leaveMultiplayer(); }
-    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'pin=eq.'+pin }, payload => { if (payload.new.status === 'finished' && state) finishMultiplayer(); })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'room_players', filter: 'room_pin=eq.'+pin }, payload => { if (payload.old.user_id === myDeviceId) { toast('❌ Вас исключили'); leaveMultiplayer(); } })
     .subscribe();
-
   await currentChannel.subscribe(async (status) => {
     if (status === 'SUBSCRIBED') {
       await currentChannel.track({ role: 'player', name: name, user_id: myDeviceId });
@@ -2036,9 +2388,7 @@ function updateLobbyUI(){
 async function hostStartGame(){
   if(!isHost || !multiplayerState) return;
   if(multiplayerState.players.length===0 && !confirm('Нет игроков. Начать в одиночку?')) return;
-
   await sbClient.from('rooms').update({ status: 'playing', current_question: 0, question_started_at: new Date().toISOString() }).eq('pin', multiplayerState.pin);
-
   const cleanQuestions = multiplayerState.questions.map(raw => {
     const nq = normQ(raw);
     const clean = { type: nq.type, question: String(nq.question || '').slice(0, 400), explanation: String(nq.explanation || '').slice(0, 200) };
@@ -2049,20 +2399,16 @@ async function hostStartGame(){
     }
     return clean;
   });
-
   try {
     const payloadSize = JSON.stringify(cleanQuestions).length;
     if (payloadSize > 8000) {
       toast('⏳ Отправка ' + cleanQuestions.length + ' вопросов...');
-      for (let i = 0; i < cleanQuestions.length; i++) {
-        safeSend({ type: 'broadcast', event: 'new-question', payload: { question: cleanQuestions[i], index: i, total: cleanQuestions.length } });
-        await new Promise(r => setTimeout(r, 80));
-      }
+      for (let i = 0; i < cleanQuestions.length; i++) { safeSend({ type: 'broadcast', event: 'new-question', payload: { question: cleanQuestions[i], index: i, total: cleanQuestions.length } }); await new Promise(r => setTimeout(r, 80)); }
     }
     safeSend({ type: 'broadcast', event: 'game-started', payload: { testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin } });
   } catch(e) { toast('❌ Ошибка отправки: ' + e.message); return; }
-
   startMultiplayerQuiz({ testTitle: TEST.title, questions: cleanQuestions, pin: multiplayerState.pin });
+  bumpQuestStat('mpToday');
 }
 
 function startMultiplayerQuiz(data){
@@ -2089,7 +2435,6 @@ function renderMultiplayerQuestion(q, index){
   $('counterSmall').textContent = '/ ' + pad(multiplayerState.questions.length);
   $('questionImage').style.display = 'none';
   $('qActions').innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding:6px 12px;background:rgba(255,255,255,0.3);border-radius:8px">🎮 PIN: ${multiplayerState.pin} · ${esc(currentUser?currentUser.name:'')}</span>`;
-
   const box = $('options');
   box.innerHTML = '';
   const cdBox = document.createElement('div');
@@ -2098,7 +2443,6 @@ function renderMultiplayerQuestion(q, index){
   box.appendChild(cdBox);
   let cdLeft = 3;
   const cdInt = setInterval(()=>{ cdLeft--; if(cdLeft > 0) cdBox.textContent = String(cdLeft); }, 1000);
-
   setTimeout(() => {
     clearInterval(cdInt);
     box.innerHTML = '';
@@ -2239,18 +2583,19 @@ async function finishMultiplayer(){
   const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
   const scoreEl = document.getElementById('multiplayerScore');
   if(scoreEl) scoreEl.remove();
-
   if (currentUser && multiplayerState) {
     try { await sbClient.from('game_history').insert({ room_pin: multiplayerState.pin, test_id: multiplayerState.testId || 'unknown', user_id: currentUser.id, name: currentUser.name, score: scores[currentUser.name] || 0, total_questions: (multiplayerState.questions || []).length }); } catch(e) {}
   }
-
+  // Победа?
+  if (sorted.length && currentUser && sorted[0][0] === currentUser.name) {
+    game.multiplayerWins = (game.multiplayerWins || 0) + 1;
+  }
   show('resultScreen');
   $('scoreText').textContent = '🏁';
   $('scoreMsg').textContent = 'Игра завершена!';
   $('scoreStats').innerHTML = sorted.length ? sorted.map(([name,score],i)=>`<div>${['🥇','🥈','🥉'][i]||(i+1)+'.'} <b>${esc(name)}</b> — ${score} XP</div>`).join('') : 'Никто не играл';
   $('btnCert').classList.add('hidden');
   $('reviewList').innerHTML = '';
-
   if(currentUser && scores[currentUser.name]) addXP(scores[currentUser.name]);
   game.multiplayerGames = (game.multiplayerGames||0)+1;
   saveGame(); checkAchievements();
@@ -2333,7 +2678,7 @@ $('btnAiNew').innerHTML='🤖 AI';
 $('welcomeCreate').innerHTML=ic('plus')+' Новый тест';
 $('btnSaveTest').innerHTML=ic('edit')+' Сохранить';
 $('startBtn').innerHTML='Начать →';
-renderLib();show('welcomeScreen');startOnboard();checkHash();autoThemeCheck();addXP(0);
+renderLib();show('welcomeScreen');startOnboard();checkHash();autoThemeCheck();addXP(0, false);
 
 document.querySelectorAll('.icon-btn[title], .q-action-btn').forEach(b=>{
   if(!b.getAttribute('aria-label') && b.title) b.setAttribute('aria-label', b.title);
