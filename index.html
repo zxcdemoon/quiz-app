@@ -48,7 +48,7 @@
 
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: .85rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
-  .field input[type="text"], .field input[type="number"], .field input[type="password"],
+  .field input[type="text"], .field input[type="number"],
   .field textarea, .field select {
     width: 100%; padding: 9px 12px; border: 1.5px solid #d1d5db;
     border-radius: 8px; font-size: .95rem; font-family: inherit;
@@ -188,8 +188,11 @@
   .ai-status.info { background: #eef2ff; color: #3730a3; display: block; }
   .ai-status.ok { background: #dcfce7; color: #166534; display: block; }
   .ai-status.err { background: #fee2e2; color: #991b1b; display: block; }
-  .ai-key-hint { font-size: .78rem; color: #9ca3af; margin-top: 4px; }
-  .ai-key-hint a { color: #667eea; }
+  .ai-note {
+    font-size: .8rem; color: #9ca3af; margin-top: 4px;
+    padding: 8px 10px; background: #f9fafb; border-radius: 8px;
+    border-left: 3px solid #c7d2fe;
+  }
 </style>
 </head>
 <body>
@@ -313,7 +316,7 @@
 <!-- ========== МОДАЛ AI ========== -->
 <div id="aiModal" class="modal hidden">
   <div class="modal-content">
-    <h2 id="aiModalTitle">🤖 Создать тест с DeepSeek</h2>
+    <h2 id="aiModalTitle">🤖 Создать тест с AI</h2>
     <p class="modal-sub" id="aiModalSub">AI сгенерирует тест с вариантами ответов по вашей теме.</p>
 
     <div class="field">
@@ -337,13 +340,10 @@
       </div>
     </div>
 
-    <div class="field" style="margin-top:14px">
-      <label>DeepSeek API-ключ *</label>
-      <input type="password" id="aiKey" placeholder="sk-...">
-      <div class="ai-key-hint">
-        Ключ хранится только в вашем браузере. Получить:
-        <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">platform.deepseek.com → API keys</a>
-      </div>
+    <div class="ai-note">
+      ⚡ Работает на <b>Pollinations AI</b> — бесплатно, без ключа и регистрации.
+      Запрос может занять <b>10–40 секунд</b> или больше при высокой нагрузке.
+      Повторные запросы подряд могут временно блокироваться.
     </div>
 
     <div class="ai-status" id="aiStatus"></div>
@@ -363,7 +363,6 @@
    ========================================================== */
 const TESTS_KEY = "quiz_tests_v2";
 const STATE_KEY = "quiz_state_v2";
-const AI_KEY    = "quiz_deepseek_key";
 
 const $ = id => document.getElementById(id);
 const deepCopy = x => JSON.parse(JSON.stringify(x));
@@ -725,7 +724,7 @@ function openEditor(idOrTest){
   if (typeof idOrTest === "string"){
     existing = tests.find(t => t.id === idOrTest);
   } else if (idOrTest && typeof idOrTest === "object"){
-    existing = idOrTest; // пришёл объект напрямую (напр. от AI)
+    existing = idOrTest;
   }
   editing = existing ? deepCopy(existing) : {
     id: uid(), title: "", description: "", timeLimit: 0,
@@ -922,15 +921,11 @@ function isValidTest(t){
 }
 
 /* ==========================================================
-   🤖 DEEPSEEK AI
+   🤖 POLLINATIONS AI (бесплатно, без ключа)
    ========================================================== */
-function getApiKey(){ return localStorage.getItem(AI_KEY) || ""; }
-function setApiKey(k){ try { localStorage.setItem(AI_KEY, k); } catch(e){} }
-
 function openAiModal(mode){
   aiMode = mode;
   aiResult = null;
-  $("aiKey").value = getApiKey();
   $("aiTopic").value = "";
   $("aiCount").value = 5;
   $("aiDiff").value = "medium";
@@ -943,7 +938,7 @@ function openAiModal(mode){
     $("aiModalTitle").textContent = "🤖 Сгенерировать вопросы";
     $("aiModalSub").textContent = "AI допишет вопросы к текущему тесту. Потом можно отредактировать.";
   } else {
-    $("aiModalTitle").textContent = "🤖 Создать тест с DeepSeek";
+    $("aiModalTitle").textContent = "🤖 Создать тест с AI";
     $("aiModalSub").textContent = "AI сгенерирует тест с вариантами ответов по вашей теме.";
   }
   $("aiModal").classList.remove("hidden");
@@ -961,43 +956,51 @@ function setStatus(msg, kind){
   el.textContent = msg || "";
 }
 
-async function callDeepSeek(messages, apiKey){
-  let res;
+async function callPollinations(messages){
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 сек максимум
+
   try {
-    res = await fetch("https://api.deepseek.com/chat/completions", {
+    const res = await fetch("https://text.pollinations.ai/openai", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + apiKey
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: "openai",           // можно "mistral", "qwen" и др.
         messages,
         temperature: 0.8,
-        response_format: { type: "json_object" },
         max_tokens: 4096
-      })
+      }),
+      signal: controller.signal
     });
-  } catch (netErr){
-    throw new Error("Сеть/браузер заблокировал запрос к api.deepseek.com. " +
-      "Проверьте интернет, VPN или блокировщики. (" + netErr.message + ")");
+
+    clearTimeout(timeoutId);
+
+    if (!res.ok){
+      let body = "";
+      try { body = await res.text(); } catch(e){}
+      let msg;
+      if (res.status === 429) msg = "Слишком много запросов к Pollinations. Подождите 15–30 секунд и попробуйте снова.";
+      else if (res.status >= 500) msg = "Сервер Pollinations временно недоступен. Попробуйте позже.";
+      else msg = `Ошибка Pollinations API ${res.status}: ${body.slice(0, 200)}`;
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    if (!data.choices || !data.choices[0] || !data.choices[0].message){
+      throw new Error("Неожиданный ответ от Pollinations API");
+    }
+    return data.choices[0].message.content;
+
+  } catch (err){
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError"){
+      throw new Error("Превышено время ожидания (90 сек). Pollinations перегружен — попробуйте позже или уменьшите число вопросов.");
+    }
+    if (err.message && err.message.includes("fetch")){
+      throw new Error("Сеть недоступна или запрос заблокирован. Проверьте интернет/VPN.");
+    }
+    throw err;
   }
-  if (!res.ok){
-    let body = "";
-    try { body = await res.text(); } catch(e){}
-    let msg;
-    if (res.status === 401) msg = "Неверный API-ключ DeepSeek (401)";
-    else if (res.status === 402) msg = "Недостаточно средств на балансе DeepSeek (402)";
-    else if (res.status === 429) msg = "Слишком много запросов — подождите (429)";
-    else if (res.status >= 500) msg = `Сервер DeepSeek временно недоступен (${res.status})`;
-    else msg = `Ошибка API ${res.status}: ${body.slice(0, 200)}`;
-    throw new Error(msg);
-  }
-  const data = await res.json();
-  if (!data.choices || !data.choices[0] || !data.choices[0].message){
-    throw new Error("Неожиданный ответ API: " + JSON.stringify(data).slice(0, 200));
-  }
-  return data.choices[0].message.content;
 }
 
 function parseJsonLoose(text){
@@ -1019,7 +1022,6 @@ function normalizeQuestions(raw){
   if (!Array.isArray(raw)) return [];
   return raw.map(q => {
     const opts = Array.isArray(q.options) ? q.options.map(o => String(o).trim()) : [];
-    // Гарантируем минимум 2 варианта
     while (opts.length < 2) opts.push("Вариант " + (opts.length + 1));
     let correct = Number(q.correct);
     if (!Number.isFinite(correct) || correct < 0 || correct >= opts.length) correct = 0;
@@ -1032,18 +1034,16 @@ function normalizeQuestions(raw){
 }
 
 async function generateWithAi(){
-  if (aiResult){ // нажата кнопка "Применить"
+  if (aiResult){
     applyAiResult();
     return;
   }
+
   const topic = $("aiTopic").value.trim();
   const count = Math.min(20, Math.max(1, parseInt($("aiCount").value, 10) || 5));
   const diff = $("aiDiff").value;
-  const key = $("aiKey").value.trim();
 
   if (!topic){ setStatus("Введите тему", "err"); $("aiTopic").focus(); return; }
-  if (!key){ setStatus("Введите API-ключ DeepSeek", "err"); $("aiKey").focus(); return; }
-  setApiKey(key);
 
   const diffLabel = { easy: "лёгкий", medium: "средний", hard: "сложный",
                       mixed: "смешанный (часть вопросов легче, часть сложнее)" }[diff];
@@ -1077,13 +1077,13 @@ async function generateWithAi(){
   const btn = $("aiGenBtn");
   btn.disabled = true;
   btn.textContent = "⏳ Генерирую...";
-  setStatus("Это займёт 10–30 секунд…", "info");
+  setStatus("Pollinations AI генерирует ответ. Обычно 10–40 секунд…", "info");
 
   try {
-    const content = await callDeepSeek([
+    const content = await callPollinations([
       { role: "system", content: sys },
       { role: "user", content: user }
-    ], key);
+    ]);
 
     let parsed;
     try { parsed = parseJsonLoose(content); }
@@ -1107,6 +1107,7 @@ async function generateWithAi(){
     btn.textContent = "✓ Применить";
     btn.disabled = false;
     btn.onclick = applyAiResult;
+
   } catch (err){
     setStatus("❌ " + err.message, "err");
     btn.disabled = false;
@@ -1119,7 +1120,6 @@ function applyAiResult(){
   if (!aiResult){ showToast("Сначала сгенерируйте"); return; }
 
   if (aiMode === "questions" && editing){
-    // убрать пустой дефолтный вопрос, если он остался нетронутым
     if (editing.questions.length === 1 && !editing.questions[0].question.trim()){
       editing.questions = [];
     }
@@ -1130,7 +1130,6 @@ function applyAiResult(){
     return;
   }
 
-  // режим "создать тест" — открываем в редакторе на проверку
   const draft = {
     id: uid(),
     title: aiResult.title,
@@ -1143,12 +1142,12 @@ function applyAiResult(){
   showToast("✓ Тест сгенерирован — проверьте и сохраните");
 }
 
-/* Enter в модалке = применить/сгенерировать */
-$("aiKey").addEventListener("keydown", e => {
-  if (e.key === "Enter"){ e.preventDefault(); $("aiGenBtn").click(); }
-});
+/* Enter в модалке */
 $("aiTopic").addEventListener("keydown", e => {
   if (e.key === "Enter"){ e.preventDefault(); $("aiCount").focus(); }
+});
+$("aiCount").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ e.preventDefault(); $("aiGenBtn").click(); }
 });
 
 /* ==========================================================
