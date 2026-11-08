@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AuraQuiz v11.0 — Liquid Glass</title>
 <meta name="theme-color" content="#0a0a0a">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23000'/><circle cx='12' cy='12' r='5' stroke='white' stroke-width='2' fill='none'/><line x1='15' y1='15' x2='19' y2='19' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
+<!-- ТВОЙ ЛОГОТИП (ВАРИАНТ 2 - ИНВЕРСИЯ). Убедись, что картинка лежит рядом и называется logo.jpg -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><filter id='inv'><feColorMatrix type='matrix' values='-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0'/></filter></defs><rect width='512' height='512' rx='120' fill='%23151518'/><rect x='4' y='4' width='504' height='504' rx='116' fill='none' stroke='rgba(255,255,255,0.15)' stroke-width='6'/><image href='logo.jpg' width='512' height='512' filter='url(%23inv)' style='mix-blend-mode: screen;'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,700;1,900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -61,15 +62,13 @@ body.multiplayer-active .timer,body.multiplayer-active #streakBadge,body.multipl
 
 /* ================= LIQUID GLASS BASE ================= */
 .lg{
-  background:
-    linear-gradient(180deg,var(--lg-tint) 0%,var(--lg-tint-2) 100%);
+  background:linear-gradient(180deg,var(--lg-tint) 0%,var(--lg-tint-2) 100%);
   backdrop-filter:blur(var(--blur)) saturate(180%);
   -webkit-backdrop-filter:blur(var(--blur)) saturate(180%);
   border:1px solid var(--lg-border-top);
   border-bottom-color:var(--lg-border-bot);
   box-shadow:var(--lg-shadow),var(--lg-inner);
-  position:relative;
-  overflow:hidden;
+  position:relative;overflow:hidden;
 }
 .lg::before{
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
@@ -99,18 +98,28 @@ body.multiplayer-active .timer,body.multiplayer-active #streakBadge,body.multipl
 .header::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--lg-hi),transparent);}
 @keyframes slideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
 
-.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:800;font-size:18px;letter-spacing:-.03em;}
-.brand-mark{
-  width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;
-  border-radius:12px;
-  background:linear-gradient(135deg,#0a84ff 0%,#0060cc 100%);
-  color:#fff;
-  box-shadow:0 4px 16px rgba(10,132,255,0.45),inset 0 1px 0 rgba(255,255,255,0.3);
-  position:relative;overflow:hidden;
+/* НОВЫЙ ДИЗАЙН ЛОГОТИПА */
+.brand{
+  display:flex;align-items:center;gap:0;cursor:pointer;transition:transform .3s var(--spring);
+  padding:4px 8px;border-radius:12px;
 }
-.brand-mark::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.35) 0%,transparent 50%);pointer-events:none;}
-.brand-mark svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));}
-.brand-name{background:linear-gradient(180deg,#fff 0%,#c0c0c8 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;}
+.brand:hover{transform:scale(1.02);background:rgba(255,255,255,0.05);}
+.brand:active{transform:scale(.98);}
+.aura-logo{
+  font-family:'Playfair Display', serif;
+  font-style:italic;font-weight:900;font-size:34px;letter-spacing:-1.5px;
+  background:linear-gradient(180deg, #ffffff 0%, #a0a0b0 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  position:relative;display:flex;align-items:center;
+  line-height:1;padding-bottom:4px; /* Для хвостика буквы A */
+}
+.aura-star{
+  position:absolute;left:10px;top:12px;width:14px;height:14px;
+  background:radial-gradient(circle, #bf5af2 0%, transparent 70%);
+  filter:drop-shadow(0 0 6px #bf5af2);
+  animation:starPulse 2s infinite;
+}
+@keyframes starPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.5);opacity:0.7;}}
 
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .header-meta{font-family:var(--mono);font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
@@ -232,9 +241,7 @@ button svg{width:18px;height:18px;stroke-width:2;flex-shrink:0;}
 @keyframes rippleEffect{to{transform:scale(4);opacity:0;}}
 
 /* ================= INPUTS ================= */
-input,textarea,select{
-  font-family:var(--font-current);
-}
+input,textarea,select{ font-family:var(--font-current); }
 .search-bar{
   width:100%;padding:11px 16px;
   border:1px solid var(--lg-border-top);border-bottom-color:var(--lg-border-bot);
@@ -825,10 +832,14 @@ body.theme-retro .btn-primary{background:linear-gradient(180deg,#f39c12,#c87f0a)
 
 <div class="app">
   <header class="header">
-    <div class="brand">
-      <span class="brand-mark" id="brandMark"></span>
-      <span class="brand-name">AuraQuiz</span>
+    <!-- НОВЫЙ БРЕНДИНГ: Aura + Звездочка, объединено с профилем -->
+    <div class="brand" onclick="openProfile()" title="Профиль">
+      <div class="aura-logo">
+        <div class="aura-star"></div>
+        Aura
+      </div>
     </div>
+    
     <div class="header-actions">
       <div class="xp-bar" id="xpBar" title="Профиль" onclick="openProfile()">
         <span id="lvlText">Lv.1</span>
@@ -866,7 +877,7 @@ body.theme-retro .btn-primary{background:linear-gradient(180deg,#f39c12,#c87f0a)
       <div id="welcomeScreen">
         <div class="welcome">
           <div class="welcome-icon" id="welcomeIcon"></div>
-          <h1>AuraQuiz</h1>
+          <h1>Aura</h1>
           <p class="subtitle" style="max-width:420px">Платформа для создания и прохождения тестов с AI, геймификацией и мультиплеером.</p>
           <div class="row" style="justify-content:center">
             <button class="btn-primary" onclick="openEditor(null)" id="welcomeCreate"></button>
@@ -2430,7 +2441,7 @@ function printResult(){
 function showCertificate(){
   const c=state.questions.reduce((a,q,i)=>a+(isCorrect(q,state.answers[i])?1:0),0);
   const pct=Math.round(c/state.questions.length*100);const date=new Date().toLocaleDateString('ru-RU');
-  $('certRender').innerHTML=`<div class="cert-label">Certificate of Achievement</div><div class="cert-title">AuraQuiz</div><div style="font-size:16px;margin-bottom:8px">Подтверждается прохождение</div><div class="cert-testname">«${esc(TEST?TEST.title:'Тест')}»</div><div class="cert-score">${pct}%</div><div>${c} из ${state.questions.length} правильных</div><div class="cert-footer"><div><b>AuraQuiz</b></div><div>${date}</div></div>`;
+  $('certRender').innerHTML=`<div class="cert-label">Certificate of Achievement</div><div class="cert-title">Aura</div><div style="font-size:16px;margin-bottom:8px">Подтверждается прохождение</div><div class="cert-testname">«${esc(TEST?TEST.title:'Тест')}»</div><div class="cert-score">${pct}%</div><div>${c} из ${state.questions.length} правильных</div><div class="cert-footer"><div><b>Aura</b></div><div>${date}</div></div>`;
   $('certModal').classList.remove('hidden');
 }
 async function downloadCert(){try{const canvas=await html2canvas($('certRender'),{scale:2,backgroundColor:'#fff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='cert.png';a.click();toast('Скачано');}catch(e){toast('Ошибка');}}
@@ -2465,7 +2476,7 @@ function resetProgress(){
 }
 
 const ONBOARD=[
-  {title:'👋 Добро пожаловать!',text:'AuraQuiz — платформа для создания и прохождения тестов с AI и геймификацией.'},
+  {title:'👋 Добро пожаловать!',text:'Aura — платформа для создания и прохождения тестов с AI и геймификацией.'},
   {title:'🎯 Проходите тесты',text:'6 режимов + мультиплеер с PIN-комнатами для класса.'},
   {title:'🏆 Зарабатывайте XP',text:'+10 XP за ответ. Стрики, достижения, квесты, магазин.'}
 ];
@@ -2821,7 +2832,6 @@ document.addEventListener('click',e=>{
 });
 
 loadAll();loadTests();loadTrash();loadAttempts();
-$('brandMark').innerHTML = ic('search');
 $('shopBtn').innerHTML = ic('shop');
 $('achBtn').innerHTML = ic('trophy');
 $('settingsBtn').innerHTML = ic('settings');
